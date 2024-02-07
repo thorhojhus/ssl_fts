@@ -1,5 +1,11 @@
 # Self-supervised learning for time series
 
+## Submodules
+
+When cloning the project, use the `--recurse-submodules` to also fetch the content from the submodule *FITS*. If the repository is already initialized, resort to the commands:  
+- `git submodule init`
+- `git sumbodule update`
+
 ## Motivation
 
 Traditional machine learning approaches often rely on labeled data, where the data is annotated with the correct output for each example. However, labeling large amounts of data can be time-consuming and expensive. Self-supervised learning is a type of machine learning that allows models to learn from unlabeled data by using the data itself as the supervision signal. This allows us to learn useful representations from large unlabelled datasets and to use the representations for fine-tuning downstream tasks associated with smaller datasets.
