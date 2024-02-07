@@ -1,1 +1,1 @@
-# ssl_fts
+# Self-supervised learning for time series
