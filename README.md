@@ -1,5 +1,12 @@
 # Self-supervised learning for time series
 
+## Real-time visualization of FITS learning
+
+<video src="NN_learning_visualization.mp4" width="776" height="756" controls>
+  Your browser does not support the video tag.
+</video>
+
+
 ## Submodules
 
 When cloning the project, use the `--recurse-submodules` to also fetch the content from the submodule *FITS*. If the repository is already initialized, resort to the commands:  
