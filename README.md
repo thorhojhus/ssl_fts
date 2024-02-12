@@ -2,9 +2,7 @@
 
 ## Real-time visualization of FITS learning
 
-<video src="NN_learning_visualization.mp4" width="776" height="756" controls>
-  Your browser does not support the video tag.
-</video>
+https://github.com/thorhojhus/ssl_fts/assets/109358056/5eee5382-6025-4826-ae5d-c901e1ef3249
 
 
 ## Submodules
