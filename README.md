@@ -1,5 +1,10 @@
 # Self-supervised learning for time series
 
+## Real-time visualization of FITS learning
+
+https://github.com/thorhojhus/ssl_fts/assets/109358056/5eee5382-6025-4826-ae5d-c901e1ef3249
+
+
 ## Submodules
 
 When cloning the project, use the `--recurse-submodules` to also fetch the content from the submodule *FITS*. If the repository is already initialized, resort to the commands:  
