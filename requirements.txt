@@ -1,1 +1,7 @@
+torch
+scikit-learn
+pandas
+numpy
+matplotlib
+yfinance
 pre-commit
