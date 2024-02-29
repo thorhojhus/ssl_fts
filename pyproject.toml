@@ -3,22 +3,18 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "src"
-version = "0.0.1"
-description = "Self-supervised learning for time series"
-authors = [
-  { name = " ", email = " " },
-]
-
+name = "ssl_fts"
+version = "2024.0"
+description = "Self-supervised learning for Time Series"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
+license = {file = "LICENSE"} # Assuming you have a LICENSE file in the root
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.10",
+]
 dynamic = ["dependencies", "optional-dependencies"]
-
-[tool.setuptools]
-packages = ["src"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
-
-[tool.ruff]
-line-length = 120
