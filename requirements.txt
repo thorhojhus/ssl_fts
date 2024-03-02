@@ -3,5 +3,6 @@ scikit-learn
 pandas
 numpy
 matplotlib
+tqdm
 yfinance
 pre-commit
