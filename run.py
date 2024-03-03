@@ -1,4 +1,6 @@
 import argparse
+from src.fits import FITS
+from src.train import train
 from src.dataset import data_setup
 
 parser = argparse.ArgumentParser(description="Time Series Forecasting")
@@ -22,7 +24,7 @@ parser.add_argument(
     "--all_cols",
     type=bool,
     default=True,
-    help="Use all columns as target",
+    help="Use all columns as target. If False, specify the target columns with --target_columns",
 )
 
 parser.add_argument(
@@ -60,16 +62,41 @@ parser.add_argument(
     help="Batch size",
 )
 
+parser.add_argument(
+    "--individual",
+    type=bool,
+    default=True,
+    help="Individual frequency upsampling",
+)
+
+parser.add_argument(
+    "--channels",
+    type=int,
+    default=1,
+    help="Number of channels",
+)
+
+parser.add_argument(
+    "--dominance_freq",
+    type=int,
+    default=20,
+    help="Dominance frequency",
+)
+
+parser.add_argument(
+    "--epochs",
+    type=int,
+    default=100,
+    help="Number of epochs",
+)
 
 
 args = parser.parse_args()
 
 train_loader, test_loader = data_setup(args)
+model = FITS(args)
+for param in model.parameters():
+    param.data.fill_(0)
 
-print("Data setup complete!")
-print(f"Train data shape: {train_loader.dataset.data.shape}")
-print(f"Test data shape: {test_loader.dataset.data.shape}")
-print(f"Number of train batches: {len(train_loader)}")
-print(f"Number of test batches: {len(test_loader)}")
-print(f"x batch shape: {next(iter(train_loader))[0].shape}")
-print(f"y batch shape: {next(iter(train_loader))[1].shape}")
+
+model = train(model, train_loader, args.epochs)
