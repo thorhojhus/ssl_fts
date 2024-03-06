@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 
+torch.seed(123)
 def train(model: nn.Module, data_loader: DataLoader, epochs: int = 1000, device="cuda"):
     model.to(device)
     criterion = nn.MSELoss()
