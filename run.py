@@ -1,5 +1,7 @@
 import argparse
 from src.fits import FITS
+from src.models.FITS import FITS as OwnFITS
+from src.models.FITS_COPY import Model as OgFITS
 from src.train import train
 from src.dataset import data_setup
 import warnings
@@ -82,8 +84,8 @@ parser.add_argument(
 
 parser.add_argument(
     "--individual",
-    type=bool,
-    default=True,
+    action=argparse.BooleanOptionalAction,
+    default=False,
     help="Individual frequency upsampling",
 )
 
@@ -106,7 +108,7 @@ args = parser.parse_args()
 
 train_loader, test_loader = data_setup(args)
 
-model = FITS(args)
+model = OgFITS(args)
 
 for param in model.parameters():
     param.data.fill_(0)
