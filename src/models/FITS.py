@@ -77,6 +77,5 @@ class FITS(nn.Module):
         # 8) Reverse Normalization
         xy = norm_xy * torch.sqrt(ts_var) + ts_mean
         print(xy, torch.sqrt(ts_var), ts_mean)
-        raise NotImplementedError("The model is not yet complete")
         return xy
         

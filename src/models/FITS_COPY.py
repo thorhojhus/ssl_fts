@@ -50,6 +50,4 @@ class Model(nn.Module):
         low_xy=low_xy * self.length_ratio # compemsate the length change
         
         xy=(low_xy) * torch.sqrt(x_var) +x_mean
-        print(xy, torch.sqrt(x_var), x_mean)
-        raise NotImplementedError("This model is not implemented yet")
         return xy#, low_xy* torch.sqrt(x_var)
