@@ -5,7 +5,6 @@ from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset, DataLoader
 from typing import List
 import torch
-from dataset_ETT_hour import Dataset_ETT_hour
 from augmentations import augmentation
 
 
