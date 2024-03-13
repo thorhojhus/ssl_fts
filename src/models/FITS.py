@@ -38,12 +38,8 @@ class FITS(nn.Module):
 
     def forward(self, ts_data: torch.Tensor) -> torch.Tensor:
         # 1) Normalization of the input tensor:
-        ts_mean, ts_var = torch.mean(ts_data, dim=1, keepdim=True), torch.var(ts_data, dim=1, keepdim=True)
-        normalized_ts_data = fn.normalize(
-            input=ts_data, 
-            dim=1, 
-            eps=1e-12
-        )
+        ts_mean, ts_var = torch.mean(ts_data, dim=1, keepdim=True), torch.var(ts_data, dim=1, keepdim=True) + 1e-5
+        normalized_ts_data = (ts_data - ts_mean) / ts_var
 
         # 2) perform real fast fourier transform on the input tensor
         ts_frequency_data = rfft(input=normalized_ts_data, dim=1)
@@ -76,6 +72,5 @@ class FITS(nn.Module):
 
         # 8) Reverse Normalization
         xy = norm_xy * torch.sqrt(ts_var) + ts_mean
-        print(xy, torch.sqrt(ts_var), ts_mean)
         return xy
         

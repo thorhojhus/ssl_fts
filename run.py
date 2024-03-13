@@ -1,7 +1,5 @@
 import argparse
-from src.fits import FITS
-from src.models.FITS import FITS as OwnFITS
-from src.models.FITS_COPY import Model as OgFITS
+from src.models.FITS import FITS
 from src.train import train
 from src.dataset import data_setup
 import warnings
@@ -108,7 +106,7 @@ args = parser.parse_args()
 
 train_loader, test_loader = data_setup(args)
 
-model = OgFITS(args)
+model = FITS(args)
 
 for param in model.parameters():
     param.data.fill_(0)
