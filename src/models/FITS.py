@@ -15,7 +15,6 @@ class FITS(nn.Module):
     *(RIN was not performed in the code, but instance wise normalization was performed instead).
     """
 
-    # TODO: figure out configuration to the model?
     def __init__(
             self, 
             args: Namespace,
@@ -26,15 +25,43 @@ class FITS(nn.Module):
         self.input_length = args.input_length
         self.output_length = args.output_length
         self.upsample_rate = (args.input_length + args.output_length) / args.input_length
+        self.channels = args.channels
 
-        self.complex_linear_layer = nn.Linear(
-            in_features=args.dominance_freq,
-            out_features=int(args.dominance_freq * self.upsample_rate),
-            dtype=torch.cfloat
+        self.frequency_upsampler = (
+            nn.Linear(
+                in_features=args.dominance_freq,
+                out_features=int(args.dominance_freq * self.upsample_rate),
+                dtype=torch.cfloat
+            )
+            if not args.individual
+            else nn.ModuleList(
+                [
+                    nn.Linear(
+                        in_features=args.dominance_freq,
+                        out_features=int(args.dominance_freq * self.upsample_rate),
+                        dtype=torch.cfloat
+                    ) for _ in range(args.channels)
+                ]
+            )
         )
 
         self.individual = args.individual
     
+    def channel_wise_frequency_upsampler(self, ts_frequency_data_filtered: torch.Tensor) -> torch.Tensor:
+        """Performs the complex valued layer frequency upsampling on a per-channel basis."""
+        complex_valued_data = torch.zeros(
+            [
+                ts_frequency_data_filtered.size(0),
+                int(self.cutoff_frequency*self.upsample_rate),
+                ts_frequency_data_filtered.size(2)
+            ],
+            dtype=ts_frequency_data_filtered.dtype
+        ).to(ts_frequency_data_filtered.device)
+        for i in range(self.channels):
+            complex_valued_data[:,:,i] = self.frequency_upsampler[i](
+                ts_frequency_data_filtered[:,:,i].permute(0,1)
+            ).permute(0,1)
+        return complex_valued_data
 
     def forward(self, ts_data: torch.Tensor) -> torch.Tensor:
         # 1) Normalization of the input tensor:
@@ -49,9 +76,9 @@ class FITS(nn.Module):
 
         # 4) Run the tensor through a complex valued linear layer
         if self.individual:
-            raise NotImplementedError("Individual frequency upsampling is not implemented yet")
+            complex_valued_data = self.channel_wise_frequency_upsampler(ts_frequency_data_filtered)
         else:
-            complex_valued_data = self.complex_linear_layer(ts_frequency_data_filtered.permute(0,2,1)).permute(0,2,1)
+            complex_valued_data = self.frequency_upsampler(ts_frequency_data_filtered.permute(0,2,1)).permute(0,2,1)
 
         # 5) obtain new frequencies from the output of the complex valued linear layer
         norm_spec_xy = torch.zeros(
