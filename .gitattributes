@@ -1,3 +1,5 @@
-*.ipynb linguist-detectable=true
-*.ipynb linguist-language=Jupyter Notebook
+#*.ipynb linguist-detectable=true
+#*.ipynb linguist-language=Jupyter Notebook
+*.ipynb diff=ipynb
 #*.ipynb  text
+* text=auto
