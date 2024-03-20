@@ -17,6 +17,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--debug",
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help="debug mode",
+)
+
+parser.add_argument(
     "--target_columns",
     type=str,
     nargs="+",
