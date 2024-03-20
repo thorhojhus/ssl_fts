@@ -8,12 +8,20 @@ warnings.filterwarnings("ignore")
 
 parser = argparse.ArgumentParser(description="Time Series Forecasting")
 
+
 # Data params
 parser.add_argument(
-    "--filepath",
+    "--root_path",
     type=str,
-    default="data/ETTh1.csv",
-    help="Path to the dataset",
+    default="data",
+    help="Root path",
+)
+
+parser.add_argument(
+    "--dataset",
+    type=str,
+    default="ETTh1",
+    help="Dataset",
 )
 
 parser.add_argument(
@@ -42,23 +50,29 @@ parser.add_argument(
 parser.add_argument(
     "--epochs",
     type=int,
-    default=10,
+    default=100,
     help="Number of epochs",
 )
 
-parser.add_argument("--device", type=str, default="cuda", help="Device to run on")
+# fmt: off
+parser.add_argument(
+    "--device",
+    type=str,
+    default="cuda",
+    help="Device to run on")
+# fmt: on
 
 parser.add_argument(
     "--batch_size",
     type=int,
-    default=64,
+    default=128,
     help="Batch size",
 )
 
 parser.add_argument(
     "--test_size",
     type=float,
-    default=0.2,
+    default=0.1,
     help="Size of the test set",
 )
 
@@ -73,14 +87,14 @@ parser.add_argument(
 parser.add_argument(
     "--seq_len",
     type=int,
-    default=720,
+    default=360,
     help="Length of the input sequence",
 )
 
 parser.add_argument(
     "--label_len",
     type=int,
-    default=96,
+    default=48,
     help="Length of the input sequence",
 )
 
@@ -101,14 +115,14 @@ parser.add_argument(
 parser.add_argument(
     "--channels",
     type=int,
-    default=1,
+    default=7,
     help="Number of channels",
 )
 
 parser.add_argument(
     "--dominance_freq",
     type=int,
-    default=196,  # int(seq_len // 24 + 1) * 6 + 10 (int(args.seq_len // args.base_T + 1) * args.H_order + 10)
+    default=106,
     help="Dominance frequency",
 )
 
@@ -116,6 +130,7 @@ args = parser.parse_args()
 
 train_loader, test_loader = data_setup(args)
 model = FITS(args)
+print(model)
 
 for param in model.parameters():
     param.data.fill_(0)

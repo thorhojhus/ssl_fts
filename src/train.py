@@ -14,13 +14,14 @@ def train(
     pred_len=360,
     features="M",
     ft=False,
+    lr=5e-4,
 ):
     model.to(device)
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, "min", factor=0.5, threshold=1e-3
+        optimizer, "min", factor=0.5, threshold=1e-4
     )
 
     current_lr = optimizer.param_groups[0]["lr"]
@@ -34,13 +35,10 @@ def train(
         train_loss = []
         for batch_x, batch_y in train_loader:
             optimizer.zero_grad()
-            # batch_x, batch_y = batch_x.to(device), batch_y.to(device)
             batch_x = batch_x.float().to(device)
             batch_y = batch_y.float().to(device)[:, -pred_len:, :]
             batch_xy = torch.cat([batch_x, batch_y], dim=1)
-
             output = model(batch_x)
-
             if ft:
                 output = output[:, -pred_len:, f_dim:]
                 batch_y = batch_y[:, -pred_len:, f_dim:].to(device)
