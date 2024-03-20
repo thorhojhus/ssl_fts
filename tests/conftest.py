@@ -18,7 +18,7 @@ def FITS(argparser):
     model = FITS(args)
     for param in model.parameters():
         param.data.fill_(0)
-    
+
     return model
 
 
@@ -105,6 +105,13 @@ def argparser():
         "--seq_len",
         type=int,
         default=360,
+        help="Length of the input sequence",
+    )
+
+    parser.add_argument(
+        "--label_len",
+        type=int,
+        default=96,
         help="Length of the input sequence",
     )
 
