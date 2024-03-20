@@ -1,4 +1,4 @@
-gitgitimport torch
+import torch
 import numpy as np
 
 
@@ -16,7 +16,7 @@ class BatchAugmentation:
     def freq_mask(self, x, y, rate=0.5, dim=1):
         xy = torch.cat([x, y], dim=1)
         xy_f = torch.fft.rfft(xy, dim=dim)
-        m = torch.cuda.FloatTensor(xy_f.shape).uniform_() < rate
+        m = torch.FloatTensor(xy_f.shape).uniform_() < rate
         freal = xy_f.real.masked_fill(m, 0)
         fimag = xy_f.imag.masked_fill(m, 0)
         xy_f = torch.complex(freal, fimag)
@@ -27,7 +27,7 @@ class BatchAugmentation:
         xy = torch.cat([x, y], dim=dim)
         xy_f = torch.fft.rfft(xy, dim=dim)
 
-        m = torch.cuda.FloatTensor(xy_f.shape).uniform_() < rate
+        m = torch.FloatTensor(xy_f.shape).uniform_() < rate
         amp = abs(xy_f)
         _, index = amp.sort(dim=dim, descending=True)
         dominant_mask = index > 2
@@ -117,7 +117,6 @@ class DatasetAugmentation:
 
         xy = torch.cat([x, y], dim=0)
         xy_f = torch.fft.rfft(xy, dim=0)
-
         m = torch.FloatTensor(xy_f.shape).uniform_() < dropout_rate
 
         # amp = abs(xy_f)
