@@ -1,5 +1,5 @@
 import argparse
-from src.fits import FITS
+from src.models.FITS import FITS
 from src.train import train
 from src.dataset import data_setup
 import warnings
@@ -86,7 +86,7 @@ parser.add_argument(
 
 parser.add_argument(
     "--individual",
-    type=bool,
+    action=argparse.BooleanOptionalAction,
     default=False,
     help="Individual frequency upsampling",
 )
