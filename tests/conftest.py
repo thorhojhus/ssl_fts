@@ -2,6 +2,7 @@ import argparse
 import pytest
 import torch
 
+
 @pytest.fixture(scope="session", autouse=True)
 def set_seed():
     torch.manual_seed(123)
@@ -84,7 +85,6 @@ def argparser():
         help="Batch size",
     )
 
-
     parser.add_argument(
         "--test_size",
         type=float,
@@ -102,14 +102,14 @@ def argparser():
     # Model params
 
     parser.add_argument(
-        "--input_length",
+        "--seq_len",
         type=int,
         default=360,
         help="Length of the input sequence",
     )
 
     parser.add_argument(
-        "--output_length",
+        "--pred_len",
         type=int,
         default=96,
         help="Length of the output sequence",
