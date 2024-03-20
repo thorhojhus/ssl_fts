@@ -5,7 +5,8 @@ from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset, DataLoader
 from typing import List
 import torch
-from augmentations import augmentation
+from .augmentations import augmentation
+from sklearn.model_selection import train_test_split
 
 
 class TimeSeriesDataset(Dataset):
@@ -33,7 +34,7 @@ def load_and_process_data(
     mode_flag: str = "train",
     all_cols: bool = True,
     normalize: bool = True,
-    test_time_train: bool = True,
+    test_time_train: bool = False,
     data_size: int = 1,
     aug_rate: tuple = (0.5,),
     augment_data: bool = False,
@@ -43,14 +44,14 @@ def load_and_process_data(
 
     mode = {"train": 0, "val": 1, "test": 2}[mode_flag]
 
-    if test_time_train:
-        border1s = [0, 12960 - seq_len, 14400]
-        border2s = [12960, 14400, 14400]
-    else:
-        border1s = [0, 8640 - seq_len, 11520 - seq_len]
-        border2s = [8640, 11520, 14400]
+    # if test_time_train:
+    #     border1s = [0, 12960 - seq_len, 14400]
+    #     border2s = [12960, 14400, 14400]
+    # else:
+    #     border1s = [0, 8640 - seq_len, 11520 - seq_len]
+    #     border2s = [8640, 11520, 14400]
 
-    border1, border2 = border1s[mode], border2s[mode]
+    # border1, border2 = border1s[mode], border2s[mode]
 
     if all_cols:
         target_columns = df.columns[1:]
@@ -59,8 +60,8 @@ def load_and_process_data(
 
     if normalize:
         scaler = StandardScaler()
-        data = df[border1s[0] : border2s[0]]
-        data = scaler.fit_transform(data.values)
+        # data = df[border1s[0] : border2s[0]]
+        data = scaler.fit_transform(df.values)
     else:
         data = df.values
 
@@ -69,9 +70,10 @@ def load_and_process_data(
         #     data[-int(len(data) * test_size) :],
         # )
 
-    data_x = data[border1:border2]
-    data_y = data[border1:border2]
-
+    # data_x = data[border1:border2]
+    # data_y = data[border1:border2]
+    data_x = data
+    data_y = data
     x_data, y_data = split_data(
         data_x, data_y, seq_len, pred_len, label_len, mode, data_size=1
     )
@@ -169,7 +171,7 @@ def create_dataloaders(
 
 
 def data_setup(args):
-    x_data_train, y_data_train = load_and_process_data(
+    x_data, y_data = load_and_process_data(
         filepath=args.filepath,
         target_columns=args.target_columns,
         all_cols=args.all_cols,
@@ -179,17 +181,7 @@ def data_setup(args):
         pred_len=args.pred_len,
         mode_flag="train",
     )
-    x_data_test, y_data_test = load_and_process_data(
-        filepath=args.filepath,
-        target_columns=args.target_columns,
-        all_cols=args.all_cols,
-        normalize=args.normalize,
-        seq_len=args.seq_len,
-        label_len=args.label_len,
-        pred_len=args.pred_len,
-        mode_flag="test",
-    )
 
-    return create_dataloaders(
-        x_data_train, y_data_train, x_data_test, y_data_test, args.batch_size
-    )
+    X_train, X_test, y_train, y_test = train_test_split(x_data, y_data)
+
+    return create_dataloaders(X_train, y_train, X_test, y_test, args.batch_size)

@@ -1,5 +1,5 @@
 import argparse
-from src.fits import FITS
+from src.models.FITS import FITS
 from src.train import train
 from src.dataset import data_setup
 import warnings
@@ -9,7 +9,6 @@ warnings.filterwarnings("ignore")
 parser = argparse.ArgumentParser(description="Time Series Forecasting")
 
 # Data params
-
 parser.add_argument(
     "--filepath",
     type=str,
@@ -36,7 +35,7 @@ parser.add_argument(
 parser.add_argument(
     "--epochs",
     type=int,
-    default=50,
+    default=10,
     help="Number of epochs",
 )
 
@@ -48,7 +47,6 @@ parser.add_argument(
     default=64,
     help="Batch size",
 )
-
 
 parser.add_argument(
     "--test_size",
@@ -88,7 +86,7 @@ parser.add_argument(
 
 parser.add_argument(
     "--individual",
-    type=bool,
+    action=argparse.BooleanOptionalAction,
     default=False,
     help="Individual frequency upsampling",
 )
@@ -103,7 +101,7 @@ parser.add_argument(
 parser.add_argument(
     "--dominance_freq",
     type=int,
-    default=20,  # int(seq_len // 24 + 1) * 6 + 10 (int(args.seq_len // args.base_T + 1) * args.H_order + 10)
+    default=196,  # int(seq_len // 24 + 1) * 6 + 10 (int(args.seq_len // args.base_T + 1) * args.H_order + 10)
     help="Dominance frequency",
 )
 
