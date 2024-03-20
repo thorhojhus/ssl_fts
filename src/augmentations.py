@@ -1,4 +1,4 @@
-import torch
+gitgitimport torch
 import numpy as np
 
 
@@ -160,4 +160,31 @@ class DatasetAugmentation:
         xy_f = torch.complex(freal, fimag)
         xy = torch.fft.irfft(xy_f, dim=0)
         x, y = xy[: x.shape[0], :].numpy(), xy[-y.shape[0] :, :].numpy()
+        return x, y
+    
+    def freq_warp(x, y, dropout_rate=0.2, dim=0, warp_factor=0.5):
+        x, y = torch.from_numpy(x), torch.from_numpy(y)
+
+        xy = torch.cat([x, y], dim=0)
+        xy_f = torch.fft.rfft(xy, dim=0)
+
+
+        freq_indices = torch.arange(xy_f.size(dim)).float()
+        warped_indices = torch.pow(freq_indices, warp_factor)
+        max_index = xy_f.size(dim) - 1
+        warped_indices = torch.clamp(warped_indices, 0, max_index).long()
+
+        xy_f_warped = torch.zeros_like(xy_f)
+        for i, wi in enumerate(warped_indices):
+            xy_f_warped[wi] += xy_f[i]
+
+
+        dropout_mask = torch.FloatTensor(xy_f_warped.shape).uniform_() < dropout_rate
+        freal = xy_f_warped.real.masked_fill(dropout_mask, 0)
+        fimag = xy_f_warped.imag.masked_fill(dropout_mask, 0)
+        xy_f_warped = torch.complex(freal, fimag)
+
+        xy_warped = torch.fft.irfft(xy_f_warped, n=xy.size(dim), dim=dim)
+
+        x, y = xy_warped[:x.shape[0], :].numpy(), xy_warped[-y.shape[0]:, :].numpy()
         return x, y
