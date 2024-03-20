@@ -8,6 +8,34 @@ def set_seed():
 
 
 @pytest.fixture(scope="function")
+def FITS(argparser):
+    """Sample FITS model with debug mode."""
+    from src.models.FITS import FITS
+
+    args = argparser.parse_args(["--device", "cpu", "--individual", "--debug"])
+
+    model = FITS(args)
+    for param in model.parameters():
+        param.data.fill_(0)
+    
+    return model
+
+
+@pytest.fixture(scope="function")
+def ogFITS(argparser):
+    """Sample Original FITS model with debug mode."""
+    from src.models.copy_fits import Model
+
+    args = argparser.parse_args(["--device", "cpu", "--individual", "--debug"])
+
+    model = Model(args)
+    for param in model.parameters():
+        param.data.fill_(0)
+
+    return model
+
+
+@pytest.fixture(scope="function")
 def argparser():
     parser = argparse.ArgumentParser(description="Time Series Forecasting")
     parser.add_argument(
@@ -15,6 +43,13 @@ def argparser():
         type=str,
         default="data/ETTh1.csv",
         help="Path to the dataset",
+    )
+
+    parser.add_argument(
+        "--debug",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="debug mode",
     )
 
     parser.add_argument(
