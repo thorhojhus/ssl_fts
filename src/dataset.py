@@ -37,7 +37,7 @@ def load_and_process_data(
     normalize: bool = True,
     test_time_train: bool = False,
     aug_rate: tuple = (0.5,),
-    augment_data: bool = False,
+    augment_data: bool = True,
     aug_method: str = "f_mix",
 ):
     df = pd.read_csv(os.path.join(root_path, str(dataset + ".csv")))
@@ -111,12 +111,12 @@ def split_data(
 
 
 def augment(x_data: list, y_data: list, aug_method: str, aug_rate: tuple):
-    aug_size = [1 for i in len(x_data)]
+    aug_size = [1 for i in range(len(x_data))]
     for i in range(len(x_data)):
         for _ in range(aug_size[i]):
             aug = augmentation("dataset")
             if aug_method == "f_mask":
-                x, y = aug.freq_dropout(x_data[i], y_data[i], dropout_rate=aug_rate)
+                x, y = aug.freq_dropout(x_data[i], y_data[i], dropout_rate=aug_rate[0])
             elif aug_method == "f_mix":
                 rand = float(np.random.random(1))
                 i2 = int(rand * len(x_data))
@@ -125,7 +125,7 @@ def augment(x_data: list, y_data: list, aug_method: str, aug_rate: tuple):
                     y_data[i],
                     x_data[i2],
                     y_data[i2],
-                    dropout_rate=aug_rate,
+                    dropout_rate=aug_rate[0],  # Pass the first element of aug_rate
                 )
             x_data.append(x)
             y_data.append(y)
@@ -161,7 +161,9 @@ def data_setup(args):
         label_len=args.label_len,
         pred_len=args.pred_len,
         mode_flag="train",
+        aug_method=args.aug_method,
     )
+    
 
     X_test, y_test = load_and_process_data(
         root_path=args.root_path,

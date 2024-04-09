@@ -126,6 +126,13 @@ parser.add_argument(
     help="Dominance frequency",
 )
 
+parser.add_argument(
+    "--aug_method",
+    type=str,
+    default="f_mix",
+    help="Augmentations",
+)
+
 args = parser.parse_args()
 
 train_loader, test_loader = data_setup(args)
@@ -135,4 +142,4 @@ print(model)
 for param in model.parameters():
     param.data.fill_(0)
 
-model = train(model, train_loader, test_loader, args.epochs, args.device, args.pred_len)
+model = train(model, train_loader, test_loader, args.epochs, args.device, args.pred_len, args.aug_method)
