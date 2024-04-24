@@ -142,7 +142,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--use_wandb",
-    type=bool,
+    action=argparse.BooleanOptionalAction,
     default=False,
     help="Whether to use wandb",
 )
