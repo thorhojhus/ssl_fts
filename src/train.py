@@ -2,17 +2,17 @@ import numpy as np
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from tqdm import tqdm
 
 def train(
     model: nn.Module,
     train_loader: DataLoader,
     test_loader: DataLoader,
     epochs: int = 1000,
-    device="cpu",  # Set default device to None
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     pred_len=360,
     features="M",
     ft=False,
+    lr=5e-4,
 ):
     if device is None:
         if torch.cuda.is_available():
@@ -21,9 +21,9 @@ def train(
             device = torch.device("cpu")
     model.to(device)
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, "min", factor=0.5, threshold=1e-3
+        optimizer, "min", factor=0.5, threshold=1e-4
     )
 
     current_lr = optimizer.param_groups[0]["lr"]
@@ -39,7 +39,6 @@ def train(
             batch_x = batch_x.float().to(device)
             batch_y = batch_y.float().to(device)[:, -pred_len:, :]
             batch_xy = torch.cat([batch_x, batch_y], dim=1)
-
             output = model(batch_x)
             if ft:
                 output = output[:, -pred_len:, f_dim:]
