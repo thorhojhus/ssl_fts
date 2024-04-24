@@ -1,9 +1,7 @@
 from argparse import Namespace
 import torch
 from torch import nn
-from torch.nn import functional as fn
 from torch.fft import rfft
-
 
 # An implementation of the FITS model as described in https://arxiv.org/abs/2307.03756 (FITS: Frequency Interpolation Time Series Forecasting)
 # with better annotation and more clear model structure - the original code for the model can be found here: https://github.com/VEWOXIC/FITS
@@ -33,6 +31,7 @@ class FITS(nn.Module):
                 in_features=args.dominance_freq,
                 out_features=int(args.dominance_freq * self.upsample_rate),
                 dtype=torch.cfloat,
+                bias=False,
             )
             if not args.individual
             else nn.ModuleList(
@@ -41,6 +40,7 @@ class FITS(nn.Module):
                         in_features=args.dominance_freq,
                         out_features=int(args.dominance_freq * self.upsample_rate),
                         dtype=torch.cfloat,
+                        bias=False,
                     )
                     for _ in range(args.channels)
                 ]
@@ -48,6 +48,9 @@ class FITS(nn.Module):
         )
 
         self.individual = args.individual
+        self.debug = args.debug
+        if args.debug:
+            self.debug_tensors = {}
 
     def channel_wise_frequency_upsampler(
         self, ts_frequency_data_filtered: torch.Tensor
@@ -63,8 +66,8 @@ class FITS(nn.Module):
         ).to(ts_frequency_data_filtered.device)
         for i in range(self.channels):
             complex_valued_data[:, :, i] = self.frequency_upsampler[i](
-                ts_frequency_data_filtered[:, :, i].permute(0, 1)
-            ).permute(0, 1)
+                ts_frequency_data_filtered[:, :, i]
+            )
         return complex_valued_data
 
     def forward(self, ts_data: torch.Tensor) -> torch.Tensor:
@@ -73,7 +76,7 @@ class FITS(nn.Module):
             torch.mean(ts_data, dim=1, keepdim=True),
             torch.var(ts_data, dim=1, keepdim=True) + 1e-5,
         )
-        normalized_ts_data = (ts_data - ts_mean) / ts_var
+        normalized_ts_data = (ts_data - ts_mean) / torch.sqrt(ts_var)
 
         # 2) perform real fast fourier transform on the input tensor
         ts_frequency_data = rfft(input=normalized_ts_data, dim=1)
@@ -110,4 +113,16 @@ class FITS(nn.Module):
 
         # 8) Reverse Normalization
         xy = norm_xy * torch.sqrt(ts_var) + ts_mean
+
+        if self.debug:
+            self.debug_tensors = {
+                "normalized_ts_data": normalized_ts_data,
+                "ts_frequency_data": ts_frequency_data,
+                "ts_frequency_data_filtered": ts_frequency_data_filtered,
+                "complex_valued_data": complex_valued_data,
+                "norm_spec_xy": norm_spec_xy,
+                "norm_xy": norm_xy,
+                "xy": xy,
+            }
+
         return xy

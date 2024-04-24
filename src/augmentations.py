@@ -35,8 +35,7 @@ class BatchAugmentation:
         freal = xy_f.real.masked_fill(m, 0)
         fimag = xy_f.imag.masked_fill(m, 0)
 
-        b_idx = np.arange(x.shape[0])
-        np.random.shuffle(b_idx)
+        b_idx = torch.randperm(x.shape[0])
         x2, y2 = x[b_idx], y[b_idx]
         xy2 = torch.cat([x2, y2], dim=dim)
         xy2_f = torch.fft.rfft(xy2, dim=dim)
@@ -55,13 +54,13 @@ class BatchAugmentation:
 
     def noise(self, x, y, rate=0.05, dim=1):
         xy = torch.cat([x, y], dim=1)
-        noise_xy = (torch.rand(xy.shape) - 0.5) * 0.1
-        xy = xy + noise_xy.cuda()
+        noise_xy = (torch.rand(xy.shape, device=xy.device) - 0.5) * 0.1
+        xy = xy + noise_xy
         return xy
 
     def noise_input(self, x, y, rate=0.05, dim=1):
-        noise = (torch.rand(x.shape) - 0.5) * 0.1
-        x = x + noise.cuda()
+        noise = (torch.rand(x.shape, device=x.device) - 0.5) * 0.1
+        x = x + noise
         xy = torch.cat([x, y], dim=1)
         return xy
 
@@ -81,8 +80,7 @@ class BatchAugmentation:
     def time_combination(self, x, y, rate=0.5, dim=1):
         xy = torch.cat([x, y], dim=dim)
 
-        b_idx = np.arange(x.shape[0])
-        np.random.shuffle(b_idx)
+        b_idx = torch.randperm(x.shape[0])
         x2, y2 = x[b_idx], y[b_idx]
         xy2 = torch.cat([x2, y2], dim=dim)
 
@@ -97,7 +95,7 @@ class BatchAugmentation:
         original_shape = xy.shape
         # randomly cut a segment from xy the length should be half of it
         # generate a random integer from 0 to the length of xy
-        start_point = np.random.randint(0, original_shape[1] // 2)
+        start_point = torch.randint(0, original_shape[1] // 2, (1,)).item()
 
         xy = xy[:, start_point : start_point + original_shape[1] // 2, :]
 
@@ -113,7 +111,7 @@ class DatasetAugmentation:
         pass
 
     def freq_dropout(self, x, y, dropout_rate=0.2, dim=0, keep_dominant=True):
-        x, y = torch.from_numpy(x), torch.from_numpy(y)
+        x, y = torch.from_numpy(x).cuda(), torch.from_numpy(y).cuda()
 
         xy = torch.cat([x, y], dim=0)
         xy_f = torch.fft.rfft(xy, dim=0)
@@ -129,15 +127,16 @@ class DatasetAugmentation:
         xy_f = torch.complex(freal, fimag)
         xy = torch.fft.irfft(xy_f, dim=dim)
 
-        x, y = xy[: x.shape[0], :].numpy(), xy[-y.shape[0] :, :].numpy()
+        x, y = xy[: x.shape[0], :], xy[-y.shape[0] :, :]
         return x, y
 
+
     def freq_mix(self, x, y, x2, y2, dropout_rate=0.2):
-        x, y = torch.from_numpy(x), torch.from_numpy(y)
+        x, y = torch.from_numpy(x).cuda(), torch.from_numpy(y).cuda()
 
         xy = torch.cat([x, y], dim=0)
         xy_f = torch.fft.rfft(xy, dim=0)
-        m = torch.FloatTensor(xy_f.shape).uniform_() < dropout_rate
+        m = torch.cuda.FloatTensor(xy_f.shape).uniform_() < dropout_rate
         amp = abs(xy_f)
         _, index = amp.sort(dim=0, descending=True)
         dominant_mask = index > 2
@@ -145,7 +144,7 @@ class DatasetAugmentation:
         freal = xy_f.real.masked_fill(m, 0)
         fimag = xy_f.imag.masked_fill(m, 0)
 
-        x2, y2 = torch.from_numpy(x2), torch.from_numpy(y2)
+        x2, y2 = torch.from_numpy(x2).cuda(), torch.from_numpy(y2).cuda()
         xy2 = torch.cat([x2, y2], dim=0)
         xy2_f = torch.fft.rfft(xy2, dim=0)
 

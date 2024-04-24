@@ -4,6 +4,11 @@ import torch.nn as nn
 
 # Copy of the current FITS model from the official implementation (visitied last at 13-03-2024)
 # from: https://github.com/VEWOXIC/FITS/blob/main/models/FITS.py
+
+
+# Changes made:
+# - added debug tensor output if debug mode is on
+# - removed bias from linear layers for debugging easier
 class Model(nn.Module):
 
     # FITS: Frequency Interpolation Time Series Forecasting
@@ -25,18 +30,24 @@ class Model(nn.Module):
                     nn.Linear(
                         self.dominance_freq,
                         int(self.dominance_freq * self.length_ratio),
+                        bias=False,
                     ).to(torch.cfloat)
                 )
 
         else:
             self.freq_upsampler = nn.Linear(
-                self.dominance_freq, int(self.dominance_freq * self.length_ratio)
+                self.dominance_freq,
+                int(self.dominance_freq * self.length_ratio),
+                bias=False,
             ).to(
                 torch.cfloat
             )  # complex layer for frequency upcampling]
-        # configs.pred_len=configs.seq_len+configs.pred_len
-        # #self.Dlinear=DLinear.Model(configs)
-        # configs.pred_len=self.pred_len
+
+        # added this ourselves ---
+        self.debug = configs.debug
+        if configs.debug:
+            self.debug_tensors = {}
+        # --- added this ourselves
 
     def forward(self, x):
         # RIN
@@ -49,8 +60,6 @@ class Model(nn.Module):
         low_specx = torch.fft.rfft(x, dim=1)
         low_specx[:, self.dominance_freq :] = 0  # LPF
         low_specx = low_specx[:, 0 : self.dominance_freq, :]  # LPF
-
-        print(low_specx[0, 0, :])
 
         if self.individual:
             low_specxy_ = torch.zeros(
@@ -86,4 +95,17 @@ class Model(nn.Module):
         # dom_xy=self.Dlinear(dom_x)
         # xy=(low_xy+dom_xy) * torch.sqrt(x_var) +x_mean # REVERSE RIN
         xy = (low_xy) * torch.sqrt(x_var) + x_mean
+
+        # added this ourselves ---
+        if self.debug:
+            self.debug_tensors = {
+                "x": x,
+                "low_specx": low_specx,
+                "low_specxy_": low_specxy_,
+                "low_specxy": low_specxy,
+                "low_xy": low_xy,
+                "xy": xy,
+            }
+        # --- added this ourselves
+
         return xy  # , low_xy* torch.sqrt(x_var)
