@@ -37,7 +37,7 @@ def load_and_process_data(
     test_time_train: bool = False,
     data_size: int = 1,
     aug_rate: tuple = (0.5,),
-    augment_data: bool = True,
+    augment_data: bool = False,
     aug_method: str = "f_mix",
 ):
     df = pd.read_csv(filepath)

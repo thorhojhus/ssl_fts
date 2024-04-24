@@ -39,7 +39,7 @@ parser.add_argument(
     help="Number of epochs",
 )
 
-parser.add_argument("--device", type=str, default="cuda", help="Device to run on")
+parser.add_argument("--device", type=str, default="cpu", help="Device to run on")
 
 parser.add_argument(
     "--batch_size",
@@ -108,7 +108,7 @@ parser.add_argument(
 parser.add_argument(
     "--aug_method",
     type=str,
-    default="none",
+    default="f_mix",
     help="Augmentations",
 )
 
