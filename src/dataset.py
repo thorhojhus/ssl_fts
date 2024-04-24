@@ -193,6 +193,7 @@ def data_setup(args):
         label_len=args.label_len,
         pred_len=args.pred_len,
         mode_flag="train",
+        augment_data=args.augment_data,
         aug_method=args.aug_method,
     )
     
@@ -206,6 +207,7 @@ def data_setup(args):
         seq_len=args.seq_len,
         label_len=args.label_len,
         pred_len=args.pred_len,
+        augment_data=False,
         mode_flag="test",
     )
 
