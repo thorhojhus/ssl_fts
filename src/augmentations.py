@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def augmentation(augment_time):
     if augment_time == "batch":
@@ -16,7 +17,7 @@ class BatchAugmentation:
     def freq_mask(self, x, y, rate=0.5, dim=1):
         xy = torch.cat([x, y], dim=1)
         xy_f = torch.fft.rfft(xy, dim=dim)
-        m = torch.cuda.FloatTensor(xy_f.shape).uniform_() < rate
+        m = torch.Tensor(xy_f.shape).uniform_() < rate
         freal = xy_f.real.masked_fill(m, 0)
         fimag = xy_f.imag.masked_fill(m, 0)
         xy_f = torch.complex(freal, fimag)
@@ -27,7 +28,7 @@ class BatchAugmentation:
         xy = torch.cat([x, y], dim=dim)
         xy_f = torch.fft.rfft(xy, dim=dim)
 
-        m = torch.cuda.FloatTensor(xy_f.shape).uniform_() < rate
+        m = torch.Tensor(xy_f.shape).uniform_() < rate
         amp = abs(xy_f)
         _, index = amp.sort(dim=dim, descending=True)
         dominant_mask = index > 2
@@ -111,12 +112,11 @@ class DatasetAugmentation:
         pass
 
     def freq_dropout(self, x, y, dropout_rate=0.2, dim=0, keep_dominant=True):
-        x, y = torch.from_numpy(x).cuda(), torch.from_numpy(y).cuda()
+        x, y = torch.from_numpy(x), torch.from_numpy(y)
 
         xy = torch.cat([x, y], dim=0)
         xy_f = torch.fft.rfft(xy, dim=0)
-
-        m = torch.cuda.FloatTensor(xy_f.shape).uniform_() < dropout_rate
+        m = torch.Tensor(xy_f.shape).uniform_() < dropout_rate
 
         # amp = abs(xy_f)
         # _,index = amp.sort(dim=dim, descending=True)
@@ -133,11 +133,11 @@ class DatasetAugmentation:
 
 
     def freq_mix(self, x, y, x2, y2, dropout_rate=0.2):
-        x, y = torch.from_numpy(x).cuda(), torch.from_numpy(y).cuda()
+        x, y = torch.from_numpy(x), torch.from_numpy(y)
 
         xy = torch.cat([x, y], dim=0)
         xy_f = torch.fft.rfft(xy, dim=0)
-        m = torch.cuda.FloatTensor(xy_f.shape).uniform_() < dropout_rate
+        m = torch.Tensor(xy_f.shape).uniform_() < dropout_rate
         amp = abs(xy_f)
         _, index = amp.sort(dim=0, descending=True)
         dominant_mask = index > 2
@@ -145,7 +145,7 @@ class DatasetAugmentation:
         freal = xy_f.real.masked_fill(m, 0)
         fimag = xy_f.imag.masked_fill(m, 0)
 
-        x2, y2 = torch.from_numpy(x2).cuda(), torch.from_numpy(y2).cuda()
+        x2, y2 = torch.from_numpy(x2), torch.from_numpy(y2)
         xy2 = torch.cat([x2, y2], dim=0)
         xy2_f = torch.fft.rfft(xy2, dim=0)
 
@@ -158,5 +158,32 @@ class DatasetAugmentation:
 
         xy_f = torch.complex(freal, fimag)
         xy = torch.fft.irfft(xy_f, dim=0)
-        x, y = xy[: x.shape[0], :], xy[-y.shape[0] :, :]
-        return x.cpu().numpy(), y.cpu().numpy()
+        x, y = xy[: x.shape[0], :].numpy(), xy[-y.shape[0] :, :].numpy()
+        return x, y
+    
+    def freq_warp(x, y, dropout_rate=0.2, dim=0, warp_factor=0.5):
+        x, y = torch.from_numpy(x), torch.from_numpy(y)
+
+        xy = torch.cat([x, y], dim=0)
+        xy_f = torch.fft.rfft(xy, dim=0)
+
+
+        freq_indices = torch.arange(xy_f.size(dim)).float()
+        warped_indices = torch.pow(freq_indices, warp_factor)
+        max_index = xy_f.size(dim) - 1
+        warped_indices = torch.clamp(warped_indices, 0, max_index).long()
+
+        xy_f_warped = torch.zeros_like(xy_f)
+        for i, wi in enumerate(warped_indices):
+            xy_f_warped[wi] += xy_f[i]
+
+
+        dropout_mask = torch.Tensor(xy_f_warped.shape).uniform_() < dropout_rate
+        freal = xy_f_warped.real.masked_fill(dropout_mask, 0)
+        fimag = xy_f_warped.imag.masked_fill(dropout_mask, 0)
+        xy_f_warped = torch.complex(freal, fimag)
+
+        xy_warped = torch.fft.irfft(xy_f_warped, n=xy.size(dim), dim=dim)
+
+        x, y = xy_warped[:x.shape[0], :].numpy(), xy_warped[-y.shape[0]:, :].numpy()
+        return x, y

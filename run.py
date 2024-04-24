@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser(description="Time Series Forecasting")
 
 
 # Data params
+# fmt: off
 parser.add_argument(
     "--root_path",
     type=str,
@@ -53,6 +54,7 @@ parser.add_argument(
     default=100,
     help="Number of epochs",
 )
+
 
 parser.add_argument(
     "--batch_size",
@@ -116,6 +118,13 @@ parser.add_argument(
     type=int,
     default=106,
     help="Dominance frequency",
+)
+
+parser.add_argument(
+    "--augment_data",
+    type=bool,
+    default=False,
+    help="Whether to use data augmentation"
 )
 
 parser.add_argument(
