@@ -54,14 +54,6 @@ parser.add_argument(
     help="Number of epochs",
 )
 
-# fmt: off
-parser.add_argument(
-    "--device",
-    type=str,
-    default="cuda",
-    help="Device to run on")
-# fmt: on
-
 parser.add_argument(
     "--batch_size",
     type=int,
@@ -133,6 +125,13 @@ parser.add_argument(
     help="Augmentations",
 )
 
+parser.add_argument(
+    "--features",
+    type=str,
+    default="M",
+    help="Features to use (M or MS)",
+)
+
 args = parser.parse_args()
 
 train_loader, test_loader = data_setup(args)
@@ -142,4 +141,4 @@ print(model)
 for param in model.parameters():
     param.data.fill_(0)
 
-model = train(model, train_loader, test_loader, args.epochs, args.device, args.pred_len, args.aug_method)
+model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features)

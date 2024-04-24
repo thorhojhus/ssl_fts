@@ -2,15 +2,13 @@ import numpy as np
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from tqdm import tqdm
-
 
 def train(
     model: nn.Module,
     train_loader: DataLoader,
     test_loader: DataLoader,
     epochs: int = 1000,
-    device="cuda",
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     pred_len=360,
     features="M",
     ft=False,
