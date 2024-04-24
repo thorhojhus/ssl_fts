@@ -5,7 +5,6 @@ from torch.utils.data import DataLoader
 import wandb
 import datetime
 
-
 def RMAE(output, target):
     return torch.sqrt(torch.mean(torch.abs(output - target)))
 
@@ -94,7 +93,7 @@ def train(
         )
 
         print(
-            f"Epoch: {epoch+1} Train loss MSE: {np.mean(train_loss_mse)}, Train loss RMAE: {np.mean(train_loss_rmae)}"
+            f"Epoch: {epoch+1} \t MSE: {np.mean(train_loss_mse):.4f} \t RMAE: {np.mean(train_loss_rmae):.4f}"
         )
 
     with torch.no_grad():
