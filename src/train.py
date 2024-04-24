@@ -14,16 +14,19 @@ def train(
     ft=False,
     lr=5e-4,
 ):
+    if device is None:
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        else:    
+            device = torch.device("cpu")
     model.to(device)
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, "min", factor=0.5, threshold=1e-4
     )
 
     current_lr = optimizer.param_groups[0]["lr"]
-
     f_dim = -1 if features == "MS" else 0
 
     print(f"Initial Learning Rate: {current_lr}")
@@ -44,8 +47,8 @@ def train(
             else:
                 output = output[:, :, f_dim:]
                 loss = criterion(output, batch_xy)
-            train_loss.append(loss.item())
 
+            train_loss.append(loss.item())
             loss.backward()
             optimizer.step()
 
@@ -66,7 +69,6 @@ def train(
             batch_y = batch_y.float().to(device)[:, -pred_len:, :]
             batch_xy = torch.cat([batch_x, batch_y], dim=1)
             output = model(batch_x)
-
             if ft:
                 output = output[:, -pred_len:, f_dim:]
                 batch_y = batch_y[:, -pred_len:, f_dim:].to(device)
@@ -74,6 +76,7 @@ def train(
             else:
                 output = output[:, :, f_dim:]
                 loss = criterion(output, batch_xy)
+
             test_loss.append(loss.item())
 
         print(f"Test loss: {np.mean(test_loss)}")

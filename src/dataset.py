@@ -132,6 +132,38 @@ def augment(x_data: list, y_data: list, aug_method: str, aug_rate: tuple):
     return x_data, y_data
 
 
+# def augment(x_data: list, y_data: list, aug_methods: list, aug_rates: list):
+#     aug_size = [1 for i in range(len(x_data))]
+#     for i in range(len(x_data)):
+#         for _ in range(aug_size[i]):
+#             aug = augmentation("dataset")
+#             for j in range(len(aug_methods)):
+#                 aug_method = aug_methods[j]
+#                 aug_rate = aug_rates[j]
+#                 if aug_method == "f_mask":
+#                     x, y = aug.freq_dropout(x_data[i], y_data[i], dropout_rate=aug_rate)
+#                     x_data.append(x)
+#                     y_data.append(y)
+#                 elif aug_method == "f_mix":
+#                     print("f_mix")
+#                     rand = float(np.random.random(1))
+#                     i2 = int(rand * len(x_data))
+#                     x, y = aug.freq_mix(
+#                         x_data[i],
+#                         y_data[i],
+#                         x_data[i2],
+#                         y_data[i2],
+#                         dropout_rate=aug_rate,
+#                     )
+#                     x_data.append(x)
+#                     y_data.append(y)
+#                 elif aug_method == "f_warp":
+#                     x, y = aug.freq_warp(x_data[i], y_data[i], warp_rate=aug_rate)
+#                     x_data.append(x)
+#                     y_data.append(y)
+#     return x_data, y_data
+
+
 def create_dataloaders(
     x_data_train: list,
     y_data_train: list,
@@ -161,6 +193,7 @@ def data_setup(args):
         label_len=args.label_len,
         pred_len=args.pred_len,
         mode_flag="train",
+        augment_data=args.augment_data,
         aug_method=args.aug_method,
     )
     
@@ -174,6 +207,7 @@ def data_setup(args):
         seq_len=args.seq_len,
         label_len=args.label_len,
         pred_len=args.pred_len,
+        augment_data=False,
         mode_flag="test",
     )
 
