@@ -14,11 +14,6 @@ def train(
     ft=False,
     lr=5e-4,
 ):
-    if device is None:
-        if torch.cuda.is_available():
-            device = torch.device("cuda")
-        else:    
-            device = torch.device("cpu")
     model.to(device)
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
