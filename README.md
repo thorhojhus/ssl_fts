@@ -1,5 +1,23 @@
 # Self-supervised learning for time series
 
+## Setup and running
+
+Install with:
+```bash
+pip install -r requirements.txt
+pip install -e .
+```
+
+Run the training with:
+```bash
+python run.py
+```
+
+To specify dataset (included in data folder) and params run:
+```bash
+python run.py --dataset ETTm1 --seq_len 320 --label_len 24 --pred_len 48
+```
+
 ## Real-time visualization of FITS learning
 
 https://github.com/thorhojhus/ssl_fts/assets/109358056/5eee5382-6025-4826-ae5d-c901e1ef3249
