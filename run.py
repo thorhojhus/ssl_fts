@@ -54,7 +54,6 @@ parser.add_argument(
     help="Number of epochs",
 )
 
-#parser.add_argument("--device", type=str, default="cpu", help="Device to run on")
 
 parser.add_argument(
     "--batch_size",
