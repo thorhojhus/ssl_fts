@@ -51,7 +51,7 @@ parser.add_argument(
 parser.add_argument(
     "--epochs",
     type=int,
-    default=100,
+    default=50,
     help="Number of epochs",
 )
 
@@ -140,6 +140,12 @@ parser.add_argument(
     default="M",
     help="Features to use (M or MS)",
 )
+parser.add_argument(
+    "--use_wandb",
+    type=bool,
+    default=False,
+    help="Whether to use wandb",
+)
 
 args = parser.parse_args()
 
@@ -150,4 +156,4 @@ print(model)
 for param in model.parameters():
     param.data.fill_(0)
 
-model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features)
+model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, args=args)
