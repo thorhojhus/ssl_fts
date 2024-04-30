@@ -31,7 +31,7 @@ class FITS(nn.Module):
                 in_features=args.dominance_freq,
                 out_features=int(args.dominance_freq * self.upsample_rate),
                 dtype=torch.cfloat,
-                bias=False,
+                bias=True,
             )
             if not args.individual
             else nn.ModuleList(
@@ -40,7 +40,7 @@ class FITS(nn.Module):
                         in_features=args.dominance_freq,
                         out_features=int(args.dominance_freq * self.upsample_rate),
                         dtype=torch.cfloat,
-                        bias=False,
+                        bias=True,
                     )
                     for _ in range(args.channels)
                 ]
