@@ -59,7 +59,7 @@ parser.add_argument(
 parser.add_argument(
     "--batch_size",
     type=int,
-    default=128,
+    default=64,
     help="Batch size",
 )
 
@@ -147,6 +147,20 @@ parser.add_argument(
     help="Whether to use wandb",
 )
 
+parser.add_argument(
+    "--ft",
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help="Fine-tune",
+)
+
+parser.add_argument(
+    "--train_and_finetune",
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help="Train and fine-tune",
+)
+
 args = parser.parse_args()
 
 train_loader, test_loader = data_setup(args)
@@ -156,4 +170,10 @@ print(model)
 for param in model.parameters():
     param.data.fill_(0)
 
-model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, args=args)
+if args.train_and_finetune:
+    model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=0, args=args)
+    model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=1, args=args)
+
+else:
+    model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=args.ft, args=args)
+
