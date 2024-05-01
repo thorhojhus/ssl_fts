@@ -6,3 +6,5 @@ matplotlib
 tqdm
 yfinance
 wandb
+pre-commit
+statsmodels
