@@ -112,25 +112,23 @@ class DatasetAugmentation:
         pass
 
     def freq_dropout(self, x, y, dropout_rate=0.2, dim=0, keep_dominant=True):
-        x, y = torch.from_numpy(x), torch.from_numpy(y)
+        if isinstance(x, np.ndarray):
+            x = torch.from_numpy(x)
+        if isinstance(y, np.ndarray):
+            y = torch.from_numpy(y)
 
         xy = torch.cat([x, y], dim=0)
         xy_f = torch.fft.rfft(xy, dim=0)
+        
         m = torch.Tensor(xy_f.shape).uniform_() < dropout_rate
-
-        # amp = abs(xy_f)
-        # _,index = amp.sort(dim=dim, descending=True)
-        # dominant_mask = index > 5
-        # m = torch.bitwise_and(m,dominant_mask)
 
         freal = xy_f.real.masked_fill(m, 0)
         fimag = xy_f.imag.masked_fill(m, 0)
         xy_f = torch.complex(freal, fimag)
         xy = torch.fft.irfft(xy_f, dim=dim)
 
-        x, y = xy[: x.shape[0], :], xy[-y.shape[0] :, :]
+        x, y = xy[:x.shape[0]], xy[-y.shape[0]:]
         return x, y
-
 
     def freq_mix(self, x, y, x2, y2, dropout_rate=0.2):
         x, y = torch.from_numpy(x), torch.from_numpy(y)
