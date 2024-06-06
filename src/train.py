@@ -4,6 +4,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 import wandb
 import datetime
+from rich import print
 
 def RMAE(output, target):
     return torch.sqrt(torch.mean(torch.abs(output - target)))
@@ -17,7 +18,7 @@ def train(
     device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     pred_len=360,
     features="M",
-    ft=False,
+    ft=True,
     lr=5e-4,
     args=None,
 ):
@@ -55,7 +56,7 @@ def train(
         model.train()
         train_loss_mse = []
         train_loss_rmae = []
-        for batch_x, batch_y in train_loader:
+        for batch_x, batch_y, *_ in train_loader:
             optimizer.zero_grad()
             batch_x = batch_x.float().to(device)
             batch_y = batch_y.float().to(device)[:, -pred_len:, :]
@@ -100,7 +101,7 @@ def train(
         model.eval()
         test_loss_mse = []
         test_loss_rmae = []
-        for batch_x, batch_y in test_loader:
+        for batch_x, batch_y, *_ in test_loader:
             batch_x = batch_x.float().to(device)
             batch_y = batch_y.float().to(device)[:, -pred_len:, :]
             batch_xy = torch.cat([batch_x, batch_y], dim=1)
@@ -129,4 +130,4 @@ def train(
             f"Test loss MSE: {np.mean(test_loss_mse)}, Test loss RMAE: {np.mean(test_loss_rmae)}"
         )
 
-    return model
+    return model, np.mean(test_loss_mse)
