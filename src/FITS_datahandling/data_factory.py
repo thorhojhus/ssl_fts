@@ -18,11 +18,15 @@ def data_provider(args, flag):
     args.in_batch_augmentation = False
     args.in_dataset_augmentation = False
     args.num_workers = 4
-    Data = data_dict[args.data]
+    if args.data not in ["ETTh1", "ETTh2", "ETTm1", "ETTm2"]:
+        Data = data_dict['custom']
+    else:
+        Data = data_dict[args.data]
     #timeenc = 0 if args.embed != 'timeF' else 1
     timeenc = 1
 
     args.root_path = 'data'
+    args.freq = 'h'
 
     if args.data == 'ETTh1':
         args.data_path = 'ETTh1.csv'
@@ -36,6 +40,16 @@ def data_provider(args, flag):
     if args.data == 'ETTm2':
         args.data_path = 'ETTm2.csv'
         args.freq = 'm'
+    if args.data == "weather":
+        args.data_path = 'weather.csv'
+    if args.data == "electricty":
+        args.data_path = 'electricty.csv'
+    if args.data == "traffic":
+        args.data_path = "traffic.csv"
+    if args.data == "exchange_rate":
+        args.data_path = "traffic.csv"
+    if args.data == "national_illness":
+        args.data_path = "national_illness.csv"
 
     if flag == 'test':
         shuffle_flag = False
