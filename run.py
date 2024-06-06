@@ -1,5 +1,6 @@
 import argparse
 from src.models.FITS import FITS
+from src.models.ARIMA import TimeSeriesARIMA
 from src.train import train
 from src.dataset import data_setup
 import warnings
@@ -8,7 +9,6 @@ from rich import print
 warnings.filterwarnings("ignore")
 
 parser = argparse.ArgumentParser(description="Time Series Forecasting")
-
 
 # Data params
 # fmt: off
@@ -196,7 +196,6 @@ else:
     train_loader, test_loader = data_setup(args)
 
 model = FITS(args)
-print(model)
 
 for param in model.parameters():
     param.data.fill_(0)
