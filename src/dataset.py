@@ -43,14 +43,14 @@ def load_and_process_data(
 ):
     df = pd.read_csv(os.path.join(root_path, str(dataset + ".csv")))
     mode = {"train": 0, "val": 1, "test": 2}[mode_flag]
+
     if all_cols:
         target_columns = df.columns[1:]
     df = df[target_columns]
-    if normalize:
-        scaler = StandardScaler()
-        data = scaler.fit_transform(df.values)
-    else:
-        data = df.values
+
+    
+    data = df.values
+
     x_data, y_data = split_data(
         data,
         seq_len,
@@ -60,8 +60,9 @@ def load_and_process_data(
         data_size=1,
         test_time_train=test_time_train,
         dataset=dataset,
+        normalize=normalize
     )
-    if augment_data:
+    if augment_data and mode_flag == "train":
         x_data, y_data = augment(x_data, y_data, aug_method, aug_rate)
     return x_data, y_data
 
@@ -75,6 +76,7 @@ def split_data(
     data_size: int = 1,
     test_time_train: bool = False,
     dataset: str = "ETTh1",
+    normalize: bool = True,
 ):
     if dataset == "ETTh1" or dataset == "ETTh2":
         border1s = [0, 8640 - seq_len, 11520 - seq_len]
@@ -82,18 +84,23 @@ def split_data(
         if test_time_train:
             border1s = [0, 12960 - seq_len, 14400]
             border2s = [12960, 14400, 14400]
-    elif dataset == "ETTm1" or dataset == "ETTm2":
+    if dataset == "ETTm1" or dataset == "ETTm2":
         border1s = [0, 34560 - seq_len, 46080 - seq_len]
         border2s = [34560, 46080, 57600]
     else:
-        n_train = int(len(data) * 0.8)
-        n_test = int(len(data) * 0.1)
+        n_train = int(len(data) * 0.7)
+        n_test = int(len(data) * 0.2)
         n_val = len(data) - n_train - n_test
         border1s = [0, n_train - seq_len, len(data) - n_test - seq_len]
         border2s = [n_train, n_train + n_val, len(data)]
         if test_time_train:
+            n_train = int(len(data) * 0.9)
             border1s = [0, n_train - seq_len, len(data)]
             border2s = [n_train, len(data), len(data)]
+    
+    if normalize:
+        scaler = StandardScaler()
+        data = scaler.fit_transform(data)
 
     border1, border2 = border1s[mode], border2s[mode]
     data = data[border1:border2]
@@ -175,7 +182,7 @@ def create_dataloaders(
     train_dataset = TimeSeriesDataset(x_data_train, y_data_train)
     test_dataset = TimeSeriesDataset(x_data_test, y_data_test)
     train_dataloader = DataLoader(
-        train_dataset, batch_size=batch_size, shuffle=True, drop_last=False
+        train_dataset, batch_size=batch_size, shuffle=True, drop_last=True
     )
     test_dataloader = DataLoader(
         test_dataset, batch_size=batch_size, shuffle=False, drop_last=False
