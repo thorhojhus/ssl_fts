@@ -200,8 +200,9 @@ for param in model.parameters():
     param.data.fill_(0)
 
 if args.train_and_finetune:
-    model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=0, args=args)
-    model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=1, args=args)
+    model, _ = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=0, args=args)
+    model, test_mse = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=1, args=args)
 
 else:
-    model = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=args.ft, args=args)
+    model, test_mse = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=args.ft, args=args)
+
