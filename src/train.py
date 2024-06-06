@@ -130,4 +130,4 @@ def train(
             f"Test loss MSE: {np.mean(test_loss_mse)}, Test loss RMAE: {np.mean(test_loss_rmae)}"
         )
 
-    return model
+    return model, np.mean(test_loss_mse)
