@@ -166,13 +166,15 @@ parser.add_argument(
     "--H_order",
     type=int,
     default=2,
-    help="H order (dont know what this means)",
+    help="The harmonic order (multiple of the base period - base_T)",
 )
 
 parser.add_argument(
     '--base_T', 
     type=int, 
-    default=24)
+    default=24,
+    help="The dominant periodicity corresponding to the base frequency of the signal"
+)
 
 parser.add_argument(
     '--use_original_datahandling', 
