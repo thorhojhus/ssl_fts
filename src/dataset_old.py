@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import os
 from numpy import ndarray
-from numpy.typing import NDArray
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import Dataset, DataLoader
 from typing import List
@@ -13,8 +12,8 @@ from .augmentations import augmentation
 class TimeSeriesDataset(Dataset):
     def __init__(
         self,
-        x_data: NDArray,
-        y_data: NDArray,
+        x_data: ndarray,
+        y_data: ndarray,
     ):
         self.x_data = x_data
         self.y_data = y_data
@@ -67,7 +66,7 @@ def load_and_process_data(
 
 
 def split_data(
-    data: NDArray,
+    data: ndarray,
     seq_len: int,
     pred_len: int,
     label_len: int,
@@ -197,6 +196,7 @@ def data_setup(args):
         augment_data=args.augment_data,
         aug_method=args.aug_method,
     )
+    
 
     X_test, y_test = load_and_process_data(
         root_path=args.root_path,
