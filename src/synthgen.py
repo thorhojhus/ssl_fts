@@ -8,18 +8,48 @@ class SyntheticDatasetGenerator:
         self.length = length
         self.time_series = np.arange(length)
         self.data = np.zeros(length)
+        self.shift_counter = 0
+        self.signal_counter = 0
     
-    def add_linear_trend(self, slope=1, intercept=0):
+    def add_linear_trend(self, slope, intercept):
         self.data += slope * self.time_series + intercept
     
-    def add_sin_wave(self, amplitude=1, frequency=1):
+    def add_sin_wave(self, amplitude, frequency):
         self.data += amplitude * np.sin(2 * np.pi * frequency * self.time_series / self.length)
     
     def add_noise(self, mean=0, std=1):
         self.data += np.random.normal(mean, std, self.length)
     
-    def add_exponential_growth(self, base=1.01):
+    def add_exponential_growth(self, base):
         self.data += base ** self.time_series
+    
+    def add_mean_shift(self, shift_magnitude, num_shifts):
+        for _ in range(num_shifts):
+            start = np.random.randint(0, self.length)
+            sign = np.random.choice([-1, 1])
+            self.data[start:] += sign * shift_magnitude
+            print(f"Added mean shift of {sign * shift_magnitude} starting at index {start}")
+    
+    
+    def add_random_signal_with_precursor(self, precursor_amplitude=1, signal_amplitude=1, max_precursor_length=100, min_delay=100, max_delay=200, num_signals=1):
+        for _ in range(num_signals):
+            start = np.random.randint(0, self.length)
+            precursor_length = np.random.randint(1, max_precursor_length)
+            precursor_end = min(start + precursor_length, self.length)
+            
+            delay = np.random.randint(min_delay, max_delay)
+            signal_start = precursor_end + delay
+            signal_end = min(signal_start + precursor_length, self.length)
+            
+            sign = (-1) ** self.signal_counter
+            if precursor_end < self.length:
+                self.data[start:precursor_end] += sign * precursor_amplitude
+            if signal_start < self.length:
+                self.data[signal_start:signal_end] += sign * signal_amplitude
+            self.signal_counter += 1
+            
+            print(f"Added precursor signal with amplitude {sign * precursor_amplitude} from index {start} to {precursor_end}")
+            print(f"Added following signal with amplitude {sign * signal_amplitude} from index {signal_start} to {signal_end}")
     
     def save_to_csv(self, filename):
         df = pd.DataFrame({"time": self.time_series, "value": self.data})
@@ -44,6 +74,14 @@ def main():
     parser.add_argument("--mean", type=float, default=0, help="Mean of the noise.")
     parser.add_argument("--std", type=float, default=0, help="Standard deviation of the noise.")
     parser.add_argument("--base", type=float, default=0, help="Base of the exponential growth.")
+    parser.add_argument("--shift_magnitude", type=float, default=0, help="Magnitude of the mean shift.")
+    parser.add_argument("--num_shifts", type=int, default=1, help="Number of mean shifts.")
+    parser.add_argument("--precursor_amplitude", type=float, default=0, help="Amplitude of the precursor signal.")
+    parser.add_argument("--signal_amplitude", type=float, default=0, help="Amplitude of the following signal.")
+    parser.add_argument("--max_precursor_length", type=int, default=0, help="Max length of the precursor signal.")
+    parser.add_argument("--min_delay", type=int, default=0, help="Min delay between precursor and following signal.")
+    parser.add_argument("--max_delay", type=int, default=0, help="Max delay between precursor and following signal.")
+    parser.add_argument("--num_signals", type=int, default=1, help="Number of random signals.")
     args = parser.parse_args()
 
     generator = SyntheticDatasetGenerator(args.length)
@@ -51,12 +89,16 @@ def main():
     generator.add_sin_wave(args.amplitude, args.frequency)
     generator.add_noise(args.mean, args.std)
     generator.add_exponential_growth(args.base)
+    if args.shift_magnitude != 0:
+        generator.add_mean_shift(args.shift_magnitude, args.num_shifts)
+    if args.precursor_amplitude != 0 and args.signal_amplitude != 0:
+        generator.add_random_signal_with_precursor(args.precursor_amplitude, args.signal_amplitude, args.max_precursor_length, args.min_delay, args.max_delay, args.num_signals)
     generator.plot_data()
 
 if __name__ == "__main__":
     main()
 
 #example use
-#python synthgen.py --length 1500 --slope 1.0 --intercept 1.0 --amplitude 2 --frequency 0.2 --mean 0.1 --std 2.0 --base 1.001
+#python synthgen.py --length 500000 --amplitude 2 --frequency 0.2 --mean 0.0 --std 2.0 --shift_magnitude 1 --num_shifts 100 --precursor_amplitude 5 --signal_amplitude 10 --max_precursor_length 50 --min_delay 100 --max_delay 200 --num_signals 3
 
-#python synthgen.py --length 1500 --mean 0.1 --std 2.0 
+#python synthgen.py --length 1500 --mean 0.1 --std 2.0 --shift_magnitude 10 --num_shifts 5 --precursor_amplitude 5 --signal_amplitude 10 --max_precursor_length 50 --min_delay 100 --max_delay 200 --num_signals 3
