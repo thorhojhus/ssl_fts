@@ -31,7 +31,7 @@ class SyntheticDatasetGenerator:
             print(f"Added mean shift of {sign * shift_magnitude} starting at index {start}")
     
     
-    def add_random_signal_with_precursor(self, precursor_amplitude=1, signal_amplitude=1, max_precursor_length=100, min_delay=100, max_delay=200, num_signals=1):
+    def add_random_signal_with_precursor(self, precursor_amplitude, signal_amplitude, max_precursor_length, min_delay, max_delay, num_signals):
         for _ in range(num_signals):
             start = np.random.randint(0, self.length)
             precursor_length = np.random.randint(1, max_precursor_length)
@@ -99,6 +99,6 @@ if __name__ == "__main__":
     main()
 
 #example use
-#python synthgen.py --length 500000 --amplitude 2 --frequency 0.2 --mean 0.0 --std 2.0 --shift_magnitude 1 --num_shifts 100 --precursor_amplitude 5 --signal_amplitude 10 --max_precursor_length 50 --min_delay 100 --max_delay 200 --num_signals 3
+#python synthgen.py --length 100000 --amplitude 2 --frequency 0.2 --shift_magnitude 10 --num_shifts 100 --precursor_amplitude 5 --signal_amplitude 10 --max_precursor_length 50 --min_delay 100 --max_delay 200 --num_signals 40
 
 #python synthgen.py --length 1500 --mean 0.1 --std 2.0 --shift_magnitude 10 --num_shifts 5 --precursor_amplitude 5 --signal_amplitude 10 --max_precursor_length 50 --min_delay 100 --max_delay 200 --num_signals 3
