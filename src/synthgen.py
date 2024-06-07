@@ -23,13 +23,35 @@ class SyntheticDatasetGenerator:
     def add_exponential_growth(self, base):
         self.data += base ** self.time_series
     
-    def add_mean_shift(self, shift_magnitude, num_shifts):
-        for _ in range(num_shifts):
+    def add_mean_shift(self, shift_magnitude, num_shifts, gaussian=False):
+        for i in range(num_shifts):
             start = np.random.randint(0, self.length)
             sign = np.random.choice([-1, 1])
-            self.data[start:] += sign * shift_magnitude
-            print(f"Added mean shift of {sign * shift_magnitude} starting at index {start}")
+            if gaussian:
+                magnitude = np.random.normal(shift_magnitude, abs(shift_magnitude) * 0.1)
+            else:
+                magnitude = shift_magnitude
+            self.data[start:] += sign * magnitude
+            print(f"Added mean shift of {sign * magnitude} starting at index {start}")
     
+    def add_balanced_mean_shifts(self, shift_magnitude, num_shifts, gaussian=False):
+        num_positive_shifts = num_shifts // 2
+        num_negative_shifts = num_shifts - num_positive_shifts
+        
+        for _ in range(num_positive_shifts):
+            self.add_single_mean_shift(shift_magnitude, gaussian, sign=1)
+        
+        for _ in range(num_negative_shifts):
+            self.add_single_mean_shift(shift_magnitude, gaussian, sign=-1)
+    
+    def add_single_mean_shift(self, shift_magnitude, gaussian, sign):
+        start = np.random.randint(0, self.length)
+        if gaussian:
+            magnitude = np.random.normal(shift_magnitude, abs(shift_magnitude) * 0.1)
+        else:
+            magnitude = shift_magnitude
+        self.data[start:] += sign * magnitude
+        print(f"Added mean shift of {sign * magnitude} starting at index {start}")
     
     def add_random_signal_with_precursor(self, precursor_amplitude, signal_amplitude, max_precursor_length, min_delay, max_delay, num_signals):
         for _ in range(num_signals):
@@ -47,9 +69,6 @@ class SyntheticDatasetGenerator:
             if signal_start < self.length:
                 self.data[signal_start:signal_end] += sign * signal_amplitude
             self.signal_counter += 1
-            
-            print(f"Added precursor signal with amplitude {sign * precursor_amplitude} from index {start} to {precursor_end}")
-            print(f"Added following signal with amplitude {sign * signal_amplitude} from index {signal_start} to {signal_end}")
     
     def save_to_csv(self, filename):
         df = pd.DataFrame({"time": self.time_series, "value": self.data})
@@ -76,6 +95,7 @@ def main():
     parser.add_argument("--base", type=float, default=0, help="Base of the exponential growth.")
     parser.add_argument("--shift_magnitude", type=float, default=0, help="Magnitude of the mean shift.")
     parser.add_argument("--num_shifts", type=int, default=1, help="Number of mean shifts.")
+    parser.add_argument("--gaussian_shifts", type=str, choices=["true", "false"], default="false", help="If true, mean shifts will be Gaussian distributed around the shift magnitude.")
     parser.add_argument("--precursor_amplitude", type=float, default=0, help="Amplitude of the precursor signal.")
     parser.add_argument("--signal_amplitude", type=float, default=0, help="Amplitude of the following signal.")
     parser.add_argument("--max_precursor_length", type=int, default=0, help="Max length of the precursor signal.")
@@ -84,13 +104,15 @@ def main():
     parser.add_argument("--num_signals", type=int, default=1, help="Number of random signals.")
     args = parser.parse_args()
 
+    gaussian_shifts = args.gaussian_shifts.lower() == "true"
+
     generator = SyntheticDatasetGenerator(args.length)
     generator.add_linear_trend(args.slope, args.intercept)
     generator.add_sin_wave(args.amplitude, args.frequency)
     generator.add_noise(args.mean, args.std)
     generator.add_exponential_growth(args.base)
     if args.shift_magnitude != 0:
-        generator.add_mean_shift(args.shift_magnitude, args.num_shifts)
+        generator.add_balanced_mean_shifts(args.shift_magnitude, args.num_shifts, gaussian_shifts)
     if args.precursor_amplitude != 0 and args.signal_amplitude != 0:
         generator.add_random_signal_with_precursor(args.precursor_amplitude, args.signal_amplitude, args.max_precursor_length, args.min_delay, args.max_delay, args.num_signals)
     generator.plot_data()
@@ -98,7 +120,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-#example use
-#python synthgen.py --length 100000 --amplitude 2 --frequency 0.2 --shift_magnitude 10 --num_shifts 100 --precursor_amplitude 5 --signal_amplitude 10 --max_precursor_length 50 --min_delay 100 --max_delay 200 --num_signals 40
 
-#python synthgen.py --length 1500 --mean 0.1 --std 2.0 --shift_magnitude 10 --num_shifts 5 --precursor_amplitude 5 --signal_amplitude 10 --max_precursor_length 50 --min_delay 100 --max_delay 200 --num_signals 3
+#python synthgen.py --length 1000000 --shift_magnitude 10 --num_shifts 1000 --gaussian_shifts true
+
