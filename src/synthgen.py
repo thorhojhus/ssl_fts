@@ -32,7 +32,6 @@ class SyntheticDatasetGenerator:
             else:
                 magnitude = shift_magnitude
             self.data[start:] += sign * magnitude
-            print(f"Added mean shift of {sign * magnitude} starting at index {start}")
     
     def add_balanced_mean_shifts(self, shift_magnitude, num_shifts, gaussian=False):
         num_positive_shifts = num_shifts // 2
@@ -51,7 +50,6 @@ class SyntheticDatasetGenerator:
         else:
             magnitude = shift_magnitude
         self.data[start:] += sign * magnitude
-        print(f"Added mean shift of {sign * magnitude} starting at index {start}")
     
     def add_random_signal_with_precursor(self, precursor_amplitude, signal_amplitude, max_precursor_length, min_delay, max_delay, num_signals):
         for _ in range(num_signals):
@@ -83,25 +81,27 @@ class SyntheticDatasetGenerator:
         plt.legend()
         plt.show()
 
+Defaultlength=1000000
+
 def main():
     parser = argparse.ArgumentParser(description="Generate a synthetic dataset.")
-    parser.add_argument("--length", type=int, default=1000, help="Length of the dataset.")
-    parser.add_argument("--slope", type=float, default=0, help="Slope of the linear trend.")
-    parser.add_argument("--intercept", type=float, default=0, help="Intercept of the linear trend.")
-    parser.add_argument("--amplitude", type=float, default=0, help="Amplitude of the sine wave.")
-    parser.add_argument("--frequency", type=float, default=0, help="Frequency of the sine wave.")
+    parser.add_argument("--length", type=int, default=1000000, help="Length of the dataset.")
+    parser.add_argument("--slope", type=float, default=1/Defaultlength, help="Slope of the linear trend.")
+    parser.add_argument("--intercept", type=float, default=10, help="Intercept of the linear trend.")
+    parser.add_argument("--amplitude", type=float, default=5, help="Amplitude of the sine wave.")
+    parser.add_argument("--frequency", type=float, default=5, help="Frequency of the sine wave.")
     parser.add_argument("--mean", type=float, default=0, help="Mean of the noise.")
-    parser.add_argument("--std", type=float, default=0, help="Standard deviation of the noise.")
-    parser.add_argument("--base", type=float, default=0, help="Base of the exponential growth.")
-    parser.add_argument("--shift_magnitude", type=float, default=0, help="Magnitude of the mean shift.")
-    parser.add_argument("--num_shifts", type=int, default=1, help="Number of mean shifts.")
-    parser.add_argument("--gaussian_shifts", type=str, choices=["true", "false"], default="false", help="If true, mean shifts will be Gaussian distributed around the shift magnitude.")
-    parser.add_argument("--precursor_amplitude", type=float, default=0, help="Amplitude of the precursor signal.")
-    parser.add_argument("--signal_amplitude", type=float, default=0, help="Amplitude of the following signal.")
-    parser.add_argument("--max_precursor_length", type=int, default=0, help="Max length of the precursor signal.")
-    parser.add_argument("--min_delay", type=int, default=0, help="Min delay between precursor and following signal.")
-    parser.add_argument("--max_delay", type=int, default=0, help="Max delay between precursor and following signal.")
-    parser.add_argument("--num_signals", type=int, default=1, help="Number of random signals.")
+    parser.add_argument("--std", type=float, default=2, help="Standard deviation of the noise.")
+    parser.add_argument("--base", type=float, default=1+(1/Defaultlength), help="Base of the exponential growth.")
+    parser.add_argument("--shift_magnitude", type=float, default=10, help="Magnitude of the mean shift.")
+    parser.add_argument("--num_shifts", type=int, default=round(Defaultlength/1000), help="Number of mean shifts.")
+    parser.add_argument("--gaussian_shifts", type=str, choices=["true", "false"], default="true", help="If true, mean shifts will be Gaussian distributed around the shift magnitude.")
+    parser.add_argument("--precursor_amplitude", type=float, default=10, help="Amplitude of the precursor signal.")
+    parser.add_argument("--signal_amplitude", type=float, default=20, help="Amplitude of the following signal.")
+    parser.add_argument("--max_precursor_length", type=int, default=round(Defaultlength/2000), help="Max length of the precursor signal.")
+    parser.add_argument("--min_delay", type=int, default=round(Defaultlength/2000), help="Min delay between precursor and following signal.")
+    parser.add_argument("--max_delay", type=int, default=round(Defaultlength/1000), help="Max delay between precursor and following signal.")
+    parser.add_argument("--num_signals", type=int, default=round(Defaultlength/10000), help="Number of random signals.")
     args = parser.parse_args()
 
     gaussian_shifts = args.gaussian_shifts.lower() == "true"
@@ -120,6 +120,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+#python synthgen.py --length 1000000 --shift_magnitude 10 --num_shifts 1000 --gaussian_shifts true --slope 0.00001 --intercept 0 --amplitude 10 --frequency 0.01 --mean 0 --std 1 --base 1.00000001 --precursor_amplitude 10 --signal_amplitude 20 --max_precursor_length 100 --min_delay 100 --max_delay 200 --num_signals 10
 
 #python synthgen.py --length 1000000 --shift_magnitude 10 --num_shifts 1000 --gaussian_shifts true
 
