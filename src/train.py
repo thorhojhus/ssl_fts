@@ -6,6 +6,7 @@ import wandb
 import datetime
 from rich import print
 
+
 def RMAE(output, target):
     return torch.sqrt(torch.mean(torch.abs(output - target)))
 

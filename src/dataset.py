@@ -49,7 +49,6 @@ def load_and_process_data(
         target_columns = df.columns[1:]
     df = df[target_columns]
 
-    
     data = df.values
 
     x_data, y_data = split_data(
@@ -61,11 +60,29 @@ def load_and_process_data(
         data_size=1,
         test_time_train=test_time_train,
         dataset=dataset,
-        normalize=normalize
+        normalize=normalize,
     )
     if augment_data and mode_flag == "train":
         x_data, y_data = augment(x_data, y_data, aug_method, aug_rate)
     return x_data, y_data
+
+
+def load_and_process_arima_data(
+    root_path: str = "data",
+    dataset: str = "ETTh1",
+    normalize: bool = True,
+):
+    df = pd.read_csv(os.path.join(root_path, str(dataset + ".csv")))["OT"]
+    data = df.values
+    if normalize:
+        scaler = StandardScaler()
+        data = scaler.fit_transform(data.reshape(-1, 1))
+
+    train_test_split = 0.8
+    train_size = int(len(data) * train_test_split)
+    train_data = data[:train_size]
+    test_data = data[train_size:]
+    return train_data, test_data
 
 
 def split_data(
@@ -98,7 +115,7 @@ def split_data(
             n_train = int(len(data) * 0.9)
             border1s = [0, n_train - seq_len, len(data)]
             border2s = [n_train, len(data), len(data)]
-    
+
     if normalize:
         scaler = StandardScaler()
         data = scaler.fit_transform(data)

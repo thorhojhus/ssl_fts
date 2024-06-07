@@ -3,6 +3,7 @@ from src.models.FITS import FITS
 from src.models.ARIMA import TimeSeriesARIMA
 from src.train import train
 from src.dataset import data_setup
+from src.dataset import load_and_process_arima_data
 import warnings
 from rich import print
 
@@ -170,14 +171,14 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--base_T', 
-    type=int, 
+    '--base_T',
+    type=int,
     default=24,
     help="The dominant periodicity corresponding to the base frequency of the signal"
 )
 
 parser.add_argument(
-    '--use_original_datahandling', 
+    '--use_original_datahandling',
     action=argparse.BooleanOptionalAction,
     default=False,
     help='Use original data handling')
@@ -197,13 +198,24 @@ else:
 
 model = FITS(args)
 
+arima_train = False
+if args.features == "MS":
+    args = parser.parse_args(["--batch_size", "1", "--all_cols", ""])
+    arima_model = TimeSeriesARIMA(4, 1, 2, args)
+    arima_train = True
+    arima_train_data, arima_test_data = load_and_process_arima_data(
+        args.root_path,
+        args.dataset,
+        args.normalize,
+    )
+
 for param in model.parameters():
     param.data.fill_(0)
 
 if args.train_and_finetune:
     model, _ = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=0, args=args)
     model, test_mse = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=1, args=args)
-
 else:
-    model, test_mse = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=args.ft, args=args)
-
+    if arima_train:
+        arima_model.train(arima_train_data, arima_test_data)
+    # model, test_mse = train(model=model, train_loader=train_loader, test_loader=test_loader, epochs=args.epochs, pred_len=args.pred_len, features=args.features, ft=args.ft, args=args)
