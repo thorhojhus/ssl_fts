@@ -9,7 +9,7 @@ from rich import print
 
 warnings.filterwarnings("ignore")
 
-args = parser.parse_args()
+args = parser.parse_args(["--features", "MS"])
 
 if args.dominance_freq == 0:
     args.dominance_freq = int(args.seq_len // args.base_T + 1) * args.H_order + 10
