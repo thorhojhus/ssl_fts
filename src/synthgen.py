@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 
-
 class SyntheticDatasetGenerator:
     def __init__(self, length: int, num_channels: int = 0):
         self.length = length
@@ -87,7 +86,7 @@ class SyntheticDatasetGenerator:
             start = np.random.randint(0, self.length)
             precursor_length = np.random.randint(1, max_precursor_length)
             precursor_end = min(start + precursor_length, self.length)
-
+          
             delay = np.random.randint(min_delay, max_delay)
             signal_start = precursor_end + delay
             signal_end = min(signal_start + precursor_length, self.length)
@@ -116,7 +115,6 @@ class SyntheticDatasetGenerator:
         plt.title("Synthetic Dataset")
         plt.legend()
         plt.show()
-
 
 Defaultlength = 1000000
 
