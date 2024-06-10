@@ -13,6 +13,27 @@ class SyntheticDatasetGenerator:
         self.shift_counter = 0
         self.signal_counter = 0
 
+    def add_spiked_correlation(
+        self,
+        spike_amplitude: float,
+        spike_length: int,
+        spike_delay: int,
+        spike_channel: int,
+        ref_channel: int,
+        gaussian: bool = False,
+    ):
+        start = np.random.randint(0, self.length - spike_delay - spike_length)
+        correlated_start = start + spike_delay
+        sign = np.random.choice([-1, 1])
+        if gaussian:
+            magnitude = np.random.normal(spike_amplitude, abs(spike_amplitude) * 0.1)
+        else:
+            magnitude = spike_amplitude
+        self.data[start : start + spike_length, spike_channel] += sign * magnitude
+        self.data[correlated_start : correlated_start + spike_length, ref_channel] += (
+            sign * magnitude
+        )
+
     def add_relative_amplitude_lag(
         self,
         lag: int,
@@ -42,7 +63,7 @@ class SyntheticDatasetGenerator:
     def add_mean_shift(
         self, shift_magnitude, num_shifts, gaussian=False, channel: int = 0
     ):
-        for i in range(num_shifts):
+        for _ in range(num_shifts):
             start = np.random.randint(0, self.length)
             sign = np.random.choice([-1, 1])
             if gaussian:
@@ -60,10 +81,14 @@ class SyntheticDatasetGenerator:
         num_negative_shifts = num_shifts - num_positive_shifts
 
         for _ in range(num_positive_shifts):
-            self.add_single_mean_shift(shift_magnitude, gaussian, sign=1)
+            self.add_single_mean_shift(
+                shift_magnitude, gaussian, sign=1, channel=channel
+            )
 
         for _ in range(num_negative_shifts):
-            self.add_single_mean_shift(shift_magnitude, gaussian, sign=-1)
+            self.add_single_mean_shift(
+                shift_magnitude, gaussian, sign=-1, channel=channel
+            )
 
     def add_single_mean_shift(self, shift_magnitude, gaussian, sign, channel: int = 0):
         start = np.random.randint(0, self.length)
