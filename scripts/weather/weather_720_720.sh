@@ -3,7 +3,7 @@
 python run.py \
     --normalize True \
     --seq_len 720 \
-    --pred_len 96 \
+    --pred_len 720 \
     --dominance_freq 0 \
     --train_and_finetune \
     --all_cols False \

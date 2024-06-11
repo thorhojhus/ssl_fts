@@ -9,8 +9,7 @@ python run.py \
     --all_cols False \
     --batch_size 64 \
     --dataset weather \
-    --dominance_freq 0 \
-    --epochs 10 \
-    --H_order 6 \
-    --base_T 24 \
+    --epochs 50 \
+    --H_order 12 \
+    --base_T 144 \
     --use_original_datahandling \
