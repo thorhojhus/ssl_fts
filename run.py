@@ -14,6 +14,7 @@ if args.dominance_freq == 0:
     print(args.dominance_freq)
 
 if args.use_original_datahandling:
+    # only works on linux for some reason
     from src.FITS_datahandling.data_factory import data_provider
 
     train_data, train_loader = data_provider(args, "train")
