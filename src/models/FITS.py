@@ -14,10 +14,7 @@ class FITS(nn.Module):
     *(RIN was not performed in the code, but instance wise normalization was performed instead).
     """
 
-    def __init__(
-        self,
-        args: Namespace,
-    ):
+    def __init__(self, args: Namespace, extra_sum_channel: bool = False):
         super(FITS, self).__init__()
 
         self.cutoff_frequency = args.dominance_freq
@@ -25,6 +22,7 @@ class FITS(nn.Module):
         self.pred_len = args.pred_len
         self.upsample_rate = (args.seq_len + args.pred_len) / args.seq_len
         self.channels = args.channels
+        self.extra_channel = extra_sum_channel
 
         self.frequency_upsampler = (
             nn.Linear(
@@ -71,6 +69,12 @@ class FITS(nn.Module):
         return complex_valued_data
 
     def forward(self, ts_data: torch.Tensor) -> torch.Tensor:
+
+        # If an extra channel is added, the sum of all channels is added to the input tensor as an extra channel
+        # the idea is that the sum channel might capture some global patterns in the data that the individual channels might not
+        if self.extra_channel:
+            ts_data = torch.cat([ts_data, ts_data.sum(dim=1, keepdim=True)], dim=1)
+
         # 1) Normalization of the input tensor:
         ts_mean, ts_var = (
             torch.mean(ts_data, dim=1, keepdim=True),

@@ -21,7 +21,7 @@ if args.use_original_datahandling:
 else:
     train_loader, test_loader = data_setup(args)
 
-model = FITS(args)
+model = FITS(args, extra_sum_channel=True)
 print(model)
 
 for param in model.parameters():
