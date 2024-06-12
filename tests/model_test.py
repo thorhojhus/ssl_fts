@@ -5,7 +5,7 @@ import torch
 from src.dataset import data_setup
 
 from src.models.FITS import FITS
-from src.models.copy_fits import Model
+from src.models.FITS_original import Model
 
 
 def test_normal_versus_normalization():
