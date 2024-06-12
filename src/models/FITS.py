@@ -31,6 +31,21 @@ class ModReLU(nn.Module):
         normalized = z / (magnitude + 1e-8)
         return relu * normalized
 
+def dropout_complex(x, p=0.5):
+    if x.is_complex():
+        mask = F.dropout(torch.ones_like(x.real), p)
+        return x * mask
+    else:
+        return F.dropout(x, p)
+    
+class ComplexDropout(nn.Module):
+    def __init__(self, p=0.5):
+        super(ComplexDropout, self).__init__()
+        self.p = p
+
+    def forward(self, x):
+        return dropout_complex(x, self.p)
+
 class FITS(nn.Module):
     """Reimplementation of the FITS model.
 
@@ -72,6 +87,7 @@ class FITS(nn.Module):
                 )
             )
             if i != self.num_layers - 1:
+                layers.append(ComplexDropout())
                 layers.append(ModReLU(out_features))
             in_features = out_features
 

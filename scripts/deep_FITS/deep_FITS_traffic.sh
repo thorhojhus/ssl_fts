@@ -6,10 +6,13 @@ python run.py \
     --pred_len 720 \
     --dominance_freq 0 \
     --train_and_finetune \
-    --all_cols False \
+    --all_cols True \
     --batch_size 64 \
-    --dataset electricity \
+    --dataset traffic \
     --epochs 50 \
-    --channels 321 \
+    --H_order 10 \
+    --channels 862 \
+    --num_layers 5 \
+    --num_hidden 128 \
     --use_original_datahandling \
-    --H_order 10
+    --no-use_wandb \
