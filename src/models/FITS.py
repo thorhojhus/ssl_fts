@@ -33,10 +33,10 @@ class ModReLU(nn.Module):
 
 def dropout_complex(x, p=0.5):
     if x.is_complex():
-        mask = torch.nn.functional.dropout(torch.ones_like(x.real), p)
+        mask = F.dropout(torch.ones_like(x.real), p)
         return x * mask
     else:
-        return torch.nn.functional.dropout(x, p)
+        return F.dropout(x, p)
     
 class ComplexDropout(nn.Module):
     def __init__(self, p=0.5):
