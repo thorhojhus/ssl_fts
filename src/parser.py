@@ -193,4 +193,11 @@ parser.add_argument(
     action=argparse.BooleanOptionalAction,
     default=False,
     help='Use original data handling')
- # type: ignore
+
+parser.add_argument(
+    '--use_baseline',
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help='Use baseline model (Naive Forecast)')
+
+# type: ignore
