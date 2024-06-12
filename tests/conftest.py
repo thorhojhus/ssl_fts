@@ -25,7 +25,7 @@ def FITS(argparser):
 @pytest.fixture(scope="function")
 def ogFITS(argparser):
     """Sample Original FITS model with debug mode."""
-    from src.models.copy_fits import Model
+    from src.models.FITS_original import Model
 
     args = argparser.parse_args(["--device", "cpu", "--individual", "--debug"])
 
