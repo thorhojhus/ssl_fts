@@ -2,7 +2,7 @@ from torch import nn
 import torch
 
 
-class Baseline(nn.Module):
+class NaiveForecast(nn.Module):
     """Naïve baseline forecasting (RWF)
 
     ```python
@@ -12,7 +12,7 @@ class Baseline(nn.Module):
     """
 
     def __init__(self, configs):
-        super(Baseline, self).__init__()
+        super(NaiveForecast, self).__init__()
         self.pred_len = configs.pred_len
 
     def forward(self, x):
