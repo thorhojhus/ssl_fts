@@ -23,7 +23,11 @@ class FITS(nn.Module):
         self.cutoff_frequency = args.dominance_freq
         self.seq_len = args.seq_len
         self.pred_len = args.pred_len
-        self.upsample_rate = (args.seq_len + args.pred_len) / args.seq_len
+        if args.upsample_rate == 0:
+            self.upsample_rate = (args.seq_len + args.pred_len) / args.seq_len
+        else:
+            self.upsample_rate = args.upsample_rate
+
         self.channels = args.channels
 
         self.frequency_upsampler = (
