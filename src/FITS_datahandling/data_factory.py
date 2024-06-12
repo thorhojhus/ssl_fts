@@ -42,8 +42,8 @@ def data_provider(args, flag):
         args.freq = 'm'
     if args.data == "weather":
         args.data_path = 'weather.csv'
-    if args.data == "electricty":
-        args.data_path = 'electricty.csv'
+    if args.data == "electricity":
+        args.data_path = 'electricity.csv'
     if args.data == "traffic":
         args.data_path = "traffic.csv"
     if args.data == "exchange_rate":
@@ -79,7 +79,7 @@ def data_provider(args, flag):
         timeenc=timeenc,
         freq=freq
     )
-    print(flag, len(data_set))
+    print("Flag:", flag, "\nLength of data set", len(data_set))
     data_loader = DataLoader(
         data_set,
         batch_size=batch_size,

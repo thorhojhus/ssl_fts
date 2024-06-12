@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     if args.dominance_freq == 0:
         args.dominance_freq = int(args.seq_len // args.base_T + 1) * args.H_order + 10
-        print(args.dominance_freq)
+        print("Dominance frequency:", args.dominance_freq)
 
     if args.use_original_datahandling:
         # only works on linux for some reason
@@ -23,11 +23,11 @@ if __name__ == "__main__":
     else:
         train_loader, test_loader = data_setup(args)
 
+    print("X shape: ", train_data[0][0].shape)
+    print("Y shape: ", train_data[0][1].shape)
     model = FITS(args)
     print(model)
-
-    for param in model.parameters():
-        param.data.fill_(0)
+    
 
     if args.train_and_finetune:
         model, _ = train(

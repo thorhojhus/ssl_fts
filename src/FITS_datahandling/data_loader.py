@@ -329,6 +329,9 @@ class Dataset_Custom(Dataset):
         '''
         df_raw.columns: ['date', ...(other features), target feature]
         '''
+        df_raw.columns = df_raw.columns.str.lower()
+        if self.args.all_cols:
+            self.target = list(df_raw.columns[1:])
         cols = list(df_raw.columns)
         if isinstance(self.target, list):
             self.target = self.target[0]
@@ -336,7 +339,10 @@ class Dataset_Custom(Dataset):
         #print("Columns:", cols)
         # if self.target not in cols:
         #     raise ValueError(f"Target column '{self.target}' not found in the dataset columns.")
-        cols.remove(self.target)
+        try:
+            cols.remove(self.target)
+        except:
+            pass
         cols.remove('date')
         df_raw = df_raw[['date'] + cols + [self.target]]
         # print(cols)
