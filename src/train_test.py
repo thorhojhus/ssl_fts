@@ -28,7 +28,7 @@ def train(
     criterion_mse = nn.MSELoss()
     criterion_rmae = RMAE
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, "min", factor=0.5, threshold=1e-4
