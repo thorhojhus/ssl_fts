@@ -1,5 +1,6 @@
 from src.models.FITS import FITS
-from src.train import train
+from src.models.baseline import NaiveForecast
+from src.train_test import train
 from src.dataset import data_setup
 from src.parser import parser
 import warnings
@@ -24,8 +25,8 @@ if __name__ == "__main__":
         train_loader, test_loader = data_setup(args)
 
     model = FITS(args)
+    # model = NaiveForecast(args)
     print(model)
-    
 
     if args.train_and_finetune:
         model, _ = train(

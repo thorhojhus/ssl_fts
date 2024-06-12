@@ -6,6 +6,7 @@ import wandb
 import datetime
 from rich import print
 
+
 def RMAE(output, target):
     return torch.sqrt(torch.mean(torch.abs(output - target)))
 
@@ -96,6 +97,26 @@ def train(
         print(
             f"Epoch: {epoch+1} \t MSE: {np.mean(train_loss_mse):.4f} \t RMAE: {np.mean(train_loss_rmae):.4f}"
         )
+
+    return test(
+        model=model,
+        test_loader=test_loader,
+        f_dim=f_dim,
+    )
+
+
+def test(
+    model: nn.Module,
+    test_loader: DataLoader,
+    f_dim: int,
+    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+    pred_len=360,
+    ft=True,
+):
+
+    model.to(device)
+    criterion_mse = nn.MSELoss()
+    criterion_rmae = RMAE
 
     with torch.no_grad():
         model.eval()
