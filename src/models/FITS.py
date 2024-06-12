@@ -7,6 +7,16 @@ from torch.fft import rfft
 # with better annotation and more clear model structure - the original code for the model can be found here: https://github.com/VEWOXIC/FITS
 
 
+class ComplexReLU(nn.Module):
+    def __init__(self):
+        super(ComplexReLU, self).__init__()
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        real = self.relu(x.real)
+        imag = self.relu(x.imag)
+        return torch.complex(real, imag)
+
 class FITS(nn.Module):
     """Reimplementation of the FITS model.
 
@@ -25,26 +35,32 @@ class FITS(nn.Module):
         self.pred_len = args.pred_len
         self.upsample_rate = (args.seq_len + args.pred_len) / args.seq_len
         self.channels = args.channels
+        self.num_layers = args.num_layers
+
+        layers = []
+        in_features = args.dominance_freq
+        for i in range(self.num_layers):
+            out_features = (
+                int(args.dominance_freq * self.upsample_rate)
+                if self.num_layers == 1 or i == self.num_layers - 1
+                else args.num_hidden
+            )
+            layers.append(
+                nn.Linear(
+                    in_features=in_features,
+                    out_features=out_features,
+                    dtype=torch.cfloat,
+                    bias=True,
+                )
+            )
+            if i != self.num_layers - 1:
+                layers.append(ComplexReLU())
+            in_features = out_features
 
         self.frequency_upsampler = (
-            nn.Linear(
-                in_features=args.dominance_freq,
-                out_features=int(args.dominance_freq * self.upsample_rate),
-                dtype=torch.cfloat,
-                bias=True,
-            )
+            nn.Sequential(*layers)
             if not args.individual
-            else nn.ModuleList(
-                [
-                    nn.Linear(
-                        in_features=args.dominance_freq,
-                        out_features=int(args.dominance_freq * self.upsample_rate),
-                        dtype=torch.cfloat,
-                        bias=True,
-                    )
-                    for _ in range(args.channels)
-                ]
-            )
+            else nn.ModuleList([nn.Sequential(*layers) for _ in range(args.channels)])
         )
 
         self.individual = args.individual
