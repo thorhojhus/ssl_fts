@@ -8,6 +8,7 @@ import warnings
 from rich import print
 import wandb
 import datetime
+from torchinfo import summary
 
 warnings.filterwarnings("ignore")
 
@@ -36,7 +37,7 @@ if __name__ == "__main__":
 
     model = FITS(args) if not args.use_baseline else NaiveForecast(args)
     # model = NaiveForecast(args)
-    print(model)
+    summary(model)
 
     if args.train_and_finetune and (not args.use_baseline):
         model, _ = train(
