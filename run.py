@@ -1,6 +1,7 @@
 from src.models.FITS import FITS
 from src.models.baseline import NaiveForecast
 from src.train_test import train
+from src.train_test import test
 from src.dataset import data_setup
 from src.parser import parser
 import warnings
@@ -33,11 +34,11 @@ if __name__ == "__main__":
     else:
         train_loader, test_loader = data_setup(args)
 
-    model = FITS(args)
+    model = FITS(args) if not args.use_baseline else NaiveForecast(args)
     # model = NaiveForecast(args)
     print(model)
 
-    if args.train_and_finetune:
+    if args.train_and_finetune and (not args.use_baseline):
         model, _ = train(
             model=model,
             train_loader=train_loader,
@@ -59,7 +60,7 @@ if __name__ == "__main__":
             args=args,
         )
 
-    else:
+    elif not args.use_baseline:
         model, test_mse = train(
             model=model,
             train_loader=train_loader,
@@ -69,4 +70,12 @@ if __name__ == "__main__":
             features=args.features,
             ft=args.ft,
             args=args,
+        )
+    else:
+        model, test_mse = test(
+            model=model,
+            test_loader=test_loader,
+            pred_len=args.pred_len,
+            f_dim=-1 if args.features == "MS" else 0,
+            ft=args.ft,
         )
