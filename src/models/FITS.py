@@ -2,6 +2,7 @@ from argparse import Namespace
 import torch
 from torch import nn
 from torch.fft import rfft
+from torch.nn import functional as F
 
 # An implementation of the FITS model as described in https://arxiv.org/abs/2307.03756 (FITS: Frequency Interpolation Time Series Forecasting)
 # with better annotation and more clear model structure - the original code for the model can be found here: https://github.com/VEWOXIC/FITS
@@ -13,9 +14,22 @@ class ComplexReLU(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
+        # https://arxiv.org/pdf/1705.09792 eq. 4
         real = self.relu(x.real)
         imag = self.relu(x.imag)
         return torch.complex(real, imag)
+
+class ModReLU(nn.Module):
+    def __init__(self, input_size):
+        super(ModReLU, self).__init__()
+        self.b = nn.Parameter(torch.zeros(input_size))
+
+    def forward(self, z):
+        # https://arxiv.org/pdf/1705.09792 eq. 3
+        magnitude = torch.abs(z)
+        relu = F.relu(magnitude + self.b)
+        normalized = z / (magnitude + 1e-8)
+        return relu * normalized
 
 class FITS(nn.Module):
     """Reimplementation of the FITS model.
@@ -58,7 +72,7 @@ class FITS(nn.Module):
                 )
             )
             if i != self.num_layers - 1:
-                layers.append(ComplexReLU())
+                layers.append(ModReLU(out_features))
             in_features = out_features
 
         self.frequency_upsampler = (
