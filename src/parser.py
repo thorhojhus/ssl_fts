@@ -172,3 +172,4 @@ parser.add_argument(
     action=argparse.BooleanOptionalAction,
     default=False,
     help='Use original data handling')
+ # type: ignore
