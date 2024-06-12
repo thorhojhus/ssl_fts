@@ -79,6 +79,20 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--num_layers",
+    type=int,
+    default=1,
+    help="Number of layers",
+)
+
+parser.add_argument(
+    "--num_hidden",
+    type=int,
+    default=64,
+    help="Number of hidden units (only used for layers greater than 1)",
+)
+
+parser.add_argument(
     "--label_len",
     type=int,
     default=48,
