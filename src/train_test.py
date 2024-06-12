@@ -23,12 +23,7 @@ def train(
     lr=5e-4,
     args=None,
 ):
-    wandb.init(
-        project="ssl_fts",
-        entity="ssl_fts",
-        name=f'{args.dataset}_feat_{args.features}_pred_{args.pred_len}_label_{args.label_len}_seq_{args.seq_len}-time_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}',
-        mode="online" if args.use_wandb else "disabled",
-    )
+
     model.to(device)
     criterion_mse = nn.MSELoss()
     criterion_rmae = RMAE
@@ -98,11 +93,16 @@ def train(
             f"Epoch: {epoch+1} \t MSE: {np.mean(train_loss_mse):.4f} \t RMAE: {np.mean(train_loss_rmae):.4f}"
         )
 
-    return test(
+    model, test_mse =  test(
         model=model,
         test_loader=test_loader,
         f_dim=f_dim,
+        device=device,
+        pred_len=pred_len,
+        ft=ft,
     )
+
+    return model, test_mse
 
 
 def test(
