@@ -12,4 +12,6 @@ python run.py \
     --epochs 50 \
     --H_order 12 \
     --base_T 144 \
+    --channels 21 \
+    --individual \
     --use_original_datahandling \
