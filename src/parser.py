@@ -99,6 +99,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--upsample_rate",
+    type=float,
+    default=0,
+    help="Upsample rate",
+)
+
+parser.add_argument(
     "--channels",
     type=int,
     default=7,
