@@ -115,29 +115,6 @@ class Dataset_ETT_hour(Dataset):
                 self.x_time.append(self.data_stamp[s_begin:s_end]) 
                 self.y_time.append(self.data_stamp[r_begin:r_end])
 
-    def data_augmentation(self):
-        origin_len = len(self.x_data)
-        if not self.args.closer_data_aug_more:
-            aug_size = [self.args.aug_data_size for i in range(origin_len)]
-        else:
-            aug_size = [int(self.args.aug_data_size * i/origin_len) + 1 for i in range(origin_len)]
-
-        for i in range(origin_len):
-            for _ in range(aug_size[i]):
-                aug = augmentation('dataset')
-                if self.args.aug_method == 'f_mask':
-                    x,y = aug.freq_dropout(self.x_data[i],self.y_data[i],dropout_rate=self.args.aug_rate)
-                elif self.args.aug_method == 'f_mix':
-                    rand = float(np.random.random(1))
-                    i2 = int(rand*len(self.x_data))
-                    x,y = aug.freq_mix(self.x_data[i],self.y_data[i],self.x_data[i2],self.y_data[i2],dropout_rate=self.args.aug_rate)
-                else: 
-                    raise ValueError
-                self.x_data.append(x)
-                self.y_data.append(y)
-                self.x_time.append(self.x_time[i]) 
-                self.y_time.append(self.y_time[i])
-
     def __getitem__(self, index):
         seq_x = self.x_data[index]
         seq_y = self.y_data[index]
@@ -254,29 +231,6 @@ class Dataset_ETT_minute(Dataset):
                 self.y_data.append(self.data_y[r_begin:r_end])
                 self.x_time.append(self.data_stamp[s_begin:s_end]) 
                 self.y_time.append(self.data_stamp[r_begin:r_end])
-
-    def data_augmentation(self):
-        origin_len = len(self.x_data)
-        if not self.args.closer_data_aug_more:
-            aug_size = [self.args.aug_data_size for i in range(origin_len)]
-        else:
-            aug_size = [int(self.args.aug_data_size * i/origin_len) + 1 for i in range(origin_len)]
-
-        for i in range(origin_len):
-            for _ in range(aug_size[i]):
-                aug = augmentation('dataset')
-                if self.args.aug_method == 'f_mask':
-                    x,y = aug.freq_dropout(self.x_data[i],self.y_data[i],dropout_rate=self.args.aug_rate)
-                elif self.args.aug_method == 'f_mix':
-                    rand = float(np.random.random(1))
-                    i2 = int(rand*len(self.x_data))
-                    x,y = aug.freq_mix(self.x_data[i],self.y_data[i],self.x_data[i2],self.y_data[i2],dropout_rate=self.args.aug_rate)
-                else: 
-                    raise ValueError
-                self.x_data.append(x)
-                self.y_data.append(y)
-                self.x_time.append(self.x_time[i]) 
-                self.y_time.append(self.y_time[i])
 
     def __getitem__(self, index):
         seq_x = self.x_data[index]
@@ -418,29 +372,6 @@ class Dataset_Custom(Dataset):
                 self.y_data.append(self.data_y[r_begin:r_end])
                 self.x_time.append(self.data_stamp[s_begin:s_end]) 
                 self.y_time.append(self.data_stamp[r_begin:r_end])
-        
-    def data_augmentation(self):
-        origin_len = len(self.x_data)
-        if not self.args.closer_data_aug_more:
-            aug_size = [self.args.aug_data_size for i in range(origin_len)]
-        else:
-            aug_size = [int(self.args.aug_data_size * i/origin_len) + 1 for i in range(origin_len)]
-
-        for i in range(origin_len):
-            for _ in range(aug_size[i]):
-                aug = augmentation('dataset')
-                if self.args.aug_method == 'f_mask':
-                    x,y = aug.freq_dropout(self.x_data[i],self.y_data[i],dropout_rate=self.args.aug_rate)
-                elif self.args.aug_method == 'f_mix':
-                    rand = float(np.random.random(1))
-                    i2 = int(rand*len(self.x_data))
-                    x,y = aug.freq_mix(self.x_data[i],self.y_data[i],self.x_data[i2],self.y_data[i2],dropout_rate=self.args.aug_rate)
-                else: 
-                    raise ValueError
-                self.x_data.append(x)
-                self.y_data.append(y)
-                self.x_time.append(self.x_time[i]) 
-                self.y_time.append(self.y_time[i])
 
     def __getitem__(self, index):
         seq_x = self.x_data[index]
