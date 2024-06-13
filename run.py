@@ -18,9 +18,11 @@ if __name__ == "__main__":
     wandb.init(
         project="ssl_fts",
         entity="ssl_fts",
-        name=f'{args.dataset}_feat_{args.features}_pred_{args.pred_len}_label_{args.label_len}_seq_{args.seq_len}-time_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}',
+        name=f'{args.dataset}_feat_{args.features}_pred_{args.pred_len}_label_{args.label_len}_seq_{args.seq_len}_baseline_{args.use_baseline}-time_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}',
         mode="online" if args.use_wandb else "disabled",
     )
+    wandb.config.update(args)
+
 
     if args.dominance_freq == 0:
         args.dominance_freq = int(args.seq_len // args.base_T + 1) * args.H_order + 10
