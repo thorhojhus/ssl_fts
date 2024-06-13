@@ -19,7 +19,8 @@ class NaiveForecast(nn.Module):
         """
         Naïve forecast by returning x, but with the last observed value reapted 'pred_len' times.
         """
-        output = torch.zeros([x.shape[0], x.shape[1] + self.pred_len, x.shape[2]])
+        device = x.device
+        output = torch.zeros([x.shape[0], x.shape[1] + self.pred_len, x.shape[2]]).to(device)
         output[:, : x.shape[1], :] = x
         output[:, x.shape[1] :, :] = x[:, -1].unsqueeze(1).repeat(1, self.pred_len, 1)
         return output

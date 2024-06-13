@@ -31,7 +31,7 @@ def train(
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, "min", factor=0.5, threshold=1e-4
+        optimizer, "min", factor=0.1, threshold=1e-4, patience=2
     )
 
     current_lr = optimizer.param_groups[0]["lr"]
@@ -125,7 +125,7 @@ def test(
         for batch_x, batch_y, *_ in test_loader:
             batch_x = batch_x.float().to(device)
             batch_y = batch_y.float().to(device)[:, -pred_len:, :]
-            batch_xy = torch.cat([batch_x, batch_y], dim=1)
+            batch_xy = torch.cat([batch_x, batch_y], dim=1).to(device)
             output = model(batch_x)
             if ft:
                 output = output[:, -pred_len:, f_dim:]
