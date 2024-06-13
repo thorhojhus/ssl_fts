@@ -1,4 +1,4 @@
-torch
+pytorch
 scikit-learn
 pandas
 numpy
