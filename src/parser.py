@@ -198,7 +198,7 @@ parser.add_argument(
 parser.add_argument(
     '--use_original_datahandling',
     action=argparse.BooleanOptionalAction,
-    default=False,
+    default=True,
     help='Use original data handling')
 
 parser.add_argument(
