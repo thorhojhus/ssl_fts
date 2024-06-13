@@ -156,7 +156,7 @@ parser.add_argument(
 parser.add_argument(
     "--use_wandb",
     action=argparse.BooleanOptionalAction,
-    default=True,
+    default=False,
     help="Whether to use wandb",
 )
 
