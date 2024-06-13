@@ -17,7 +17,7 @@ def data_provider(args, flag):
     args.test_time_train = False
     args.in_batch_augmentation = False
     args.in_dataset_augmentation = False
-    args.num_workers = 4
+    args.num_workers = 8
     if args.data not in ["ETTh1", "ETTh2", "ETTm1", "ETTm2"]:
         Data = data_dict['custom']
     else:
