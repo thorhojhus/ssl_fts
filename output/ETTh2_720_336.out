@@ -1,0 +1,157 @@
+
+
+
+
+
+
+
+Dominance frequency: 196
+Flag: train 
+Length of data set 7585
+Flag: val 
+Length of data set 2545
+Flag: test 
+Length of data set 2545
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+FITS                                     --
+├─Linear: 1-1                            56,539
+=================================================================
+Total params: 56,539
+Trainable params: 56,539
+Non-trainable params: 0
+=================================================================
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.7029       Train RMAE: 0.7225      Val MSE: 0.3475
+Val RMAE: 0.6494
+Epoch: 2         Train MSE: 0.4594       Train RMAE: 0.6440      Val MSE: 0.2707
+Val RMAE: 0.6058
+Epoch: 3         Train MSE: 0.3834       Train RMAE: 0.6102      Val MSE: 0.2328
+Val RMAE: 0.5786
+Epoch: 4         Train MSE: 0.3391       Train RMAE: 0.5868      Val MSE: 0.2085
+Val RMAE: 0.5576
+Epoch: 5         Train MSE: 0.3079       Train RMAE: 0.5676      Val MSE: 0.1909
+Val RMAE: 0.5400
+Epoch: 6         Train MSE: 0.2844       Train RMAE: 0.5506      Val MSE: 0.1779
+Val RMAE: 0.5249
+Epoch: 7         Train MSE: 0.2669       Train RMAE: 0.5357      Val MSE: 0.1685
+Val RMAE: 0.5120
+Epoch: 8         Train MSE: 0.2529       Train RMAE: 0.5223      Val MSE: 0.1598
+Val RMAE: 0.5000
+Epoch: 9         Train MSE: 0.2419       Train RMAE: 0.5103      Val MSE: 0.1542
+Val RMAE: 0.4902
+Epoch: 10        Train MSE: 0.2341       Train RMAE: 0.5001      Val MSE: 0.1488
+Val RMAE: 0.4812
+Epoch: 11        Train MSE: 0.2274       Train RMAE: 0.4907      Val MSE: 0.1460
+Val RMAE: 0.4745
+Epoch: 12        Train MSE: 0.2229       Train RMAE: 0.4832      Val MSE: 0.1427
+Val RMAE: 0.4682
+Epoch: 13        Train MSE: 0.2192       Train RMAE: 0.4765      Val MSE: 0.1404
+Val RMAE: 0.4632
+Epoch: 14        Train MSE: 0.2167       Train RMAE: 0.4712      Val MSE: 0.1395
+Val RMAE: 0.4593
+Epoch: 15        Train MSE: 0.2142       Train RMAE: 0.4666      Val MSE: 0.1375
+Val RMAE: 0.4556
+Epoch: 16        Train MSE: 0.2133       Train RMAE: 0.4632      Val MSE: 0.1367
+Val RMAE: 0.4532
+Epoch: 17        Train MSE: 0.2120       Train RMAE: 0.4604      Val MSE: 0.1361
+Val RMAE: 0.4511
+Epoch: 18        Train MSE: 0.2114       Train RMAE: 0.4582      Val MSE: 0.1352
+Val RMAE: 0.4493
+Epoch: 19        Train MSE: 0.2106       Train RMAE: 0.4565      Val MSE: 0.1351
+Val RMAE: 0.4481
+Epoch: 20        Train MSE: 0.2100       Train RMAE: 0.4550      Val MSE: 0.1352
+Val RMAE: 0.4474
+Epoch: 21        Train MSE: 0.2097       Train RMAE: 0.4540      Val MSE: 0.1347
+Val RMAE: 0.4465
+Epoch: 22        Train MSE: 0.2097       Train RMAE: 0.4535      Val MSE: 0.1346
+Val RMAE: 0.4459
+Epoch: 23        Train MSE: 0.2097       Train RMAE: 0.4529      Val MSE: 0.1338
+Val RMAE: 0.4452
+Epoch: 24        Train MSE: 0.2094       Train RMAE: 0.4523      Val MSE: 0.1338
+Val RMAE: 0.4449
+Epoch: 25        Train MSE: 0.2091       Train RMAE: 0.4520      Val MSE: 0.1337
+Val RMAE: 0.4449
+Epoch: 26        Train MSE: 0.2097       Train RMAE: 0.4521      Val MSE: 0.1345
+Val RMAE: 0.4450
+Epoch: 27        Train MSE: 0.2094       Train RMAE: 0.4519      Val MSE: 0.1342
+Val RMAE: 0.4447
+Learning Rate changed to: 5e-05
+Epoch: 28        Train MSE: 0.2094       Train RMAE: 0.4518      Val MSE: 0.1338
+Val RMAE: 0.4445
+Early stopping triggered after 28 epochs
+Test loss MSE: 0.3624443210661411, Test loss RMAE: 0.6216877371072769
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.6170       Train RMAE: 0.6759      Val MSE: 0.3808
+Val RMAE: 0.6551
+Epoch: 2         Train MSE: 0.6135       Train RMAE: 0.6740      Val MSE: 0.3788
+Val RMAE: 0.6537
+Epoch: 3         Train MSE: 0.6130       Train RMAE: 0.6737      Val MSE: 0.3762
+Val RMAE: 0.6526
+Epoch: 4         Train MSE: 0.6130       Train RMAE: 0.6733      Val MSE: 0.3765
+Val RMAE: 0.6523
+Epoch: 5         Train MSE: 0.6126       Train RMAE: 0.6730      Val MSE: 0.3771
+Val RMAE: 0.6524
+Epoch: 6         Train MSE: 0.6126       Train RMAE: 0.6729      Val MSE: 0.3755
+Val RMAE: 0.6516
+Epoch: 7         Train MSE: 0.6106       Train RMAE: 0.6724      Val MSE: 0.3761
+Val RMAE: 0.6516
+Epoch: 8         Train MSE: 0.6095       Train RMAE: 0.6716      Val MSE: 0.3754
+Val RMAE: 0.6512
+Epoch: 9         Train MSE: 0.6098       Train RMAE: 0.6718      Val MSE: 0.3760
+Val RMAE: 0.6514
+Epoch: 10        Train MSE: 0.6115       Train RMAE: 0.6720      Val MSE: 0.3753
+Val RMAE: 0.6513
+Epoch: 11        Train MSE: 0.6091       Train RMAE: 0.6714      Val MSE: 0.3748
+Val RMAE: 0.6507
+Epoch: 12        Train MSE: 0.6090       Train RMAE: 0.6714      Val MSE: 0.3730
+Val RMAE: 0.6502
+Epoch: 13        Train MSE: 0.6104       Train RMAE: 0.6719      Val MSE: 0.3733
+Val RMAE: 0.6500
+Epoch: 14        Train MSE: 0.6109       Train RMAE: 0.6718      Val MSE: 0.3744
+Val RMAE: 0.6504
+Epoch: 15        Train MSE: 0.6086       Train RMAE: 0.6714      Val MSE: 0.3721
+Val RMAE: 0.6496
+Epoch: 16        Train MSE: 0.6095       Train RMAE: 0.6714      Val MSE: 0.3729
+Val RMAE: 0.6503
+Epoch: 17        Train MSE: 0.6108       Train RMAE: 0.6719      Val MSE: 0.3742
+Val RMAE: 0.6502
+Learning Rate changed to: 5e-05
+Epoch: 18        Train MSE: 0.6107       Train RMAE: 0.6714      Val MSE: 0.3743
+Val RMAE: 0.6506
+Epoch: 19        Train MSE: 0.6057       Train RMAE: 0.6704      Val MSE: 0.3736
+Val RMAE: 0.6502
+Epoch: 20        Train MSE: 0.6081       Train RMAE: 0.6710      Val MSE: 0.3730
+Val RMAE: 0.6500
+Early stopping triggered after 20 epochs
+Test loss MSE: 0.35852865520864724, Test loss RMAE: 0.619247205555439
+
+f 0.021 MB uploaded
+
+
+
+▂▂▂▃▃▃▃▄▄▄▅▅▅▆▆▆▆▇▇▇██▁▂▂▂▂▃▃▃▄▄▄▅▅▅▅▆
+
+
+
+
+train_loss_rmae █▆▅▄▄▃▃▃▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇
+mse ▇▅▄▃▃▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁████████████████
+▅▅▄▃▃▃▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁████████████████
+
+
+
+
+
+
+
+train_loss_rmae 0.67105
+
+
+
+l_FITS-time_2024-06-13_20-33-15 at: https://wandb.ai/ssl_fts/ssl_fts/runs/h2ugpmbf
+
+
+
+
