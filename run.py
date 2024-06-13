@@ -34,10 +34,16 @@ if __name__ == "__main__":
         test_data, test_loader = data_provider(args, "test")
     else:
         train_loader, test_loader = data_setup(args)
-
+    
     model = FITS(args) if not args.use_baseline else NaiveForecast(args)
+    
+    if args.use_real_FITS:
+        from src.models.real_deep_FITS import FITS
+        model = FITS(args)
+    
     # model = NaiveForecast(args)
     summary(model)
+    print(model)
 
     if args.train_and_finetune and (not args.use_baseline):
         model, _ = train(
