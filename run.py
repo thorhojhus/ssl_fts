@@ -40,9 +40,11 @@ if __name__ == "__main__":
         from src.FITS_datahandling.data_factory import data_provider
 
         train_data, train_loader = data_provider(args, "train")
+        val_data, val_loader = data_provider(args, "val")
         test_data, test_loader = data_provider(args, "test")
     else:
         train_loader, test_loader = data_setup(args)
+        val_loader = test_loader
     
     
     model = model_dict[args.model](args)
@@ -56,6 +58,7 @@ if __name__ == "__main__":
         model, _ = train(
             model=model,
             train_loader=train_loader,
+            val_loader=val_loader,
             test_loader=test_loader,
             epochs=args.epochs,
             pred_len=args.pred_len,
@@ -66,6 +69,7 @@ if __name__ == "__main__":
         model, test_mse = train(
             model=model,
             train_loader=train_loader,
+            val_loader=val_loader,
             test_loader=test_loader,
             epochs=args.epochs,
             pred_len=args.pred_len,
