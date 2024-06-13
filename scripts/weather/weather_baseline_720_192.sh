@@ -15,4 +15,5 @@ python run.py \
     --channels 21 \
     --individual \
     --use_original_datahandling \
-    --use_baseline \
+    --test_only \
+    --model NF \

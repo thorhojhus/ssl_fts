@@ -202,9 +202,16 @@ parser.add_argument(
     help='Use original data handling')
 
 parser.add_argument(
-    '--use_baseline',
+    '--test_only',
     action=argparse.BooleanOptionalAction,
     default=False,
-    help='Use baseline model (Naive Forecast)')
+    help='only do testing (ARIMA & NaiveForecast only)')
+
+
+parser.add_argument(
+    '--model',
+    type=str,
+    default="FITS",
+    help='Select between [FITS, ARIMA, NF (NaiveForecast)]')
 
 # type: ignore

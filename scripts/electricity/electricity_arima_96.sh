@@ -7,4 +7,4 @@ python run.py \
     --channels 321 \
     --use_original_datahandling \
     --test_only \
-    --model NF \
+    --model ARIMA \
