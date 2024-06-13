@@ -12,5 +12,5 @@ python run.py \
     --epochs 50 \
     --use_original_datahandling \
     --test_only \
-    --model NF \
+    --model ARIMA \
     --H_order 6

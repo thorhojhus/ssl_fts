@@ -11,5 +11,6 @@ python run.py \
     --dataset ETTh1 \
     --epochs 50 \
     --use_original_datahandling \
-    --use_baseline \
+    --test_only \
+    --model NF \
     --H_order 6

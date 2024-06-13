@@ -3,7 +3,7 @@
 python run.py \
     --normalize True \
     --seq_len 720 \
-    --pred_len 336 \
+    --pred_len 192 \
     --dominance_freq 0 \
     --train_and_finetune \
     --all_cols False \
@@ -12,5 +12,5 @@ python run.py \
     --epochs 50 \
     --use_original_datahandling \
     --test_only \
-    --model NF \
+    --model ARIMA \
     --H_order 6
