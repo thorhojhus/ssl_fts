@@ -19,7 +19,7 @@ def train(
     features="M",
     ft=True,
     lr=5e-4,
-    patience=10,  # early stopping patience
+    patience=5,  # early stopping patience
     min_delta=0.0001,  # minimum change to qualify as an improvement
     args=None,
 ):
