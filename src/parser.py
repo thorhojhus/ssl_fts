@@ -189,6 +189,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--use_real_FITS",
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help="Real FITS",
+)
+
+parser.add_argument(
     '--use_original_datahandling',
     action=argparse.BooleanOptionalAction,
     default=False,

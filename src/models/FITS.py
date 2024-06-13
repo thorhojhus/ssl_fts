@@ -31,12 +31,12 @@ class ModReLU(nn.Module):
         normalized = z / (magnitude + 1e-8)
         return relu * normalized
 
-def dropout_complex(x, p=0.5):
+def dropout_complex(x, p=0.5, training=True):
     if x.is_complex():
-        mask = F.dropout(torch.ones_like(x.real), p)
+        mask = F.dropout(torch.ones_like(x.real), p, training)
         return x * mask
     else:
-        return F.dropout(x, p)
+        return F.dropout(x, p, training)
     
 class ComplexDropout(nn.Module):
     def __init__(self, p=0.5):
@@ -44,7 +44,7 @@ class ComplexDropout(nn.Module):
         self.p = p
 
     def forward(self, x):
-        return dropout_complex(x, self.p)
+        return dropout_complex(x, self.p, self.training)
 
 class FITS(nn.Module):
     """Reimplementation of the FITS model.
@@ -176,3 +176,21 @@ class FITS(nn.Module):
             }
 
         return xy
+
+
+if __name__ == "__main__":
+    args = Namespace(
+        dominance_freq=10,
+        seq_len=100,
+        pred_len=10,
+        upsample_rate=0,
+        channels=1,
+        num_layers=3,
+        num_hidden=128,
+        individual=False,
+        debug=False,
+    )
+    model = FITS(args)
+    ts_data = torch.randn(32, 100, 1)
+    output = model(ts_data)
+    print(output.shape)
