@@ -13,4 +13,5 @@ python run.py \
     --H_order 10 \
     --channels 862 \
     --use_original_datahandling \
-    --use_baseline \
+    --test_only \
+    --model NF \

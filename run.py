@@ -1,5 +1,6 @@
 from src.models.FITS import FITS
 from src.models.baseline import NaiveForecast
+from src.models.ARIMA import ARIMA
 from src.train_test import train
 from src.train_test import test
 from src.dataset import data_setup
@@ -11,6 +12,12 @@ import datetime
 from torchinfo import summary
 
 warnings.filterwarnings("ignore")
+
+model_dict = {
+    "FITS": FITS,
+    "ARIMA": ARIMA,
+    "NF": NaiveForecast,
+}
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -37,17 +44,15 @@ if __name__ == "__main__":
     else:
         train_loader, test_loader = data_setup(args)
     
-    model = FITS(args) if not args.use_baseline else NaiveForecast(args)
     
+    model = model_dict[args.model](args)
     if args.use_real_FITS:
         from src.models.real_deep_FITS import FITS
         model = FITS(args)
     
-    # model = NaiveForecast(args)
     summary(model)
-    print(model)
 
-    if args.train_and_finetune and (not args.use_baseline):
+    if args.train_and_finetune and (not args.test_only):
         model, _ = train(
             model=model,
             train_loader=train_loader,
@@ -69,7 +74,7 @@ if __name__ == "__main__":
             args=args,
         )
 
-    elif not args.use_baseline:
+    elif not args.test_only:
         model, test_mse = train(
             model=model,
             train_loader=train_loader,

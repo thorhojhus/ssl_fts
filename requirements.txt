@@ -8,3 +8,4 @@ yfinance
 wandb
 rich
 torchinfo
+pmdarima
