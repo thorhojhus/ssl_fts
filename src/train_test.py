@@ -25,6 +25,7 @@ def train(
 ):
 
     model.to(device)
+    print(device)
     criterion_mse = nn.MSELoss()
     criterion_rmae = RMAE
 
@@ -108,16 +109,16 @@ def train(
             print(f"Learning Rate changed to: {new_lr}")
             current_lr = new_lr
 
-        wandb.log(
-            {
-                "epoch": epoch + 1,
-                "train_loss_mse": np.mean(train_loss_mse),
-                "train_loss_rmae": np.mean(train_loss_rmae),
-                "val_loss_mse": mean_val_loss_mse,
-                "val_loss_rmae": mean_val_loss_rmae,
-                "learning_rate": current_lr,
-            }
-        )
+        # wandb.log(
+        #     {
+        #         "epoch": epoch + 1,
+        #         "train_loss_mse": np.mean(train_loss_mse),
+        #         "train_loss_rmae": np.mean(train_loss_rmae),
+        #         "val_loss_mse": mean_val_loss_mse,
+        #         "val_loss_rmae": mean_val_loss_rmae,
+        #         "learning_rate": current_lr,
+        #     }
+        # )
 
         print(
             f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train RMAE: {np.mean(train_loss_rmae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val RMAE: {mean_val_loss_rmae:.4f}"
