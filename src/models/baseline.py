@@ -24,3 +24,20 @@ class NaiveForecast(nn.Module):
         output[:, : x.shape[1], :] = x
         output[:, x.shape[1] :, :] = x[:, -1].unsqueeze(1).repeat(1, self.pred_len, 1)
         return output
+
+
+class AverageForecast(nn.Module):
+    """Average of Time Series as Forecasting value."""
+    def __init__(self, configs):
+        super(AverageForecast, self).__init__()
+        self.pred_len = configs.pred_len
+    
+    def forward(self, x):
+        """
+        Forecast by returning the average of the time series.
+        """
+        device = x.device
+        output = torch.zeros([x.shape[0], x.shape[1] + self.pred_len, x.shape[2]]).to(device)
+        output[:, : x.shape[1], :] = x
+        output[:, x.shape[1] :, :] = x.mean(dim=1).unsqueeze(1).repeat(1, self.pred_len, 1)
+        return output
