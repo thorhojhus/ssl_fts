@@ -29,7 +29,7 @@ def train(
     criterion_mse = nn.MSELoss()
     criterion_rmae = RMAE
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, "min", factor=0.1, threshold=1e-4, patience=2
     )
@@ -109,20 +109,24 @@ def train(
             print(f"Learning Rate changed to: {new_lr}")
             current_lr = new_lr
 
-        # wandb.log(
-        #     {
-        #         "epoch": epoch + 1,
-        #         "train_loss_mse": np.mean(train_loss_mse),
-        #         "train_loss_rmae": np.mean(train_loss_rmae),
-        #         "val_loss_mse": mean_val_loss_mse,
-        #         "val_loss_rmae": mean_val_loss_rmae,
-        #         "learning_rate": current_lr,
-        #     }
-        # )
+        wandb.log(
+            {
+                "epoch": epoch + 1,
+                "train_loss_mse": np.mean(train_loss_mse),
+                "train_loss_rmae": np.mean(train_loss_rmae),
+                "val_loss_mse": mean_val_loss_mse,
+                "val_loss_rmae": mean_val_loss_rmae,
+                "learning_rate": current_lr,
+            }
+        )
 
         print(
-            f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train RMAE: {np.mean(train_loss_rmae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val RMAE: {mean_val_loss_rmae:.4f}"
+            f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Val MSE: {mean_val_loss_mse:.4f}"
         )
+
+        # print(
+        #     f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train RMAE: {np.mean(train_loss_rmae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val RMAE: {mean_val_loss_rmae:.4f}"
+        # )
 
         # Early stopping
         if mean_val_loss_mse < best_val_loss - min_delta:
@@ -190,7 +194,7 @@ def test(
         )
 
         print(
-            f"Test loss MSE: {np.mean(test_loss_mse)}, Test loss RMAE: {np.mean(test_loss_rmae)}"
+            f"Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss RMAE: {np.mean(test_loss_rmae):.4f}"
         )
 
     return model, np.mean(test_loss_mse)

@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+Dominance frequency: 196
+Flag: train 
+Length of data set 7825
+Flag: val 
+Length of data set 2785
+Flag: test 
+Length of data set 2785
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+ARIMA                                    --
+=================================================================
+Total params: 0
+Trainable params: 0
+Non-trainable params: 0
+=================================================================
+Traceback (most recent call last):
+  File "/home/thorh/ssl_fts/run.py", line 95, in <module>
+    model, test_mse = test(
+                      ^^^^^
+  File "/home/thorh/ssl_fts/src/train_test.py", line 170, in test
+    output = model(batch_x)
+             ^^^^^^^^^^^^^^
+
