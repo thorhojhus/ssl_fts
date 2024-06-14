@@ -1,0 +1,172 @@
+
+
+
+
+
+
+
+Dominance frequency: 196
+Flag: train 
+Length of data set 7825
+Flag: val 
+Length of data set 2785
+Flag: test 
+Length of data set 2785
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+FITS                                     --
+├─Linear: 1-1                            43,734
+=================================================================
+Total params: 43,734
+Trainable params: 43,734
+Non-trainable params: 0
+=================================================================
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.5593       Train RMAE: 0.6844      Val MSE: 0.2477
+Val RMAE: 0.6015
+Epoch: 2         Train MSE: 0.3543       Train RMAE: 0.6112      Val MSE: 0.1879
+Val RMAE: 0.5619
+Epoch: 3         Train MSE: 0.2832       Train RMAE: 0.5782      Val MSE: 0.1564
+Val RMAE: 0.5362
+Epoch: 4         Train MSE: 0.2390       Train RMAE: 0.5542      Val MSE: 0.1343
+Val RMAE: 0.5151
+Epoch: 5         Train MSE: 0.2053       Train RMAE: 0.5332      Val MSE: 0.1172
+Val RMAE: 0.4963
+Epoch: 6         Train MSE: 0.1783       Train RMAE: 0.5139      Val MSE: 0.1034
+Val RMAE: 0.4793
+Epoch: 7         Train MSE: 0.1566       Train RMAE: 0.4961      Val MSE: 0.0920
+Val RMAE: 0.4633
+Epoch: 8         Train MSE: 0.1386       Train RMAE: 0.4793      Val MSE: 0.0825
+Val RMAE: 0.4486
+Epoch: 9         Train MSE: 0.1238       Train RMAE: 0.4634      Val MSE: 0.0746
+Val RMAE: 0.4348
+Epoch: 10        Train MSE: 0.1116       Train RMAE: 0.4485      Val MSE: 0.0680
+Val RMAE: 0.4221
+Epoch: 11        Train MSE: 0.1016       Train RMAE: 0.4345      Val MSE: 0.0626
+Val RMAE: 0.4102
+Epoch: 12        Train MSE: 0.0934       Train RMAE: 0.4216      Val MSE: 0.0581
+Val RMAE: 0.3995
+Epoch: 13        Train MSE: 0.0869       Train RMAE: 0.4097      Val MSE: 0.0544
+Val RMAE: 0.3897
+Epoch: 14        Train MSE: 0.0817       Train RMAE: 0.3989      Val MSE: 0.0514
+Val RMAE: 0.3810
+Epoch: 15        Train MSE: 0.0775       Train RMAE: 0.3889      Val MSE: 0.0490
+Val RMAE: 0.3733
+Epoch: 16        Train MSE: 0.0742       Train RMAE: 0.3802      Val MSE: 0.0471
+Val RMAE: 0.3664
+Epoch: 17        Train MSE: 0.0716       Train RMAE: 0.3724      Val MSE: 0.0456
+Val RMAE: 0.3608
+Epoch: 18        Train MSE: 0.0695       Train RMAE: 0.3656      Val MSE: 0.0444
+Val RMAE: 0.3558
+Epoch: 19        Train MSE: 0.0681       Train RMAE: 0.3598      Val MSE: 0.0434
+Val RMAE: 0.3516
+Epoch: 20        Train MSE: 0.0669       Train RMAE: 0.3548      Val MSE: 0.0427
+Val RMAE: 0.3481
+Epoch: 21        Train MSE: 0.0660       Train RMAE: 0.3508      Val MSE: 0.0420
+Val RMAE: 0.3451
+Epoch: 22        Train MSE: 0.0654       Train RMAE: 0.3474      Val MSE: 0.0417
+Val RMAE: 0.3430
+Epoch: 23        Train MSE: 0.0649       Train RMAE: 0.3448      Val MSE: 0.0413
+Val RMAE: 0.3409
+Epoch: 24        Train MSE: 0.0646       Train RMAE: 0.3427      Val MSE: 0.0410
+Val RMAE: 0.3396
+Epoch: 25        Train MSE: 0.0643       Train RMAE: 0.3411      Val MSE: 0.0408
+Val RMAE: 0.3385
+Epoch: 26        Train MSE: 0.0640       Train RMAE: 0.3399      Val MSE: 0.0406
+Val RMAE: 0.3375
+Epoch: 27        Train MSE: 0.0641       Train RMAE: 0.3391      Val MSE: 0.0407
+Val RMAE: 0.3371
+Epoch: 28        Train MSE: 0.0640       Train RMAE: 0.3384      Val MSE: 0.0408
+Val RMAE: 0.3370
+Learning Rate changed to: 5e-05
+Epoch: 29        Train MSE: 0.0640       Train RMAE: 0.3381      Val MSE: 0.0406
+Val RMAE: 0.3366
+Epoch: 30        Train MSE: 0.0636       Train RMAE: 0.3376      Val MSE: 0.0406
+Val RMAE: 0.3364
+Epoch: 31        Train MSE: 0.0636       Train RMAE: 0.3376      Val MSE: 0.0405
+Val RMAE: 0.3364
+Epoch: 32        Train MSE: 0.0636       Train RMAE: 0.3375      Val MSE: 0.0405
+Val RMAE: 0.3363
+Epoch: 33        Train MSE: 0.0636       Train RMAE: 0.3375      Val MSE: 0.0405
+Val RMAE: 0.3363
+Epoch: 34        Train MSE: 0.0635       Train RMAE: 0.3374      Val MSE: 0.0405
+Val RMAE: 0.3362
+Epoch: 35        Train MSE: 0.0636       Train RMAE: 0.3375      Val MSE: 0.0406
+Val RMAE: 0.3363
+Epoch: 36        Train MSE: 0.0635       Train RMAE: 0.3374      Val MSE: 0.0404
+Val RMAE: 0.3362
+Early stopping triggered after 36 epochs
+Test loss MSE: 0.27618830845775927, Test loss RMAE: 0.5726313726468519
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.4104       Train RMAE: 0.6032      Val MSE: 0.2167
+Val RMAE: 0.5708
+Epoch: 2         Train MSE: 0.4055       Train RMAE: 0.6001      Val MSE: 0.2148
+Val RMAE: 0.5687
+Epoch: 3         Train MSE: 0.4036       Train RMAE: 0.5984      Val MSE: 0.2143
+Val RMAE: 0.5682
+Epoch: 4         Train MSE: 0.4038       Train RMAE: 0.5984      Val MSE: 0.2136
+Val RMAE: 0.5676
+Epoch: 5         Train MSE: 0.4032       Train RMAE: 0.5976      Val MSE: 0.2128
+Val RMAE: 0.5668
+Epoch: 6         Train MSE: 0.4024       Train RMAE: 0.5968      Val MSE: 0.2148
+Val RMAE: 0.5687
+Epoch: 7         Train MSE: 0.4020       Train RMAE: 0.5973      Val MSE: 0.2120
+Val RMAE: 0.5665
+Epoch: 8         Train MSE: 0.3990       Train RMAE: 0.5960      Val MSE: 0.2115
+Val RMAE: 0.5657
+Epoch: 9         Train MSE: 0.4014       Train RMAE: 0.5964      Val MSE: 0.2116
+Val RMAE: 0.5662
+Epoch: 10        Train MSE: 0.4009       Train RMAE: 0.5962      Val MSE: 0.2123
+Val RMAE: 0.5663
+Learning Rate changed to: 5e-05
+Epoch: 11        Train MSE: 0.4012       Train RMAE: 0.5964      Val MSE: 0.2127
+Val RMAE: 0.5667
+Epoch: 12        Train MSE: 0.3984       Train RMAE: 0.5953      Val MSE: 0.2113
+Val RMAE: 0.5658
+Epoch: 13        Train MSE: 0.3973       Train RMAE: 0.5944      Val MSE: 0.2119
+Val RMAE: 0.5660
+Epoch: 14        Train MSE: 0.3975       Train RMAE: 0.5948      Val MSE: 0.2107
+Val RMAE: 0.5654
+Epoch: 15        Train MSE: 0.3976       Train RMAE: 0.5945      Val MSE: 0.2115
+Val RMAE: 0.5658
+Epoch: 16        Train MSE: 0.3976       Train RMAE: 0.5946      Val MSE: 0.2115
+Val RMAE: 0.5657
+Learning Rate changed to: 5e-06
+Epoch: 17        Train MSE: 0.3972       Train RMAE: 0.5946      Val MSE: 0.2110
+Val RMAE: 0.5654
+Epoch: 18        Train MSE: 0.3970       Train RMAE: 0.5943      Val MSE: 0.2107
+Val RMAE: 0.5653
+Epoch: 19        Train MSE: 0.3973       Train RMAE: 0.5944      Val MSE: 0.2109
+Val RMAE: 0.5653
+Early stopping triggered after 19 epochs
+Test loss MSE: 0.27033933920955117, Test loss RMAE: 0.5677192603999918
+
+f 0.021 MB uploaded
+
+
+
+▁▂▂▂▃▃▃▃▄▄▄▅▅▅▆▆▆▆▇▇▇▇██▁▁▁▂▂▂▃▃▃▃▄▄▄▅
+
+
+
+
+train_loss_rmae █▇▆▅▅▄▄▃▃▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+mse █▆▅▄▃▃▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▇▇▇▇▇▇▇▇▇▇▇▇▇▇
+▆▅▅▄▄▃▃▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▇▇▇▇▇▇▇▇▇▇▇▇▇▇
+
+
+
+
+
+
+
+train_loss_rmae 0.59439
+
+
+
+_FITS-time_2024-06-13_20-30-43 at: https://wandb.ai/ssl_fts/ssl_fts/runs/81jarfd7
+
+
+
+

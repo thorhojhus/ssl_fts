@@ -1,0 +1,122 @@
+
+
+
+
+
+
+
+Dominance frequency: 196
+Flag: train 
+Length of data set 33649
+Flag: val 
+Length of data set 11329
+Flag: test 
+Length of data set 11329
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+FITS                                     --
+├─Linear: 1-1                            48,856
+=================================================================
+Total params: 48,856
+Trainable params: 48,856
+Non-trainable params: 0
+=================================================================
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.2453       Train RMAE: 0.5323      Val MSE: 0.0799
+Val RMAE: 0.4393
+Epoch: 2         Train MSE: 0.1201       Train RMAE: 0.4324      Val MSE: 0.0536
+Val RMAE: 0.3811
+Epoch: 3         Train MSE: 0.0875       Train RMAE: 0.3813      Val MSE: 0.0436
+Val RMAE: 0.3461
+Epoch: 4         Train MSE: 0.0746       Train RMAE: 0.3496      Val MSE: 0.0398
+Val RMAE: 0.3275
+Epoch: 5         Train MSE: 0.0699       Train RMAE: 0.3333      Val MSE: 0.0385
+Val RMAE: 0.3198
+Epoch: 6         Train MSE: 0.0685       Train RMAE: 0.3267      Val MSE: 0.0381
+Val RMAE: 0.3174
+Epoch: 7         Train MSE: 0.0681       Train RMAE: 0.3248      Val MSE: 0.0380
+Val RMAE: 0.3168
+Epoch: 8         Train MSE: 0.0680       Train RMAE: 0.3244      Val MSE: 0.0380
+Val RMAE: 0.3166
+Epoch: 9         Train MSE: 0.0680       Train RMAE: 0.3242      Val MSE: 0.0381
+Val RMAE: 0.3169
+Epoch: 10        Train MSE: 0.0680       Train RMAE: 0.3244      Val MSE: 0.0380
+Val RMAE: 0.3167
+Learning Rate changed to: 5e-05
+Epoch: 11        Train MSE: 0.0680       Train RMAE: 0.3245      Val MSE: 0.0380
+Val RMAE: 0.3168
+Epoch: 12        Train MSE: 0.0677       Train RMAE: 0.3242      Val MSE: 0.0379
+Val RMAE: 0.3166
+Epoch: 13        Train MSE: 0.0676       Train RMAE: 0.3241      Val MSE: 0.0379
+Val RMAE: 0.3166
+Early stopping triggered after 13 epochs
+Test loss MSE: 0.22047270583302786, Test loss RMAE: 0.5303247217716796
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.2940       Train RMAE: 0.5487      Val MSE: 0.1525
+Val RMAE: 0.5181
+Epoch: 2         Train MSE: 0.2914       Train RMAE: 0.5469      Val MSE: 0.1520
+Val RMAE: 0.5175
+Epoch: 3         Train MSE: 0.2904       Train RMAE: 0.5465      Val MSE: 0.1516
+Val RMAE: 0.5172
+Epoch: 4         Train MSE: 0.2899       Train RMAE: 0.5460      Val MSE: 0.1518
+Val RMAE: 0.5174
+Epoch: 5         Train MSE: 0.2895       Train RMAE: 0.5459      Val MSE: 0.1515
+Val RMAE: 0.5169
+Epoch: 6         Train MSE: 0.2893       Train RMAE: 0.5456      Val MSE: 0.1518
+Val RMAE: 0.5173
+Epoch: 7         Train MSE: 0.2892       Train RMAE: 0.5458      Val MSE: 0.1515
+Val RMAE: 0.5169
+Learning Rate changed to: 5e-05
+Epoch: 8         Train MSE: 0.2888       Train RMAE: 0.5455      Val MSE: 0.1515
+Val RMAE: 0.5170
+Epoch: 9         Train MSE: 0.2874       Train RMAE: 0.5447      Val MSE: 0.1510
+Val RMAE: 0.5164
+Epoch: 10        Train MSE: 0.2867       Train RMAE: 0.5445      Val MSE: 0.1509
+Val RMAE: 0.5163
+Epoch: 11        Train MSE: 0.2871       Train RMAE: 0.5444      Val MSE: 0.1510
+Val RMAE: 0.5164
+Epoch: 12        Train MSE: 0.2872       Train RMAE: 0.5447      Val MSE: 0.1509
+Val RMAE: 0.5162
+Epoch: 13        Train MSE: 0.2871       Train RMAE: 0.5443      Val MSE: 0.1510
+Val RMAE: 0.5163
+Epoch: 14        Train MSE: 0.2871       Train RMAE: 0.5445      Val MSE: 0.1509
+Val RMAE: 0.5163
+Learning Rate changed to: 5e-06
+Epoch: 15        Train MSE: 0.2871       Train RMAE: 0.5445      Val MSE: 0.1509
+Val RMAE: 0.5163
+Epoch: 16        Train MSE: 0.2869       Train RMAE: 0.5443      Val MSE: 0.1509
+Val RMAE: 0.5163
+Epoch: 17        Train MSE: 0.2868       Train RMAE: 0.5443      Val MSE: 0.1509
+Val RMAE: 0.5163
+Early stopping triggered after 17 epochs
+Test loss MSE: 0.21586572470959653, Test loss RMAE: 0.5258211428194903
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
