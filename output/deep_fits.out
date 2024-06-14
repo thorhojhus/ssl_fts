@@ -1,0 +1,86 @@
+Dominance frequency: 320
+Flag: train 
+Length of data set 10841
+Flag: val 
+Length of data set 1037
+Flag: test 
+Length of data set 2789
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+FITS                                     --
+├─Sequential: 1-1                        --
+│    └─Linear: 2-1                       164,352
+│    └─ComplexDropout: 2-2               --
+│    └─ModReLU: 2-3                      512
+│    └─Linear: 2-4                       262,656
+│    └─ComplexDropout: 2-5               --
+│    └─ModReLU: 2-6                      512
+│    └─Linear: 2-7                       328,320
+=================================================================
+Total params: 756,352
+Trainable params: 756,352
+Non-trainable params: 0
+=================================================================
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.5929       Val MSE: 0.2927
+Epoch: 2         Train MSE: 0.2663       Val MSE: 0.2755
+Epoch: 3         Train MSE: 0.2522       Val MSE: 0.2706
+Epoch: 4         Train MSE: 0.2490       Val MSE: 0.2680
+Epoch: 5         Train MSE: 0.2477       Val MSE: 0.2675
+Epoch: 6         Train MSE: 0.2471       Val MSE: 0.2669
+Epoch: 7         Train MSE: 0.2468       Val MSE: 0.2670
+Epoch: 8         Train MSE: 0.2466       Val MSE: 0.2666
+Epoch: 9         Train MSE: 0.2464       Val MSE: 0.2670
+Epoch: 10        Train MSE: 0.2463       Val MSE: 0.2664
+Epoch: 11        Train MSE: 0.2461       Val MSE: 0.2669
+Epoch: 12        Train MSE: 0.2462       Val MSE: 0.2661
+Epoch: 13        Train MSE: 0.2461       Val MSE: 0.2664
+Epoch: 14        Train MSE: 0.2460       Val MSE: 0.2659
+Epoch: 15        Train MSE: 0.2458       Val MSE: 0.2658
+Epoch: 16        Train MSE: 0.2458       Val MSE: 0.2654
+Epoch: 17        Train MSE: 0.2459       Val MSE: 0.2655
+Epoch: 18        Train MSE: 0.2458       Val MSE: 0.2661
+Learning Rate changed to: 5e-05
+Epoch: 19        Train MSE: 0.2458       Val MSE: 0.2655
+Epoch: 20        Train MSE: 0.2439       Val MSE: 0.2632
+Epoch: 21        Train MSE: 0.2436       Val MSE: 0.2636
+Epoch: 22        Train MSE: 0.2436       Val MSE: 0.2632
+Learning Rate changed to: 5e-06
+Epoch: 23        Train MSE: 0.2436       Val MSE: 0.2632
+Epoch: 24        Train MSE: 0.2435       Val MSE: 0.2628
+Epoch: 25        Train MSE: 0.2434       Val MSE: 0.2630
+Epoch: 26        Train MSE: 0.2434       Val MSE: 0.2632
+Learning Rate changed to: 5.000000000000001e-07
+Epoch: 27        Train MSE: 0.2434       Val MSE: 0.2633
+Epoch: 28        Train MSE: 0.2433       Val MSE: 0.2631
+Epoch: 29        Train MSE: 0.2433       Val MSE: 0.2632
+Early stopping triggered after 29 epochs
+Test loss MSE: 0.4603, Test loss RMAE: 0.5595
+Initial Learning Rate: 0.0005
+Epoch: 1         Train MSE: 0.3118       Val MSE: 0.3976
+Epoch: 2         Train MSE: 0.3086       Val MSE: 0.3983
+Epoch: 3         Train MSE: 0.3078       Val MSE: 0.3972
+Epoch: 4         Train MSE: 0.3074       Val MSE: 0.3966
+Epoch: 5         Train MSE: 0.3074       Val MSE: 0.3971
+Epoch: 6         Train MSE: 0.3070       Val MSE: 0.3974
+Epoch: 7         Train MSE: 0.3068       Val MSE: 0.3960
+Epoch: 8         Train MSE: 0.3070       Val MSE: 0.3980
+Epoch: 9         Train MSE: 0.3067       Val MSE: 0.3980
+Learning Rate changed to: 5e-05
+Epoch: 10        Train MSE: 0.3067       Val MSE: 0.3985
+Epoch: 11        Train MSE: 0.3032       Val MSE: 0.3931
+Epoch: 12        Train MSE: 0.3028       Val MSE: 0.3928
+Epoch: 13        Train MSE: 0.3028       Val MSE: 0.3931
+Epoch: 14        Train MSE: 0.3028       Val MSE: 0.3929
+Learning Rate changed to: 5e-06
+Epoch: 15        Train MSE: 0.3028       Val MSE: 0.3928
+Epoch: 16        Train MSE: 0.3025       Val MSE: 0.3916
+Epoch: 17        Train MSE: 0.3023       Val MSE: 0.3926
+Epoch: 18        Train MSE: 0.3024       Val MSE: 0.3925
+Learning Rate changed to: 5.000000000000001e-07
+Epoch: 19        Train MSE: 0.3024       Val MSE: 0.3918
+Epoch: 20        Train MSE: 0.3023       Val MSE: 0.3920
+Epoch: 21        Train MSE: 0.3023       Val MSE: 0.3920
+Early stopping triggered after 21 epochs
+Test loss MSE: 0.4571, Test loss RMAE: 0.5566
