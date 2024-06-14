@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import argparse
 
 class SyntheticDatasetGenerator:
-    def __init__(self, length: int, num_channels: int = 0):
+    def __init__(self, length: int, num_channels: int = 1):
         self.length = length
         self.time_series = np.arange(length)
         self.channels = num_channels
