@@ -141,7 +141,7 @@ def train(
         f_dim=f_dim,
         device=device,
         pred_len=pred_len,
-        ft=ft,
+        ft=True,
     )
 
     return model, test_mse
