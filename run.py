@@ -48,9 +48,14 @@ if __name__ == "__main__":
     
     
     model = model_dict[args.model](args)
+    if args.num_layers > 1:
+        from src.models.deep_FITS import FITS
+        model = FITS(args)
+
     if args.use_real_FITS:
         from src.models.real_deep_FITS import FITS
         model = FITS(args)
+
     
     summary(model)
     print(model)
@@ -96,5 +101,5 @@ if __name__ == "__main__":
             test_loader=test_loader,
             pred_len=args.pred_len,
             f_dim=-1 if args.features == "MS" else 0,
-            ft=args.ft,
+            ft=True,
         )

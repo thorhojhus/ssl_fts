@@ -1,0 +1,17 @@
+Dominance frequency: 196
+Flag: train 
+Length of data set 7201
+Flag: val 
+Length of data set 2161
+Flag: test 
+Length of data set 2161
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+NaiveForecast                            --
+=================================================================
+Total params: 0
+Trainable params: 0
+Non-trainable params: 0
+=================================================================
+Test loss MSE: 0.5975142984705812, Test loss RMAE: 0.7141617676791023

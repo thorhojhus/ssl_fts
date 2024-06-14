@@ -1,0 +1,16 @@
+Flag: train 
+Length of data set 17501
+Flag: val 
+Length of data set 2441
+Flag: test 
+Length of data set 5069
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+NaiveForecast                            --
+=================================================================
+Total params: 0
+Trainable params: 0
+Non-trainable params: 0
+=================================================================
+Test loss MSE: 1.6009145736694337, Test loss RMAE: 0.9752826444804669

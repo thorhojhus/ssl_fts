@@ -31,7 +31,7 @@ class ModReLU(nn.Module):
         normalized = z / (magnitude + 1e-8)
         return relu * normalized
 
-def dropout_complex(x, p=0.5, training=True):
+def dropout_complex(x, p=0.9, training=True):
     if x.is_complex():
         mask = F.dropout(torch.ones_like(x.real), p, training)
         return x * mask

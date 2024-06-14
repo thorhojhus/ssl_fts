@@ -12,7 +12,7 @@ python run.py \
     --epochs 50 \
     --H_order 10 \
     --channels 862 \
-    --num_layers 5 \
-    --num_hidden 128 \
+    --num_layers 3 \
+    --num_hidden 512 \
     --use_original_datahandling \
     --no-use_wandb \
