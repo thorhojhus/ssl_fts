@@ -4,137 +4,77 @@ import matplotlib.pyplot as plt
 import argparse
 
 class SyntheticDatasetGenerator:
-    def __init__(self, length: int, num_channels: int = 1):
+    def __init__(self, length):
         self.length = length
         self.time_series = np.arange(length)
-        self.channels = num_channels
-        self.data = np.zeros((length, num_channels))
+        self.data = np.zeros(length)
         self.shift_counter = 0
         self.signal_counter = 0
-
-    def add_spiked_correlation(
-        self,
-        spike_amplitude: float,
-        spike_length: int,
-        spike_delay: int,
-        spike_channel: int,
-        ref_channel: int,
-        gaussian: bool = False,
-    ):
-        start = np.random.randint(0, self.length - spike_delay - spike_length)
-        correlated_start = start + spike_delay
-        sign = np.random.choice([-1, 1])
-        if gaussian:
-            magnitude = np.random.normal(spike_amplitude, abs(spike_amplitude) * 0.1)
-        else:
-            magnitude = spike_amplitude
-        self.data[start : start + spike_length, spike_channel] += sign * magnitude
-        self.data[correlated_start : correlated_start + spike_length, ref_channel] += (
-            sign * magnitude
-        )
-
-    def add_relative_amplitude_lag(
-        self,
-        lag: int,
-        amplitude_proportion: float,
-        lag_channel: int,
-        reference_channel: int,
-    ):
-        for i in range(lag, self.length):
-            self.data[i, lag_channel] = (
-                amplitude_proportion * self.data[i - lag, reference_channel]
-            )
-
-    def add_linear_trend(self, slope, intercept, channel: int = 0):
-        self.data[:, channel] += slope * self.time_series + intercept
-
-    def add_sin_wave(self, amplitude, frequency, channel: int = 0):
-        self.data[:, channel] += amplitude * np.sin(
-            2 * np.pi * frequency * self.time_series / self.length
-        )
-
-    def add_noise(self, mean=0, std=1, channel: int = 0):
-        self.data[:, channel] += np.random.normal(mean, std, self.length)
-
-    def add_exponential_growth(self, base, channel: int = 0):
-        self.data[:, channel] += base**self.time_series
-
-    def add_mean_shift(
-        self, shift_magnitude, num_shifts, gaussian=False, channel: int = 0
-    ):
-        for _ in range(num_shifts):
+    
+    def add_linear_trend(self, slope, intercept):
+        self.data += slope * self.time_series + intercept
+    
+    def add_sin_wave(self, amplitude, frequency):
+        self.data += amplitude * np.sin(2 * np.pi * frequency * self.time_series / self.length)
+    
+    def add_noise(self, mean=0, std=1):
+        self.data += np.random.normal(mean, std, self.length)
+    
+    def add_exponential_growth(self, base):
+        self.data += base ** self.time_series
+    
+    def add_mean_shift(self, shift_magnitude, num_shifts, gaussian=False):
+        for i in range(num_shifts):
             start = np.random.randint(0, self.length)
             sign = np.random.choice([-1, 1])
             if gaussian:
-                magnitude = np.random.normal(
-                    shift_magnitude, abs(shift_magnitude) * 0.1
-                )
+                magnitude = np.random.normal(shift_magnitude, abs(shift_magnitude) * 0.1)
             else:
                 magnitude = shift_magnitude
-            self.data[start:, channel] += sign * magnitude
-
-    def add_balanced_mean_shifts(
-        self, shift_magnitude, num_shifts, gaussian=False, channel: int = 0
-    ):
+            self.data[start:] += sign * magnitude
+    
+    def add_balanced_mean_shifts(self, shift_magnitude, num_shifts, gaussian=False):
         num_positive_shifts = num_shifts // 2
         num_negative_shifts = num_shifts - num_positive_shifts
-
+        
         for _ in range(num_positive_shifts):
-            self.add_single_mean_shift(
-                shift_magnitude, gaussian, sign=1, channel=channel
-            )
-
+            self.add_single_mean_shift(shift_magnitude, gaussian, sign=1)
+        
         for _ in range(num_negative_shifts):
-            self.add_single_mean_shift(
-                shift_magnitude, gaussian, sign=-1, channel=channel
-            )
-
-    def add_single_mean_shift(self, shift_magnitude, gaussian, sign, channel: int = 0):
+            self.add_single_mean_shift(shift_magnitude, gaussian, sign=-1)
+    
+    def add_single_mean_shift(self, shift_magnitude, gaussian, sign):
         start = np.random.randint(0, self.length)
         if gaussian:
             magnitude = np.random.normal(shift_magnitude, abs(shift_magnitude) * 0.1)
         else:
             magnitude = shift_magnitude
-        self.data[start:, channel] += sign * magnitude
-
-    def add_random_signal_with_precursor(
-        self,
-        precursor_amplitude,
-        signal_amplitude,
-        max_precursor_length,
-        min_delay,
-        max_delay,
-        num_signals,
-        channel: int = 0,
-    ):
+        self.data[start:] += sign * magnitude
+    
+    def add_random_signal_with_precursor(self, precursor_amplitude, signal_amplitude, max_precursor_length, min_delay, max_delay, num_signals):
         for _ in range(num_signals):
             start = np.random.randint(0, self.length)
             precursor_length = np.random.randint(1, max_precursor_length)
             precursor_end = min(start + precursor_length, self.length)
-          
+            
             delay = np.random.randint(min_delay, max_delay)
             signal_start = precursor_end + delay
             signal_end = min(signal_start + precursor_length, self.length)
-
+            
             sign = (-1) ** self.signal_counter
             if precursor_end < self.length:
-                self.data[start:precursor_end, channel] += sign * precursor_amplitude
+                self.data[start:precursor_end] += sign * precursor_amplitude
             if signal_start < self.length:
-                self.data[signal_start:signal_end, channel] += sign * signal_amplitude
+                self.data[signal_start:signal_end] += sign * signal_amplitude
             self.signal_counter += 1
-
+    
     def save_to_csv(self, filename):
         df = pd.DataFrame({"time": self.time_series, "value": self.data})
         df.to_csv(filename, index=False)
 
     def plot_data(self):
         plt.figure(figsize=(10, 5))
-        for channel in range(self.channels):
-            plt.plot(
-                self.time_series,
-                self.data[:, channel],
-                label=f"Synthetic Data [Channel {channel}]",
-            )
+        plt.plot(self.time_series, self.data, label="Synthetic Data")
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.title("Synthetic Dataset")
