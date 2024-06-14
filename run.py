@@ -53,6 +53,7 @@ if __name__ == "__main__":
         model = FITS(args)
     
     summary(model)
+    print(model)
 
     if args.train_and_finetune and (not args.test_only):
         model, _ = train(
