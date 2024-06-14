@@ -1,0 +1,31 @@
+
+
+
+
+
+
+
+Dominance frequency: 82
+Flag: train 
+Length of data set 36072
+Flag: val 
+Length of data set 5175
+Flag: test 
+Length of data set 10444
+=================================================================
+Layer (type:depth-idx)                   Param #
+=================================================================
+ARIMA                                    --
+=================================================================
+Total params: 0
+Trainable params: 0
+Non-trainable params: 0
+=================================================================
+Exception ignored in: <function _MultiProcessingDataLoaderIter.__del__ at 0x7f43c02091c0>
+Traceback (most recent call last):
+  File "/home/thorh/miniforge3/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 1478, in __del__
+    def __del__(self):
+
+KeyboardInterrupt: 
+Traceback (most recent call last):
+
