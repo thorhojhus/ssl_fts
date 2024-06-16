@@ -1,0 +1,8 @@
+Dominance frequency: 196
+
+Length of train set: 33745
+
+Length of val set: 11425
+
+Length of test set: 11425
+Test loss MSE: 0.2235, Test loss RMAE: 0.5458
