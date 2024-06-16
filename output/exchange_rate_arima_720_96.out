@@ -1,0 +1,8 @@
+Dominance frequency: 196
+Flag: train 
+Length of data set 4496
+Flag: val 
+Length of data set 665
+Flag: test 
+Length of data set 1422
+Test loss MSE: 0.0779, Test loss RMAE: 0.4352

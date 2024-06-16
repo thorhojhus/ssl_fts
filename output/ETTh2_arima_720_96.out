@@ -5,4 +5,4 @@ Flag: val
 Length of data set 2785
 Flag: test 
 Length of data set 2785
-Test loss MSE: 0.8393, Test loss RMAE: 0.7719
+Test loss MSE: 0.4440, Test loss RMAE: 0.6528
