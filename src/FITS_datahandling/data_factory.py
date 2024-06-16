@@ -47,13 +47,13 @@ def data_provider(args, flag):
     if args.data == "traffic":
         args.data_path = "traffic.csv"
     if args.data == "exchange_rate":
-        args.data_path = "traffic.csv"
+        args.data_path = "exchange_rate.csv"
     if args.data == "national_illness":
         args.data_path = "national_illness.csv"
 
     if flag == 'test':
-        shuffle_flag = False
-        drop_last = False # True
+        shuffle_flag = False if args.model != "ARIMA" else True
+        drop_last = False
         batch_size = args.batch_size
         freq = args.freq
     elif flag == 'pred':
@@ -79,7 +79,7 @@ def data_provider(args, flag):
         timeenc=timeenc,
         freq=freq
     )
-    print("Flag:", flag, "\nLength of data set", len(data_set))
+    print(f"\nLength of {flag} set: {len(data_set)}")
     data_loader = DataLoader(
         data_set,
         batch_size=batch_size,
