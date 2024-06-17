@@ -25,7 +25,6 @@ def train(
 ):
 
     model.to(device)
-    print(device)
     criterion_mse = nn.MSELoss()
     criterion_rmae = RMAE
 
