@@ -214,4 +214,9 @@ parser.add_argument(
     default="FITS",
     help='Select between [FITS, ARIMA, NF (NaiveForecast)]')
 
+parser.add_argument(
+    '--save_state_dict',
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help='Save state dict of model')
 # type: ignore
