@@ -2,49 +2,10 @@ from argparse import Namespace
 import torch
 from torch import nn
 from torch.fft import rfft
-from torch.nn import functional as F
 
 # An implementation of the FITS model as described in https://arxiv.org/abs/2307.03756 (FITS: Frequency Interpolation Time Series Forecasting)
 # with better annotation and more clear model structure - the original code for the model can be found here: https://github.com/VEWOXIC/FITS
 
-
-class ComplexReLU(nn.Module):
-    def __init__(self):
-        super(ComplexReLU, self).__init__()
-        self.relu = nn.ReLU()
-
-    def forward(self, x):
-        # https://arxiv.org/pdf/1705.09792 eq. 4
-        real = self.relu(x.real)
-        imag = self.relu(x.imag)
-        return torch.complex(real, imag)
-
-class ModReLU(nn.Module):
-    def __init__(self, input_size):
-        super(ModReLU, self).__init__()
-        self.b = nn.Parameter(torch.zeros(input_size))
-
-    def forward(self, z):
-        # https://arxiv.org/pdf/1705.09792 eq. 3
-        magnitude = torch.abs(z)
-        relu = F.relu(magnitude - self.b)
-        normalized = z / (magnitude + 1e-8)
-        return relu * normalized
-
-def dropout_complex(x, p=0.9, training=True):
-    if x.is_complex():
-        mask = F.dropout(torch.ones_like(x.real), p, training)
-        return x * mask
-    else:
-        return F.dropout(x, p, training)
-    
-class ComplexDropout(nn.Module):
-    def __init__(self, p=0.5):
-        super(ComplexDropout, self).__init__()
-        self.p = p
-
-    def forward(self, x):
-        return dropout_complex(x, self.p, self.training)
 
 class FITS(nn.Module):
     """Reimplementation of the FITS model.
@@ -62,45 +23,54 @@ class FITS(nn.Module):
         self.cutoff_frequency = args.dominance_freq
         self.seq_len = args.seq_len
         self.pred_len = args.pred_len
-        if args.upsample_rate == 0:
-            self.upsample_rate = (args.seq_len + args.pred_len) / args.seq_len
-        else:
-            self.upsample_rate = args.upsample_rate
-
+        self.upsample_rate = (args.seq_len + args.pred_len) / args.seq_len
         self.channels = args.channels
-        self.num_layers = args.num_layers
-
-        layers = []
-        in_features = args.dominance_freq
-        for i in range(self.num_layers):
-            out_features = (
-                int(args.dominance_freq * self.upsample_rate)
-                if self.num_layers == 1 or i == self.num_layers - 1
-                else args.num_hidden
-            )
-            layers.append(
-                nn.Linear(
-                    in_features=in_features,
-                    out_features=out_features,
-                    dtype=torch.cfloat,
-                    bias=True,
-                )
-            )
-            if i != self.num_layers - 1:
-                layers.append(ComplexDropout())
-                layers.append(ModReLU(out_features))
-            in_features = out_features
 
         self.frequency_upsampler = (
-            nn.Sequential(*layers)
+            nn.Linear(
+                in_features=args.dominance_freq,
+                out_features=int(args.dominance_freq * self.upsample_rate),
+                dtype=torch.cfloat,
+                bias=True,
+            )
             if not args.individual
-            else nn.ModuleList([nn.Sequential(*layers) for _ in range(args.channels)])
+            else nn.ModuleList(
+                [
+                    nn.Linear(
+                        in_features=args.dominance_freq,
+                        out_features=int(args.dominance_freq * self.upsample_rate),
+                        dtype=torch.cfloat,
+                        bias=True,
+                    )
+                    for _ in range(args.channels)
+                ]
+            )
         )
 
         self.individual = args.individual
         self.debug = args.debug
         if args.debug:
             self.debug_tensors = {}
+
+
+        layer_list = []
+        ts_size = args.pred_len + args.seq_len
+        
+        # input size after irfft
+        ts_size_in = int((ts_size))
+        first_layer = nn.Linear(ts_size_in, args.num_hidden)
+        layer_list.append(first_layer)
+        layer_list.append(nn.LeakyReLU())
+
+        for i in range(args.num_layers):
+            layer_list.append(nn.Linear(args.num_hidden, args.num_hidden))
+            layer_list.append(nn.LeakyReLU())
+        
+        output_layer = nn.Linear(args.num_hidden, ts_size)
+
+        layer_list.append(output_layer)
+
+        self.post_upscale_nn = nn.Sequential(*layer_list)
 
     def channel_wise_frequency_upsampler(
         self, ts_frequency_data_filtered: torch.Tensor
@@ -120,6 +90,7 @@ class FITS(nn.Module):
             )
         return complex_valued_data
 
+
     def forward(self, ts_data: torch.Tensor) -> torch.Tensor:
         # 1) Normalization of the input tensor:
         ts_mean, ts_var = (
@@ -133,7 +104,7 @@ class FITS(nn.Module):
 
         # 3) perform a low pass filter to remove high frequency noise, which contributes little to the overall signal
         ts_frequency_data_filtered = ts_frequency_data[:, 0 : self.cutoff_frequency, :]
-
+        #print(ts_frequency_data_filtered.shape)
         # 4) Run the tensor through a complex valued linear layer
         if self.individual:
             complex_valued_data = self.channel_wise_frequency_upsampler(
@@ -161,8 +132,13 @@ class FITS(nn.Module):
         norm_xy = torch.fft.irfft(norm_spec_xy, dim=1)
         norm_xy = norm_xy * self.upsample_rate
 
-        # 8) Reverse Normalization
+        # 8) Post upscaling neural network
+        xy = self.post_upscale_nn(norm_xy.permute(0, 2, 1)).permute(0, 2, 1)
+        
+        # 9) Reverse Normalization
         xy = norm_xy * torch.sqrt(ts_var) + ts_mean
+
+
 
         if self.debug:
             self.debug_tensors = {
@@ -178,19 +154,23 @@ class FITS(nn.Module):
         return xy
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+    # Example usage of the FITS model
     args = Namespace(
         dominance_freq=10,
         seq_len=100,
-        pred_len=10,
-        upsample_rate=0,
+        pred_len=100,
+        upsample_rate=2,
         channels=1,
-        num_layers=3,
-        num_hidden=128,
         individual=False,
         debug=False,
+        num_hidden=64,
+        num_layers=1,
     )
     model = FITS(args)
-    ts_data = torch.randn(32, 100, 1)
-    output = model(ts_data)
-    print(output.shape)
+    x = torch.randn([32, 100, 1])
+    y = model(x)
+    print(model)
+    print(y.shape)
+    if model.debug:
+        print(model.debug_tensors)
