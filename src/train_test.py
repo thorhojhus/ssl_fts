@@ -42,7 +42,8 @@ def train(
             "epochs": epochs,
             "model": model.__class__.__name__,
             "device": str(device),
-        }
+        },
+        allow_val_change=True,
     )
 
     print(f"Initial Learning Rate: {current_lr}")

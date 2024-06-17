@@ -10,6 +10,10 @@ from rich import print
 import wandb
 import datetime
 from torchinfo import summary
+from src.models.real_deep_FITS import FITS as RealDeepFITS
+from src.models.deep_FITS import FITS as DeepFITS
+from src.models.deep_FITS_after_upscaler import FITS as DeepFITSAfterUpscaler
+from src.models.FITS_bypass_layer import FITS as FITSBypassLayer
 
 warnings.filterwarnings("ignore")
 
@@ -17,6 +21,10 @@ model_dict = {
     "FITS": FITS,
     "ARIMA": ARIMA,
     "NF": NaiveForecast,
+    "real_deep_FITS": RealDeepFITS,
+    "deep_FITS": DeepFITS,
+    "deep_FITS_after_upscaler": DeepFITSAfterUpscaler,
+    "FITS_bypass_layer": FITSBypassLayer,
 }
 
 if __name__ == "__main__":
@@ -48,16 +56,6 @@ if __name__ == "__main__":
     
     
     model = model_dict[args.model](args)
-
-    if args.use_deep:
-        #from src.models.deep_FITS import FITS
-        #from src.models.deep_FITS_after_upscaler import FITS
-        from src.models.FITS_bypass_layer import FITS
-        model = FITS(args)
-
-    if args.use_real_FITS:
-        from src.models.real_deep_FITS import FITS
-        model = FITS(args)
 
     
     summary(model)
