@@ -157,6 +157,7 @@ def test(
     device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     pred_len=360,
     ft=True,
+    args=None,
 ):
 
     model.to(device)
@@ -167,7 +168,8 @@ def test(
         model.eval()
         test_loss_mse = []
         test_loss_rmae = []
-        for batch_x, batch_y, *_ in test_loader:
+        i = 0
+        for i, (batch_x, batch_y, *_) in enumerate(test_loader):
             batch_x = batch_x.float().to(device)
             batch_y = batch_y.float().to(device)[:, -pred_len:, :]
             batch_xy = torch.cat([batch_x, batch_y], dim=1).to(device)
@@ -184,6 +186,9 @@ def test(
 
             test_loss_mse.append(loss_mse.item())
             test_loss_rmae.append(loss_rmae.item())
+            i += 1
+            if i == 50 and args.model == "ARIMA":
+                break
 
         wandb.log(
             {
