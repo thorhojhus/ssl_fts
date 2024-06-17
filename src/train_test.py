@@ -5,8 +5,11 @@ from torch.utils.data import DataLoader
 import wandb
 from rich import print
 
-def RMAE(output, target):
-    return torch.sqrt(torch.mean(torch.abs(output - target)))
+# def MAE(output, target):
+#     return torch.sqrt(torch.mean(torch.abs(output - target)))
+
+def MAE(output, target):
+    return torch.mean(torch.abs(output - target))
 
 def train(
     model: nn.Module,
@@ -26,7 +29,7 @@ def train(
 
     model.to(device)
     criterion_mse = nn.MSELoss()
-    criterion_rmae = RMAE
+    criterion_mae = MAE
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -53,7 +56,7 @@ def train(
     for epoch in range(epochs):
         model.train()
         train_loss_mse = []
-        train_loss_rmae = []
+        train_loss_mae = []
         for batch_x, batch_y, *_ in train_loader:
             optimizer.zero_grad()
             batch_x = batch_x.float().to(device)
@@ -64,21 +67,21 @@ def train(
                 output = output[:, -pred_len:, f_dim:]
                 batch_y = batch_y[:, -pred_len:, f_dim:].to(device)
                 loss_mse = criterion_mse(output, batch_y)
-                loss_rmae = criterion_rmae(output, batch_y)
+                loss_mae = criterion_mae(output, batch_y)
             else:
                 output = output[:, :, f_dim:]
                 loss_mse = criterion_mse(output, batch_xy)
-                loss_rmae = criterion_rmae(output, batch_xy)
+                loss_mae = criterion_mae(output, batch_xy)
 
             train_loss_mse.append(loss_mse.item())
-            train_loss_rmae.append(loss_rmae.item())
+            train_loss_mae.append(loss_mae.item())
             loss_mse.backward()
             optimizer.step()
 
         # Validate after each epoch
         model.eval()
         val_loss_mse = []
-        val_loss_rmae = []
+        val_loss_mae = []
         with torch.no_grad():
             for batch_x, batch_y, *_ in val_loader:
                 batch_x = batch_x.float().to(device)
@@ -89,17 +92,17 @@ def train(
                     output = output[:, -pred_len:, f_dim:]
                     batch_y = batch_y[:, -pred_len:, f_dim:].to(device)
                     loss_mse = criterion_mse(output, batch_y)
-                    loss_rmae = criterion_rmae(output, batch_y)
+                    loss_mae = criterion_mae(output, batch_y)
                 else:
                     output = output[:, :, f_dim:]
                     loss_mse = criterion_mse(output, batch_xy)
-                    loss_rmae = criterion_rmae(output, batch_xy)
+                    loss_mae = criterion_mae(output, batch_xy)
 
                 val_loss_mse.append(loss_mse.item())
-                val_loss_rmae.append(loss_rmae.item())
+                val_loss_mae.append(loss_mae.item())
 
         mean_val_loss_mse = np.mean(val_loss_mse)
-        mean_val_loss_rmae = np.mean(val_loss_rmae)
+        mean_val_loss_mae = np.mean(val_loss_mae)
 
         scheduler.step(mean_val_loss_mse)
 
@@ -112,9 +115,9 @@ def train(
             {
                 "epoch": epoch + 1,
                 "train_loss_mse": np.mean(train_loss_mse),
-                "train_loss_rmae": np.mean(train_loss_rmae),
+                "train_loss_mae": np.mean(train_loss_mae),
                 "val_loss_mse": mean_val_loss_mse,
-                "val_loss_rmae": mean_val_loss_rmae,
+                "val_loss_mae": mean_val_loss_mae,
                 "learning_rate": current_lr,
             }
         )
@@ -124,7 +127,7 @@ def train(
         )
 
         # print(
-        #     f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train RMAE: {np.mean(train_loss_rmae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val RMAE: {mean_val_loss_rmae:.4f}"
+        #     f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train MAE: {np.mean(train_loss_mae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val MAE: {mean_val_loss_mae:.4f}"
         # )
 
         # Early stopping
@@ -162,12 +165,12 @@ def test(
 
     model.to(device)
     criterion_mse = nn.MSELoss()
-    criterion_rmae = RMAE
+    criterion_mae = MAE
 
     with torch.no_grad():
         model.eval()
         test_loss_mse = []
-        test_loss_rmae = []
+        test_loss_mae = []
         i = 0
         for i, (batch_x, batch_y, *_) in enumerate(test_loader):
             batch_x = batch_x.float().to(device)
@@ -178,14 +181,14 @@ def test(
                 output = output[:, -pred_len:, f_dim:]
                 batch_y = batch_y[:, -pred_len:, f_dim:].to(device)
                 loss_mse = criterion_mse(output, batch_y)
-                loss_rmae = criterion_rmae(output, batch_y)
+                loss_mae = criterion_mae(output, batch_y)
             else:
                 output = output[:, :, f_dim:]
                 loss_mse = criterion_mse(output, batch_xy)
-                loss_rmae = criterion_rmae(output, batch_xy)
+                loss_mae = criterion_mae(output, batch_xy)
 
             test_loss_mse.append(loss_mse.item())
-            test_loss_rmae.append(loss_rmae.item())
+            test_loss_mae.append(loss_mae.item())
             i += 1
             if i == 50 and args.model == "ARIMA":
                 break
@@ -193,12 +196,12 @@ def test(
         wandb.log(
             {
                 "test_loss_mse": np.mean(test_loss_mse),
-                "test_loss_rmae": np.mean(test_loss_rmae),
+                "test_loss_mae": np.mean(test_loss_mae),
             }
         )
 
         print(
-            f"Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss RMAE: {np.mean(test_loss_rmae):.4f}"
+            f"Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss MAE: {np.mean(test_loss_mae):.4f}"
         )
 
     return model, np.mean(test_loss_mse)
