@@ -5,9 +5,6 @@ from torch.utils.data import DataLoader
 import wandb
 from rich import print
 
-# def MAE(output, target):
-#     return torch.sqrt(torch.mean(torch.abs(output - target)))
-
 def MAE(output, target):
     return torch.mean(torch.abs(output - target))
 
