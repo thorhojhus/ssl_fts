@@ -103,3 +103,7 @@ if __name__ == "__main__":
             f_dim=-1 if args.features == "MS" else 0,
             ft=True,
         )
+
+    if args.save_state_dict:
+        import torch
+        torch.save(model.state_dict(), f"models/model_{args.model}_data_{args.dataset}_pred{args.pred_len}_state_dict.pth")
