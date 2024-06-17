@@ -50,6 +50,8 @@ def data_provider(args, flag):
         args.data_path = "exchange_rate.csv"
     if args.data == "national_illness":
         args.data_path = "national_illness.csv"
+    if args.data == "motor":
+        args.data_path = "motortemp.csv"
 
     if flag == 'test':
         shuffle_flag = False if args.model != "ARIMA" else True
