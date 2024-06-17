@@ -146,6 +146,7 @@ def train(
         device=device,
         pred_len=pred_len,
         ft=True,
+        args=args,
     )
 
     return model, test_mse
