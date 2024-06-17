@@ -1,6 +1,6 @@
 from src.models.FITS import FITS
 from src.models.baseline import NaiveForecast
-from src.models.ARIMA import ARIMA
+from models.ARIMA_multiprocessing import ARIMA
 from src.train_test import train
 from src.train_test import test
 from src.dataset import data_setup
