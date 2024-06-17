@@ -287,8 +287,11 @@ class Dataset_Custom(Dataset):
         if self.args.all_cols:
             self.target = list(df_raw.columns[1:])
         cols = list(df_raw.columns)
-        if isinstance(self.target, list):
+        if isinstance(self.target, list): # needs to train with features S which implies a single target
             self.target = self.target[0]
+        if self.args.all_cols:
+           self.target = list(df_raw.columns[1:])
+        cols = list(df_raw.columns)
         #print("Target:", self.target)
         #print("Columns:", cols)
         # if self.target not in cols:
@@ -298,7 +301,7 @@ class Dataset_Custom(Dataset):
         except:
             pass
         cols.remove('date')
-        df_raw = df_raw[['date'] + cols + [self.target]]
+        df_raw = df_raw[['date'] + cols + self.target]
         # print(cols)
         num_train = int(len(df_raw) * 0.7)
         num_test = int(len(df_raw) * 0.2)

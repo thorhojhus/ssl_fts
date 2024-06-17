@@ -212,11 +212,19 @@ parser.add_argument(
     '--model',
     type=str,
     default="FITS",
-    help='Select between [FITS, ARIMA, NF (NaiveForecast)]')
+    help='Select between [FITS, ARIMA, NF (NaiveForecast), real_deep_FITS, FITS_bypass_layer, deep_FITS, deep_FITS_after_upscaler]')
 
 parser.add_argument(
     '--save_state_dict',
     action=argparse.BooleanOptionalAction,
     default=False,
     help='Save state dict of model')
+
+parser.add_argument(
+    "--use_deep",
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help="Use deep FITS",
+)
+
 # type: ignore
