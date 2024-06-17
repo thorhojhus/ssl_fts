@@ -48,8 +48,11 @@ if __name__ == "__main__":
     
     
     model = model_dict[args.model](args)
-    if args.num_layers > 1:
-        from src.models.deep_FITS import FITS
+
+    if args.use_deep:
+        #from src.models.deep_FITS import FITS
+        #from src.models.deep_FITS_after_upscaler import FITS
+        from src.models.FITS_bypass_layer import FITS
         model = FITS(args)
 
     if args.use_real_FITS:
@@ -69,6 +72,7 @@ if __name__ == "__main__":
             epochs=args.epochs,
             pred_len=args.pred_len,
             features=args.features,
+            #device="cpu",
             ft=0,
             args=args,
         )
@@ -80,6 +84,7 @@ if __name__ == "__main__":
             epochs=args.epochs,
             pred_len=args.pred_len,
             features=args.features,
+            #device="cpu",
             ft=1,
             args=args,
         )
@@ -92,6 +97,7 @@ if __name__ == "__main__":
             epochs=args.epochs,
             pred_len=args.pred_len,
             features=args.features,
+            #device="cpu",
             ft=args.ft,
             args=args,
         )
@@ -101,7 +107,9 @@ if __name__ == "__main__":
             test_loader=test_loader,
             pred_len=args.pred_len,
             f_dim=-1 if args.features == "MS" else 0,
+            #device="cpu",
             ft=True,
+            args=args,
         )
 
     if args.save_state_dict:

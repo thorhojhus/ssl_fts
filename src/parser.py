@@ -219,4 +219,12 @@ parser.add_argument(
     action=argparse.BooleanOptionalAction,
     default=False,
     help='Save state dict of model')
+
+parser.add_argument(
+    "--use_deep",
+    action=argparse.BooleanOptionalAction,
+    default=False,
+    help="Use deep FITS",
+)
+
 # type: ignore
