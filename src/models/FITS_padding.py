@@ -77,7 +77,7 @@ class FITS(nn.Module):
         # 2) perform real fast fourier transform on the input tensor
         ts_frequency_data = rfft(input=normalized_ts_data, dim=1)
 
-        # 3) perform a low pass filter to remove high frequency noise, which contributes little to the overall signal
+        # 3) perform a low pass filter to remove high frequency noise
         ts_frequency_data_filtered = ts_frequency_data[:, 0 : self.cutoff_frequency, :]
 
         # 4) Run the tensor through a complex valued linear layer
@@ -94,7 +94,7 @@ class FITS(nn.Module):
         norm_spec_xy = torch.zeros(
             [
                 complex_valued_data.size(0),
-                int((self.seq_len + self.pred_len) / 2 + 1),
+                int(self.total_len / 2 + 1),
                 complex_valued_data.size(2),
             ],
             dtype=complex_valued_data.dtype,
