@@ -1,0 +1,31 @@
+Running model: real_deep_FITS with seq_len: 96
+Test loss MSE: 0.5771, Test loss MAE: 0.5104
+Running model: real_deep_FITS with seq_len: 192
+Test loss MSE: 0.5311, Test loss MAE: 0.4899
+Running model: real_deep_FITS with seq_len: 336
+Test loss MSE: 0.4727, Test loss MAE: 0.4602
+Running model: real_deep_FITS with seq_len: 720
+Test loss MSE: 0.4261, Test loss MAE: 0.4287
+Running model: FITS_bypass_layer with seq_len: 96
+Test loss MSE: 0.4861, Test loss MAE: 0.4485
+Running model: FITS_bypass_layer with seq_len: 192
+Test loss MSE: 0.4405, Test loss MAE: 0.4229
+Running model: FITS_bypass_layer with seq_len: 336
+Test loss MSE: 0.4275, Test loss MAE: 0.4165
+Running model: FITS_bypass_layer with seq_len: 720
+Test loss MSE: 0.4155, Test loss MAE: 0.4113
+Running model: deep_FITS with seq_len: 96
+Test loss MSE: 0.4871, Test loss MAE: 0.4514
+Running model: deep_FITS with seq_len: 192
+Test loss MSE: 0.4416, Test loss MAE: 0.4263
+Running model: deep_FITS with seq_len: 336
+Test loss MSE: 0.4272, Test loss MAE: 0.4199
+Running model: deep_FITS with seq_len: 720
+Test loss MSE: 0.4138, Test loss MAE: 0.4144
+Running model: deep_FITS_after_upscaler with seq_len: 96
+Test loss MSE: 0.4866, Test loss MAE: 0.4488
+Running model: deep_FITS_after_upscaler with seq_len: 192
+Test loss MSE: 0.4407, Test loss MAE: 0.4227
+Running model: deep_FITS_after_upscaler with seq_len: 336
+Test loss MSE: 0.4274, Test loss MAE: 0.4161
+Running model: deep_FITS_after_upscaler with seq_len: 720
