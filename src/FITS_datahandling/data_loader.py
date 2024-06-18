@@ -284,24 +284,21 @@ class Dataset_Custom(Dataset):
         df_raw.columns: ['date', ...(other features), target feature]
         '''
         df_raw.columns = df_raw.columns.str.lower()
-        if self.args.all_cols:
-            self.target = list(df_raw.columns[1:])
         cols = list(df_raw.columns)
         if isinstance(self.target, list): # needs to train with features S which implies a single target
-            self.target = self.target[0]
+            self.target = self.target[0].lower()
         if self.args.all_cols:
            self.target = list(df_raw.columns[1:])
         cols = list(df_raw.columns)
+        self.date_exists = True if 'date' in cols else False
         #print("Target:", self.target)
         #print("Columns:", cols)
-        # if self.target not in cols:
-        #     raise ValueError(f"Target column '{self.target}' not found in the dataset columns.")
         try:
             cols.remove(self.target)
         except:
             pass
-        cols.remove('date')
-        df_raw = df_raw[['date'] + cols + self.target]
+        if self.date_exists:
+            cols.remove('date')
         # print(cols)
         num_train = int(len(df_raw) * 0.7)
         num_test = int(len(df_raw) * 0.2)
@@ -326,27 +323,27 @@ class Dataset_Custom(Dataset):
         if self.scale:
             train_data = df_data[border1s[0]:border2s[0]]
             self.scaler.fit(train_data.values)
-            # print(self.scaler.mean_)
-            # exit()
             data = self.scaler.transform(df_data.values)
         else:
             data = df_data.values
 
-        df_stamp = df_raw[['date']][border1:border2]
-        df_stamp['date'] = pd.to_datetime(df_stamp.date)
-        if self.timeenc == 0:
-            df_stamp['month'] = df_stamp.date.apply(lambda row: row.month, 1)
-            df_stamp['day'] = df_stamp.date.apply(lambda row: row.day, 1)
-            df_stamp['weekday'] = df_stamp.date.apply(lambda row: row.weekday(), 1)
-            df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
-            data_stamp = df_stamp.drop(['date'], 1).values
-        elif self.timeenc == 1:
-            data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
-            data_stamp = data_stamp.transpose(1, 0)
+        if self.date_exists:
+            df_stamp = df_raw[['date']][border1:border2]
+            df_stamp['date'] = pd.to_datetime(df_stamp.date)
+            if self.timeenc == 0:
+                df_stamp['month'] = df_stamp.date.apply(lambda row: row.month, 1)
+                df_stamp['day'] = df_stamp.date.apply(lambda row: row.day, 1)
+                df_stamp['weekday'] = df_stamp.date.apply(lambda row: row.weekday(), 1)
+                df_stamp['hour'] = df_stamp.date.apply(lambda row: row.hour, 1)
+                data_stamp = df_stamp.drop(['date'], 1).values
+            elif self.timeenc == 1:
+                data_stamp = time_features(pd.to_datetime(df_stamp['date'].values), freq=self.freq)
+                data_stamp = data_stamp.transpose(1, 0)
 
         self.data_x = data[border1:border2]
         self.data_y = data[border1:border2]
-        self.data_stamp = data_stamp
+        if self.date_exists:
+            self.data_stamp = data_stamp
 
     def regenerate_augmentation_data(self):
         self.collect_all_data()
@@ -373,13 +370,17 @@ class Dataset_Custom(Dataset):
                 r_end = r_begin + self.label_len + self.pred_len
                 self.x_data.append(self.data_x[s_begin:s_end])
                 self.y_data.append(self.data_y[r_begin:r_end])
-                self.x_time.append(self.data_stamp[s_begin:s_end]) 
-                self.y_time.append(self.data_stamp[r_begin:r_end])
+                if self.date_exists:
+                    self.x_time.append(self.data_stamp[s_begin:s_end]) 
+                    self.y_time.append(self.data_stamp[r_begin:r_end])
 
     def __getitem__(self, index):
         seq_x = self.x_data[index]
         seq_y = self.y_data[index]
-        return seq_x, seq_y, self.x_time[index], self.y_time[index]
+        if self.date_exists:
+            return seq_x, seq_y, self.x_time[index], self.y_time[index]
+        else:
+            return seq_x, seq_y, np.array([]), np.array([])
 
     def __len__(self):
         return len(self.x_data)
