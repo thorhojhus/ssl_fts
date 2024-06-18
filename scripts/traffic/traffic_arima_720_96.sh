@@ -7,7 +7,7 @@ python run.py \
     --dominance_freq 0 \
     --train_and_finetune \
     --all_cols True \
-    --batch_size 64 \
+    --batch_size 1 \
     --dataset traffic \
     --epochs 50 \
     --H_order 10 \

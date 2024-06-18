@@ -8,7 +8,7 @@ pred_lens=(96 192 336 720)
 for dataset in "${datasets[@]}"; do
     for model in "${models[@]}"; do
         for pred_len in "${pred_lens[@]}"; do
-            echo "Running model: $model with pred_len: $pred_len"
+            echo "Running model: $model with pred_len: $pred_len on $dataset"
             python run.py \
                 --normalize True \
                 --seq_len 720 \
