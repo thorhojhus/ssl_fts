@@ -14,7 +14,7 @@ from src.models.real_deep_FITS import FITS as RealDeepFITS
 from src.models.deep_FITS import FITS as DeepFITS
 from src.models.deep_FITS_after_upscaler import FITS as DeepFITSAfterUpscaler
 from src.models.FITS_bypass_layer import FITS as FITSBypassLayer
-
+from src.models.FITS_padding import FITS as FITSPadding
 warnings.filterwarnings("ignore")
 
 model_dict = {
@@ -25,6 +25,7 @@ model_dict = {
     "deep_FITS": DeepFITS,
     "deep_FITS_after_upscaler": DeepFITSAfterUpscaler,
     "FITS_bypass_layer": FITSBypassLayer,
+    "FITS_padding": FITSPadding,
 }
 
 if __name__ == "__main__":
@@ -41,10 +42,9 @@ if __name__ == "__main__":
 
     if args.dominance_freq == 0:
         args.dominance_freq = int(args.seq_len // args.base_T + 1) * args.H_order + 10
-        print("Dominance frequency:", args.dominance_freq)
+        #print("Dominance frequency:", args.dominance_freq)
 
     if args.use_original_datahandling:
-        # only works on linux for some reason
         from src.FITS_datahandling.data_factory import data_provider
 
         train_data, train_loader = data_provider(args, "train")
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     model = model_dict[args.model](args)
 
     
-    summary(model)
-    print(model)
+    #summary(model)
+    #print(model)
 
     if args.train_and_finetune and (not args.test_only):
         model, _ = train(
