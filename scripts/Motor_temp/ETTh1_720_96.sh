@@ -6,10 +6,11 @@ python run.py \
     --pred_len 96 \
     --dominance_freq 0 \
     --train_and_finetune \
-    --all_cols False \
     --batch_size 64 \
     --dataset motor \
-    --epochs 50 \
     --use_original_datahandling \
+    --epochs 50 \
     --H_order 6 \
+    --target "PM" \
+    --features "MS" \
     --save_state_dict
