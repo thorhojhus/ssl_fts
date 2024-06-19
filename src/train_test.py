@@ -163,7 +163,7 @@ def test(
 ):
 
     model.to(device)
-    criterion_se = nn.SmoothL1Loss()
+    criterion_se = nn.MSELoss()
     criterion_mse = nn.MSELoss()
     criterion_mae = MAE
 
