@@ -163,6 +163,7 @@ def test(
 ):
 
     model.to(device)
+    criterion_se = nn.SmoothL1Loss()
     criterion_mse = nn.MSELoss()
     criterion_mae = MAE
 
@@ -180,6 +181,7 @@ def test(
             if ft:
                 output = output[:, -pred_len:, f_dim:]
                 batch_y = batch_y[:, -pred_len:, f_dim:].to(device)
+                loss_se = criterion_se(output[-1], batch_y[-1])
                 loss_mse = criterion_mse(output, batch_y)
                 loss_mae = criterion_mae(output, batch_y)
             else:
@@ -188,7 +190,7 @@ def test(
                 loss_mae = criterion_mae(output, batch_xy)
 
             
-            test_loss_se.append((output - batch_y) ** 2)
+            test_loss_se.append(loss_se.item())
             test_loss_mse.append(loss_mse.item())
             test_loss_mae.append(loss_mae.item())
             i += 1
