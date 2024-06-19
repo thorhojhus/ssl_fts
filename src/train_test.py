@@ -181,7 +181,7 @@ def test(
             if ft:
                 output = output[:, -pred_len:, f_dim:]
                 batch_y = batch_y[:, -pred_len:, f_dim:].to(device)
-                loss_se = criterion_se(output[-1], batch_y[-1])
+                loss_se = criterion_se(output[:,-1,:], batch_y[:,-1,:])
                 loss_mse = criterion_mse(output, batch_y)
                 loss_mae = criterion_mae(output, batch_y)
             else:
@@ -205,7 +205,7 @@ def test(
         )
 
         print(
-            f"Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss MAE: {np.mean(test_loss_mae):.4f}"
+            f"Test loss SE: {np.mean(test_loss_se):.4f} Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss MAE: {np.mean(test_loss_mae):.4f}"
         )
 
     return model, np.mean(test_loss_mse)
