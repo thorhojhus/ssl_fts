@@ -168,6 +168,7 @@ def test(
 
     with torch.no_grad():
         model.eval()
+        test_loss_se=[]
         test_loss_mse = []
         test_loss_mae = []
         i = 0
@@ -186,6 +187,8 @@ def test(
                 loss_mse = criterion_mse(output, batch_xy)
                 loss_mae = criterion_mae(output, batch_xy)
 
+            
+            test_loss_se.append((output - batch_y) ** 2)
             test_loss_mse.append(loss_mse.item())
             test_loss_mae.append(loss_mae.item())
             i += 1
