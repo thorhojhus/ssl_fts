@@ -18,7 +18,8 @@ class SyntheticDatasetGenerator:
         self.data += amplitude * np.sin(2 * np.pi * frequency * self.time_series / self.length)
     
     def add_noise(self, mean=0, std=1):
-        self.data += np.random.normal(mean, std, self.length)
+        noise = np.random.normal(mean, std, self.length)
+        self.data = self.data + noise - np.mean(noise)
     
     def add_exponential_growth(self, base):
         self.data += base ** self.time_series
