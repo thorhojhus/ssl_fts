@@ -60,7 +60,7 @@ def data_provider(args, flag):
     if args.data == "motor":
         args.data_path = "motortemp.csv"
     if args.data == "GD":
-        args.data_path = "gd.csv"
+        args.data_path = "GD.csv"
     if args.data == "MRO":
         args.data_path = "MRO.csv"
 
