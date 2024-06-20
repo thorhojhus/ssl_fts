@@ -112,4 +112,4 @@ if __name__ == "__main__":
 
     if args.save_state_dict:
         import torch
-        torch.save(model.state_dict(), f"models/model_{args.model}_data_{args.dataset}_pred{args.pred_len}_state_dict.pth")
+        torch.save(model, f"src/saved_models/model_{args.model}_data_{args.dataset}_pred{args.pred_len}__pred__epochs{args.epochs}.pth")

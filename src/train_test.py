@@ -51,7 +51,7 @@ def train(
     best_val_loss = float('inf')
     epochs_no_improve = 0
 
-    for epoch in range(epochs):
+    for epoch in range(1, epochs+1):
         model.train()
         train_loss_mse = []
         train_loss_mae = []
@@ -111,7 +111,7 @@ def train(
 
         wandb.log(
             {
-                "epoch": epoch + 1,
+                "epoch": epoch,
                 "train_loss_mse": np.mean(train_loss_mse),
                 "train_loss_mae": np.mean(train_loss_mae),
                 "val_loss_mse": mean_val_loss_mse,
@@ -121,11 +121,11 @@ def train(
         )
 
         print(
-            f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Val MSE: {mean_val_loss_mse:.4f}"
+            f"Epoch: {epoch} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Val MSE: {mean_val_loss_mse:.4f}"
         )
 
         # print(
-        #     f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train MAE: {np.mean(train_loss_mae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val MAE: {mean_val_loss_mae:.4f}"
+        #     f"Epoch: {epoch} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train MAE: {np.mean(train_loss_mae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val MAE: {mean_val_loss_mae:.4f}"
         # )
 
         # Early stopping
@@ -136,7 +136,7 @@ def train(
             epochs_no_improve += 1
 
         if epochs_no_improve >= patience:
-            print(f"Early stopping triggered after {epoch+1} epochs")
+            print(f"Early stopping triggered after {epoch} epochs")
             break
 
     model, test_mse = test(
@@ -205,7 +205,8 @@ def test(
         )
 
         print(
-            f"Test loss SE: {np.mean(test_loss_se):.4f} Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss MAE: {np.mean(test_loss_mae):.4f}"
+            f"Test loss SE (mean from {i} batches) {np.mean(test_loss_se):.4f} Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss MAE: {np.mean(test_loss_mae):.4f}"
         )
+        print("args =", args)
 
     return model, np.mean(test_loss_mse)

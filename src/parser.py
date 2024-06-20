@@ -217,7 +217,7 @@ parser.add_argument(
 parser.add_argument(
     '--save_state_dict',
     action=argparse.BooleanOptionalAction,
-    default=False,
+    default=True,
     help='Save state dict of model')
 
 parser.add_argument(

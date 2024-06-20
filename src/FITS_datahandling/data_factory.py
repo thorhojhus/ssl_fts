@@ -1,3 +1,5 @@
+import os
+import sys
 from .data_loader import Dataset_ETT_hour, Dataset_ETT_minute, Dataset_Custom, Dataset_Pred
 from torch.utils.data import DataLoader
 
@@ -25,7 +27,12 @@ def data_provider(args, flag):
     #timeenc = 0 if args.embed != 'timeF' else 1
     timeenc = 1
 
-    args.root_path = 'data'
+    if 'ipykernel' in sys.modules:
+        # Running in a Jupyter notebook
+        args.root_path = '../data'
+    else:
+        # Running as a Python script
+        args.root_path = 'data'
     args.freq = 'h'
 
     if args.data == 'ETTh1':
@@ -53,7 +60,7 @@ def data_provider(args, flag):
     if args.data == "motor":
         args.data_path = "motortemp.csv"
     if args.data == "GD":
-        args.data_path = "GD.csv"
+        args.data_path = "gd.csv"
     if args.data == "MRO":
         args.data_path = "MRO.csv"
 
