@@ -22,6 +22,7 @@ def train(
     patience=5,  # early stopping patience
     min_delta=0.0001,  # minimum change to qualify as an improvement
     args=None,
+    do_print=True,
 ):
 
     model.to(device)
@@ -45,8 +46,8 @@ def train(
         },
         allow_val_change=True,
     )
-
-    print(f"Initial Learning Rate: {current_lr}")
+    if do_print:
+        print(f"Initial Learning Rate: {current_lr}")
 
     best_val_loss = float('inf')
     epochs_no_improve = 0
@@ -68,6 +69,7 @@ def train(
                 loss_mae = criterion_mae(output, batch_y)
             else:
                 output = output[:, :, f_dim:]
+                #print(output.shape, batch_xy.shape)
                 loss_mse = criterion_mse(output, batch_xy)
                 loss_mae = criterion_mae(output, batch_xy)
 
@@ -106,7 +108,8 @@ def train(
 
         new_lr = optimizer.param_groups[0]["lr"]
         if current_lr != new_lr:
-            print(f"Learning Rate changed to: {new_lr}")
+            if do_print:
+                print(f"Learning Rate changed to: {new_lr}")
             current_lr = new_lr
 
         wandb.log(
@@ -120,14 +123,11 @@ def train(
             }
         )
 
-        print(
-            f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Val MSE: {mean_val_loss_mse:.4f}"
-        )
-
-        # print(
-        #     f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Train MAE: {np.mean(train_loss_mae):.4f} \t Val MSE: {mean_val_loss_mse:.4f} \t Val MAE: {mean_val_loss_mae:.4f}"
-        # )
-
+        if do_print:
+            print(
+                f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Val MSE: {mean_val_loss_mse:.4f}"
+            )
+            
         # Early stopping
         if mean_val_loss_mse < best_val_loss - min_delta:
             best_val_loss = mean_val_loss_mse
@@ -136,18 +136,21 @@ def train(
             epochs_no_improve += 1
 
         if epochs_no_improve >= patience:
-            print(f"Early stopping triggered after {epoch+1} epochs")
+            if do_print:
+                print(f"Early stopping triggered after {epoch+1} epochs")
             break
-
-    model, test_mse = test(
-        model=model,
-        test_loader=test_loader,
-        f_dim=f_dim,
-        device=device,
-        pred_len=pred_len,
-        ft=True,
-        args=args,
-    )
+    
+    test_mse = 0
+    if ft == 1:
+        model, test_mse = test(
+            model=model,
+            test_loader=test_loader,
+            f_dim=f_dim,
+            device=device,
+            pred_len=pred_len,
+            ft=True,
+            args=args,
+        )
 
     return model, test_mse
 
@@ -205,7 +208,7 @@ def test(
         )
 
         print(
-            f"Test loss SE: {np.mean(test_loss_se):.4f} Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss MAE: {np.mean(test_loss_mae):.4f}"
+            f"Test loss SE: {np.mean(test_loss_se):.3f} Test loss MSE: {np.mean(test_loss_mse):.3f}, Test loss MAE: {np.mean(test_loss_mae):.3f}"
         )
 
     return model, np.mean(test_loss_mse)

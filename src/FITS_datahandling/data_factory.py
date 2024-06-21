@@ -85,7 +85,7 @@ def data_provider(args, flag):
         timeenc=timeenc,
         freq=freq
     )
-    print(f"\nLength of {flag} set: {len(data_set)}")
+    #print(f"\nLength of {flag} set: {len(data_set)}")
     data_loader = DataLoader(
         data_set,
         batch_size=batch_size,
