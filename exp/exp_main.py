@@ -36,6 +36,7 @@ class Exp_Main(Exp_Basic):
             'FITS': FITS,
             'FITS_DLinear': FITS_DLinear,
             'FITS_p': FITS_p,
+            'FITS_100': FITS_100,
         }
         model = model_dict[self.args.model].Model(self.args).float()
 
