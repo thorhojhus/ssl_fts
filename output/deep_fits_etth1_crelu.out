@@ -1,0 +1,48 @@
+Running with num_layers=2 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.733 Test loss MSE: 0.4929, Test loss MAE: 0.496
+Running with num_layers=2 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.707 Test loss MSE: 0.4870, Test loss MAE: 0.489
+Running with num_layers=2 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.857 Test loss MSE: 0.5198, Test loss MAE: 0.502
+Running with num_layers=2 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.885 Test loss MSE: 0.5315, Test loss MAE: 0.505
+Running with num_layers=3 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.627 Test loss MSE: 0.4759, Test loss MAE: 0.491
+Running with num_layers=3 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.652 Test loss MSE: 0.4816, Test loss MAE: 0.488
+Running with num_layers=3 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.735 Test loss MSE: 0.5010, Test loss MAE: 0.493
+Running with num_layers=3 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.786 Test loss MSE: 0.5214, Test loss MAE: 0.500
+Running with num_layers=4 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.619 Test loss MSE: 0.4797, Test loss MAE: 0.497
+Running with num_layers=4 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.577 Test loss MSE: 0.4522, Test loss MAE: 0.474
+Running with num_layers=4 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.612 Test loss MSE: 0.4626, Test loss MAE: 0.480
+Running with num_layers=4 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.655 Test loss MSE: 0.4857, Test loss MAE: 0.494
+Running with num_layers=5 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.649 Test loss MSE: 0.4972, Test loss MAE: 0.510
+Running with num_layers=5 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.588 Test loss MSE: 0.4561, Test loss MAE: 0.480
+Running with num_layers=5 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.580 Test loss MSE: 0.4565, Test loss MAE: 0.481
+Running with num_layers=5 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.633 Test loss MSE: 0.4822, Test loss MAE: 0.503

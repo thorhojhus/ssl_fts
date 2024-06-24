@@ -17,8 +17,8 @@ from src.models.FITS_bypass_layer import FITS as FITSBypassLayer
 from src.models.FITS_padding import FITS as FITSPadding
 import torch
 import numpy as np
-torch.manual_seed(1337)
-np.random.seed(1337)
+#torch.manual_seed(1337)
+#np.random.seed(1337)
 warnings.filterwarnings("ignore")
 
 model_dict = {

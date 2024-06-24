@@ -1,0 +1,9 @@
+Pred_len 96
+Test loss SE: 0.194 Test loss MSE: 0.143, Test loss MAE: 0.195
+Pred_len 192
+Test loss SE: 0.264 Test loss MSE: 0.186, Test loss MAE: 0.236
+Pred_len 336
+Test loss SE: 0.327 Test loss MSE: 0.236, Test loss 
+MAE: 0.277
+Pred_len 720
+Test loss SE: 0.398 Test loss MSE: 0.308, Test loss MAE: 0.330

@@ -22,9 +22,7 @@ def train(
     patience=5,  # early stopping patience
     min_delta=0.0001,  # minimum change to qualify as an improvement
     args=None,
-    do_print=True,
 ):
-
     model.to(device)
     criterion_mse = nn.MSELoss()
     criterion_mae = MAE
@@ -46,7 +44,8 @@ def train(
         },
         allow_val_change=True,
     )
-    if do_print:
+
+    if args.print:
         print(f"Initial Learning Rate: {current_lr}")
 
     best_val_loss = float('inf')
@@ -108,7 +107,7 @@ def train(
 
         new_lr = optimizer.param_groups[0]["lr"]
         if current_lr != new_lr:
-            if do_print:
+            if args.print:
                 print(f"Learning Rate changed to: {new_lr}")
             current_lr = new_lr
 
@@ -123,7 +122,7 @@ def train(
             }
         )
 
-        if do_print:
+        if args.print:
             print(
                 f"Epoch: {epoch+1} \t Train MSE: {np.mean(train_loss_mse):.4f} \t Val MSE: {mean_val_loss_mse:.4f}"
             )
@@ -136,7 +135,7 @@ def train(
             epochs_no_improve += 1
 
         if epochs_no_improve >= patience:
-            if do_print:
+            if args.print:
                 print(f"Early stopping triggered after {epoch+1} epochs")
             break
     
@@ -208,7 +207,7 @@ def test(
         )
 
         print(
-            f"Test loss SE: {np.mean(test_loss_se):.3f} Test loss MSE: {np.mean(test_loss_mse):.3f}, Test loss MAE: {np.mean(test_loss_mae):.3f}"
+            f"Test loss SE: {np.mean(test_loss_se):.3f} Test loss MSE: {np.mean(test_loss_mse):.4f}, Test loss MAE: {np.mean(test_loss_mae):.3f}"
         )
 
     return model, np.mean(test_loss_mse)

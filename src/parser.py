@@ -227,4 +227,11 @@ parser.add_argument(
     help="Use deep FITS",
 )
 
+parser.add_argument(
+    "--print",
+    action=argparse.BooleanOptionalAction,
+    default=True,
+    help="Print for each epoch",
+)
+
 # type: ignore

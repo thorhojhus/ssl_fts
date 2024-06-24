@@ -11,4 +11,5 @@ python run.py \
     --dataset national_illness \
     --epochs 50 \
     --use_original_datahandling \
+    --no-print \
     --H_order 6

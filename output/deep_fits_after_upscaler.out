@@ -1,0 +1,60 @@
+Running with num_layers=1 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.571 Test loss MSE: 0.4367, Test loss MAE: 0.458
+Running with num_layers=1 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.573 Test loss MSE: 0.4366, Test loss MAE: 0.458
+Running with num_layers=1 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4364, Test loss MAE: 0.457
+Running with num_layers=1 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.572 Test loss MSE: 0.4364, Test loss MAE: 0.457
+Running with num_layers=2 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.569 Test loss MSE: 0.4362, Test loss MAE: 0.457
+Running with num_layers=2 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.571 Test loss MSE: 0.4363, Test loss MAE: 0.457
+Running with num_layers=2 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.571 Test loss MSE: 0.4366, Test loss MAE: 0.458
+Running with num_layers=2 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.571 Test loss MSE: 0.4364, Test loss MAE: 0.457
+Running with num_layers=3 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4365, Test loss MAE: 0.457
+Running with num_layers=3 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4360, Test loss MAE: 0.457
+Running with num_layers=3 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.572 Test loss MSE: 0.4364, Test loss MAE: 0.458
+Running with num_layers=3 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.569 Test loss MSE: 0.4357, Test loss MAE: 0.457
+Running with num_layers=4 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4366, Test loss MAE: 0.458
+Running with num_layers=4 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4361, Test loss MAE: 0.457
+Running with num_layers=4 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4365, Test loss MAE: 0.458
+Running with num_layers=4 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4361, Test loss MAE: 0.457
+Running with num_layers=5 and num_hidden=64
+Pred_len 720
+Test loss SE: 0.569 Test loss MSE: 0.4364, Test loss MAE: 0.457
+Running with num_layers=5 and num_hidden=128
+Pred_len 720
+Test loss SE: 0.571 Test loss MSE: 0.4364, Test loss MAE: 0.457
+Running with num_layers=5 and num_hidden=256
+Pred_len 720
+Test loss SE: 0.573 Test loss MSE: 0.4372, Test loss MAE: 0.458
+Running with num_layers=5 and num_hidden=512
+Pred_len 720
+Test loss SE: 0.570 Test loss MSE: 0.4364, Test loss MAE: 0.457

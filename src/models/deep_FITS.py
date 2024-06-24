@@ -89,6 +89,7 @@ class FITS(nn.Module):
             if i != self.num_layers - 1:
                 layers.append(ComplexDropout())
                 layers.append(ModReLU(out_features))
+                #layers.append(ComplexReLU())
             in_features = out_features
 
         self.frequency_upsampler = (

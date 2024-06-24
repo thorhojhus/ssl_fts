@@ -3,7 +3,7 @@
 python run.py \
     --normalize True \
     --seq_len 720 \
-    --pred_len 336 \
+    --pred_len 192 \
     --dominance_freq 0 \
     --train_and_finetune \
     --all_cols True \
@@ -13,3 +13,4 @@ python run.py \
     --H_order 10 \
     --channels 862 \
     --use_original_datahandling \
+    --no-print
