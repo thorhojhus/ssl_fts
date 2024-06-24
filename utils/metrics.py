@@ -31,6 +31,8 @@ def MAPE(pred, true):
 def MSPE(pred, true):
     return np.mean(np.square((pred - true) / true))
 
+def SE(pred, true):
+    return np.mean((pred[:, -1, :] - true[:, -1, :]) ** 2)
 
 def metric(pred, true):
     mae = MAE(pred, true)

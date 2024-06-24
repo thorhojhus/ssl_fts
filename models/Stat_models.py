@@ -13,8 +13,8 @@ class Naive_repeat(nn.Module):
         self.pred_len = configs.pred_len
         
     def forward(self, x):
-        B,L,D = x.shape
-        x = x[:,-1,:].reshape(B,1,D).repeat(self.pred_len,axis=1)
+        B, L, D = x.shape
+        x = x[:, -1, :].reshape(B, 1, D).repeat(1, self.pred_len, 1)
         return x # [B, L, D]
 
 class Naive_thread(threading.Thread):
