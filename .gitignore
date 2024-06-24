@@ -1,3 +1,5 @@
+data/LD2011_2014.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
