@@ -2,7 +2,7 @@
 
 # Default values for seq_len, model, and pred_len
 seq_len=336
-model=DLinear
+model="DLinear_FITS"
 
 # Parse command line arguments
 while getopts s:m:p: flag

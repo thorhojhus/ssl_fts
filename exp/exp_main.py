@@ -340,6 +340,9 @@ class Exp_Main(Exp_Basic):
         results['Repeat'] = compute_metrics(naive_preds, trues, criterion_mse, criterion_mae)
 
         log_metrics(results)
+        print("")
+        print(self.model)
+        
         return
 
     def predict(self, setting, load=False):

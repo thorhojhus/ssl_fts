@@ -98,7 +98,7 @@ class Model(nn.Module):
         fits_args = Namespace(
             seq_len=configs.seq_len,
             pred_len=configs.pred_len,
-            dominance_freq=int(10),
+            dominance_freq=configs.seq_len//2,
             enc_in=configs.enc_in,
             individual=configs.individual,
         )

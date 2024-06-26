@@ -1,0 +1,4 @@
+Args in experiment:
+Namespace(is_training=1, model_id='FITS_DLinear DLinear_FITS_exchange_rate_336_96_M_channels_7', model='FITS_DLinear DLinear_FITS', data='custom', root_path='./dataset/', data_path='exchange_rate.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=336, label_len=48, pred_len=96, individual=False, embed_type=0, enc_in=7, dec_in=7, c_out=7, d_model=512, n_heads=8, e_layers=2, d_layers=1, d_ff=2048, moving_avg=25, factor=1, distil=True, dropout=0.05, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=10, itr=1, train_epochs=10, batch_size=8, patience=3, learning_rate=0.0005, des='Exp', loss='mse', lradj='type1', use_amp=False, use_gpu=True, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+FITS_DLinear DLinear_FITS_exchange_rate_336_96_M_channels_7_FITS_DLinear DLinear_FITS_M_channels_7
+Using GPU: NVIDIA GeForce RTX 4070 (cuda:0):

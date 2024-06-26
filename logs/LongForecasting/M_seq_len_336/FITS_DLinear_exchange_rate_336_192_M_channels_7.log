@@ -1,0 +1,90 @@
+Args in experiment:
+Namespace(is_training=1, model_id='FITS_DLinear_exchange_rate_336_192_M_channels_7', model='FITS_DLinear', data='custom', root_path='./dataset/', data_path='exchange_rate.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=336, label_len=48, pred_len=192, individual=False, embed_type=0, enc_in=7, dec_in=7, c_out=7, d_model=512, n_heads=8, e_layers=2, d_layers=1, d_ff=2048, moving_avg=25, factor=1, distil=True, dropout=0.05, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=10, itr=1, train_epochs=10, batch_size=8, patience=3, learning_rate=0.0005, des='Exp', loss='mse', lradj='type1', use_amp=False, use_gpu=True, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+FITS_DLinear_exchange_rate_336_192_M_channels_7_FITS_DLinear_M_channels_7
+Using GPU: NVIDIA GeForce RTX 4070 (cuda:0):
+FITS cutoff frequency: 168
+>>>>>>>start training : FITS_DLinear_exchange_rate_336_192_M_channels_7_FITS_DLinear_M_channels_7>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 4784
+val 569
+test 1326
+	iters: 100, epoch: 1 | loss: 0.2187915
+	speed: 0.0197s/iter; time left: 116.0825s
+	iters: 200, epoch: 1 | loss: 0.1632051
+	speed: 0.0064s/iter; time left: 37.2012s
+	iters: 300, epoch: 1 | loss: 0.2194028
+	speed: 0.0065s/iter; time left: 36.6675s
+	iters: 400, epoch: 1 | loss: 0.1153970
+	speed: 0.0071s/iter; time left: 39.7620s
+	iters: 500, epoch: 1 | loss: 0.2072620
+	speed: 0.0072s/iter; time left: 39.3441s
+Epoch: 1 cost time: 5.0 seconds
+Epoch: 1, Steps: 598 | Train Loss: 0.2530898 Vali Loss: 0.3529347 Test Loss: 0.1892558
+Validation loss decreased (inf --> 0.352935).  Saving model ...
+Updating learning rate to 0.0005
+	iters: 100, epoch: 2 | loss: 0.1993604
+	speed: 0.0331s/iter; time left: 174.6979s
+	iters: 200, epoch: 2 | loss: 0.2217088
+	speed: 0.0072s/iter; time left: 37.1133s
+	iters: 300, epoch: 2 | loss: 0.1608764
+	speed: 0.0074s/iter; time left: 37.3936s
+	iters: 400, epoch: 2 | loss: 0.1800122
+	speed: 0.0074s/iter; time left: 36.6873s
+	iters: 500, epoch: 2 | loss: 0.1971584
+	speed: 0.0077s/iter; time left: 37.5982s
+Epoch: 2 cost time: 4.6 seconds
+Epoch: 2, Steps: 598 | Train Loss: 0.2405460 Vali Loss: 0.4093056 Test Loss: 0.2185438
+EarlyStopping counter: 1 out of 3
+Updating learning rate to 0.00025
+	iters: 100, epoch: 3 | loss: 0.1858420
+	speed: 0.0334s/iter; time left: 156.3076s
+	iters: 200, epoch: 3 | loss: 0.2217411
+	speed: 0.0069s/iter; time left: 31.4949s
+	iters: 300, epoch: 3 | loss: 0.2868827
+	speed: 0.0075s/iter; time left: 33.6559s
+	iters: 400, epoch: 3 | loss: 0.1204208
+	speed: 0.0074s/iter; time left: 32.6436s
+	iters: 500, epoch: 3 | loss: 0.3020139
+	speed: 0.0077s/iter; time left: 32.8171s
+Epoch: 3 cost time: 4.7 seconds
+Epoch: 3, Steps: 598 | Train Loss: 0.2315111 Vali Loss: 0.3913546 Test Loss: 0.1849428
+EarlyStopping counter: 2 out of 3
+Updating learning rate to 0.000125
+	iters: 100, epoch: 4 | loss: 0.1843438
+	speed: 0.0346s/iter; time left: 141.4213s
+	iters: 200, epoch: 4 | loss: 0.1201199
+	speed: 0.0071s/iter; time left: 28.3182s
+	iters: 300, epoch: 4 | loss: 0.2402645
+	speed: 0.0072s/iter; time left: 27.8586s
+	iters: 400, epoch: 4 | loss: 0.2195787
+	speed: 0.0075s/iter; time left: 28.5726s
+	iters: 500, epoch: 4 | loss: 0.1678311
+	speed: 0.0071s/iter; time left: 26.0600s
+Epoch: 4 cost time: 4.6 seconds
+Epoch: 4, Steps: 598 | Train Loss: 0.2271545 Vali Loss: 0.4864115 Test Loss: 0.2280541
+EarlyStopping counter: 3 out of 3
+Early stopping
+>>>>>>>testing : FITS_DLinear_exchange_rate_336_192_M_channels_7_FITS_DLinear_M_channels_7<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+test 1326
+FITS_DLinear_exchange_rate_336_192_M_channels_7_FITS_DLinear_M_channels_7
+Shapes: pred (1320, 192, 8), true (1320, 192, 8), naive_pred (1320, 192, 8)
+Shapes: gt (165, 528), pd (165, 528), naive_pd (165, 528)
+Final Metrics:
+FITS_DLinear MSE: 0.189256   MAE: 0.318239   SE: 0.465525   RRMSE: 0.302463   RMAE: 0.221259   (numpy)
+FITS_DLinear MSE: 0.189256   MAE: 0.318239   SE: 0.465525   RRMSE: 0.302463   RMAE: 0.221259   (torch)
+
+Repeat       MSE: 0.166919   MAE: 0.288571   SE: 0.342343   RRMSE: 0.284054   RMAE: 0.200632   (numpy)
+Repeat       MSE: 0.166919   MAE: 0.288571   SE: 0.342343   RRMSE: 0.284054   RMAE: 0.200632   (torch)
+
+
+Model(
+  (decomposition): SeriesDecomp(
+    (moving_avg): MovingAvg(
+      (avg): AvgPool1d(kernel_size=(25,), stride=(1,), padding=(0,))
+    )
+  )
+  (fits): FITS(
+    (frequency_upsampler): Linear(in_features=168, out_features=264, bias=True)
+  )
+  (Linear_Seasonal): Linear(in_features=528, out_features=192, bias=True)
+  (Linear_Trend): Linear(in_features=336, out_features=192, bias=True)
+)

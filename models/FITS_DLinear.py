@@ -125,11 +125,12 @@ class Model(nn.Module):
         fits_args = Namespace(
             seq_len=configs.seq_len,
             pred_len=configs.pred_len,
-            dominance_freq=int(10),
+            dominance_freq=configs.seq_len//2,
             channels=configs.enc_in,
             individual=configs.individual,
         )
         self.fits = FITS(fits_args)
+        print("FITS cutoff frequency:", fits_args.dominance_freq)
 
         # Linear layers
         self.individual = configs.individual
