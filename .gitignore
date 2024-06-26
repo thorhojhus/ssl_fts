@@ -1,6 +1,6 @@
 **/__pycache__/
 **/checkpoints/
-**/test_results/
+# **/test_results/
 # Ignore all logs
 logs/LongForecasting/Old
 logs/LongForecasting/MS_seq_len_336_old
