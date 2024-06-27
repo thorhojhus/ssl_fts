@@ -113,15 +113,17 @@ if args.is_training:
         #     args.embed,
         #     args.distil,
         #     args.des, ii)
-        setting = f'{args.model_id}_{args.model}_{args.features}_channels_{args.enc_in}'
+        base_setting = args.model_id  # This should already be 'exchange_rate_336_96_M_channels_7'
+        model_name = args.model       # This should be 'DLinear_FITS'
+        setting = f'{base_setting}'   # We'll use this for folder creation
         print(setting)
 
         exp = Exp(args)  # set experiments
-        print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-        exp.train(setting)
+        print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>\n'.format(setting))
+        exp.train(setting, model_name)
 
         print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-        exp.test(setting)
+        exp.test(setting, model_name)
 
         if args.do_predict:
             print('>>>>>>>predicting : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))

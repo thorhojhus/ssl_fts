@@ -4,22 +4,19 @@
 seq_len=336
 
 # List of models to run
-models=("FITS")
+models=("DLinear")
+# models=("XGBoost")
 
 # List of pred_len values
-pred_lens=(96 192 336 720)
+pred_lens=(720)
 
 # List of datasets to run
-datasets=("exchange_rate" "GD" "MRO")
+datasets=("exchange_rate")
 features="M"
 
 # Create necessary directories if they do not exist
-if [ ! -d "./logs" ]; then
-    mkdir ./logs
-fi
-
-if [ ! -d "./logs/LongForecasting" ]; then
-    mkdir ./logs/LongForecasting
+if [ ! -d "./results" ]; then
+    mkdir ./results
 fi
 
 # Loop through each dataset
@@ -36,21 +33,28 @@ for dataset in "${datasets[@]}"; do
         continue
     fi
 
-    echo "Running experiments for dataset: $dataset"
+    # Loop through each model
+    for model in "${models[@]}"; do
+        # Loop through each pred_len value
+        for pred_len in "${pred_lens[@]}"; do
+            echo "Running experiments for seq_len=${seq_len} pred_len=${pred_len} and dataset=${dataset}:"
 
-    # Loop through each pred_len value
-    for pred_len in "${pred_lens[@]}"; do
-        echo "Running experiments for seq_len=${seq_len} pred_len=${pred_len} and dataset=${dataset}:"
+            logname="${dataset}_${seq_len}_${pred_len}_${features}_channels_${channels}"
+            result_dir="./results/${logname}"
 
-        # Loop through each model
-        for model in "${models[@]}"; do
-            if [ "$features" = "S" ]; then
-                logname="${model}_${dataset}_${seq_len}_${pred_len}_${features}_channels_1"
-            else
-                logname="${model}_${dataset}_${seq_len}_${pred_len}_${features}_channels_${channels}"
+            # Create result directory
+            if [ ! -d "$result_dir" ]; then
+                mkdir "$result_dir"
             fi
 
-            echo "logs/LongForecasting/${logname}.log"
+            # Create logs directory inside result directory
+            logs_dir="${result_dir}/logs"
+            if [ ! -d "$logs_dir" ]; then
+                mkdir "$logs_dir"
+            fi
+
+            log_file="${logs_dir}/${model}.log"
+            echo "Log file: $log_file"
 
             python -u run_longExp.py \
               --is_training 1 \
@@ -65,7 +69,7 @@ for dataset in "${datasets[@]}"; do
               --pred_len $pred_len \
               --enc_in $channels \
               --des 'Exp' \
-              --itr 1 --batch_size 8 --learning_rate 0.0005 > "logs/LongForecasting/${logname}.log"
+              --itr 1 --batch_size 8 --learning_rate 0.0005 > "$log_file"
 
             python -u print_metrics.py
         done

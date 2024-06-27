@@ -3,9 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
 import cv2
+from utils.metrics import MSE, MAE, SE, RMSE
 
-def configure(dataset, seq_len, pred_len, model):
-    root_folder = f'test_results/{model}_{dataset}_{seq_len}_{pred_len}_M_channels_7_{model}_M_channels_7'
+
+def configure(dataset, seq_len, pred_len):
+    root_folder = f'results/{dataset}_{seq_len}_{pred_len}_M_channels_7'
     models = {
         'DLinear': {'color': 'blue', 'style': '-'},
         'DLinear_FITS': {'color': 'magenta', 'style': '-'},
@@ -13,49 +15,93 @@ def configure(dataset, seq_len, pred_len, model):
         'Repeat': {'color': 'gray', 'style': '--'},
         'FITS_DLinear': {'color': 'orange', 'style': '-'},
     }
-    exclude_repeat = True  # Set this to False if you want to include 'Repeat' in the comparison
+    exclude_repeat = True
     return root_folder, seq_len, models, exclude_repeat
 
-def load_data(dataset, seq_len, pred_len, model_name):
-    folder = f'test_results/{model_name}_{dataset}_{seq_len}_{pred_len}_M_channels_7_{model_name}_M_channels_7'
-    gt_path = os.path.join(folder, 'gt.npy')
-    pd_path = os.path.join(folder, 'pd.npy')
+
+def load_data(root_folder, model_name):
+    pd_path = os.path.join(root_folder, f'{model_name}_pred.npy')
+    metrics_path = os.path.join(root_folder, f'{model_name}_metrics.npy')
     
     if os.path.exists(pd_path):
-        return np.load(gt_path), np.load(pd_path)
-    print(f"Shapes: gt {np.load(gt_path).shape}, pd {np.load(pd_path).shape}")
-    return None, None
-
-def load_naive_pred(dataset, seq_len, pred_len, model_name):
-    folder = f'test_results/{model_name}_{dataset}_{seq_len}_{pred_len}_M_channels_7_{model_name}_M_channels_7'
-    naive_pred_path = os.path.join(folder, 'naive_pd.npy')
-    if os.path.exists(naive_pred_path):
-        print(f"Loading naive prediction from {naive_pred_path}")
-        return np.load(naive_pred_path)
+        pd = np.load(pd_path)
+        metrics = np.load(metrics_path, allow_pickle=True).item() if os.path.exists(metrics_path) else None
+        print(f"Loaded data for {model_name}. Shape: pd {pd.shape} from {pd_path}")
+        return pd, metrics
     else:
-        print(f"Naive prediction file not found: {naive_pred_path}")
-        return None
+        print(f"Data not found for {model_name} in {root_folder}")
+        return None, None
 
-def setup_video(root_folder, specified_model):
+
+def load_naive_pred(root_folder):
+    gt_path = os.path.join(root_folder, 'gt.npy')
+    naive_pred_path = os.path.join(root_folder, 'naive_pred.npy')
+    
+    if os.path.exists(gt_path) and os.path.exists(naive_pred_path):
+        gt = np.load(gt_path)
+        naive_pred = np.load(naive_pred_path)
+        print(f"Loaded data for Ground Truth. Shape: {gt.shape} from {gt_path}")
+        print(f"Loaded data for Repeat. Shape: {naive_pred.shape} from {naive_pred_path}")
+        return gt, naive_pred
+    else:
+        print(f"Ground truth or naive prediction file not found in {root_folder}")
+        return None, None
+
+
+def calculate_metrics(pred, true):
+    mse = MSE(pred, true)
+    mae = MAE(pred, true)
+    se = np.mean((pred[:, -1, :] - true[:, -1, :]) ** 2)
+    rmse = RMSE(pred, true)
+    rrmse = rmse / np.mean(np.abs(true))
+    rmae = mae / np.mean(np.abs(true))
+    return {
+        'MSE': mse,
+        'MAE': mae,
+        'SE': se,
+        'RRMSE': rrmse,
+        'RMAE': rmae
+    }
+
+
+def assert_metrics(calculated_metrics, loaded_metrics, model_name):
+    for key in calculated_metrics:
+        if key in loaded_metrics:
+            np.testing.assert_almost_equal(calculated_metrics[key], loaded_metrics[key], decimal=4, 
+                                           err_msg=f"Mismatch in {key} for {model_name}")
+        else:
+            print(f"Warning: {key} not found in loaded metrics for {model_name}")
+
+
+def setup_video(root_folder, specified_model, total_samples):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video_path = os.path.join(root_folder, f'forecast_video_{specified_model}.mp4')
+    video_path = os.path.join(root_folder, f'forecast_video_{specified_model}_{total_samples}_samples.mp4')
     return fourcc, video_path, None
 
-def plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat):
+
+def plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat, dim_to_plot):
     plt.figure(figsize=(12, 6), dpi=100)
-    plt.plot(range(len(gt_data)), gt_data, label='Ground Truth', linewidth=2, color='black')
+    
+    # Plot ground truth for the entire sequence
+    plt.plot(range(len(gt_data)), gt_data[:, dim_to_plot], label=f'Ground Truth (Dim {dim_to_plot})', linewidth=2, color='black', alpha=0.7)
 
     for model, data in results.items():
         if model != 'Repeat' or not exclude_repeat:
             label = f'{model} [MSE: {data["mse"]:.3f}]'
-            plt.plot(range(len(data["pd_data"])), data["pd_data"], label=label, linewidth=2, 
-                     color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
-            plt.scatter(len(data["pd_data"]) - 1, data["pd_data"][-1], color=models[model]['color'], s=100, zorder=5)
-            plt.annotate(f'SE: {data["se"]:.3f}', (len(data["pd_data"]) - 1, data["pd_data"][-1]), 
-                         xytext=(5, 5), textcoords='offset points', color=models[model]['color'])
+            
+            # Plot the input sequence (historical data)
+            plt.plot(range(input_len), data["pd_data"][:input_len, dim_to_plot], 
+                     color=models[model]['color'], linestyle=models[model]['style'], alpha=0.3)
+            
+            # Plot the forecast
+            plt.plot(range(input_len, len(data["pd_data"])), data["pd_data"][input_len:, dim_to_plot], 
+                     label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
+            
+            # Highlight the last point of the forecast
+            plt.scatter(len(data["pd_data"]) - 1, data["pd_data"][-1, dim_to_plot], color=models[model]['color'], s=50, zorder=5)
 
     plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start')
-    plt.legend(loc='upper left')
+    plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
 
     sorted_models = sorted([(k, v) for k, v in results.items() if k != 'Repeat' or not exclude_repeat], key=lambda x: x[1]['mse'])
     
@@ -63,7 +109,7 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
         best_model, second_best_model = sorted_models[0][0], sorted_models[1][0]
         compared_model = second_best_model if specified_model == best_model else best_model
         mse_diff = results[compared_model]['mse'] - results[specified_model]['mse']
-        title = f'{specified_model} {"better" if mse_diff > 0 else "worse"} than {compared_model} by {abs(mse_diff):.3f} MSE. Sample {sample+1}/{total_samples}'
+        title = f'{specified_model} {"better" if mse_diff > 0 else "worse"} than {compared_model} by {mse_diff:.3f} MSE. Sample {sample+1}/{total_samples}'
     else:
         title = f'{specified_model} MSE: {results[specified_model]["mse"]:.3f}. Sample {sample+1}/{total_samples}'
 
@@ -81,87 +127,101 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
     buf.close()
     return cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
 
-import numpy as np
-from utils.metrics import MSE, MAE, SE, RMSE
 
-def calculate_and_print_metrics(data, naive_pred, input_len):
-    models = list(data.keys()) + ['Repeat']
-    metrics = {}
-
-    for model in models:
-        if model == 'Repeat':
-            pred = naive_pred[:, input_len:]
-            true = data[list(data.keys())[0]][0][:, input_len:]  # Use ground truth from any model
-        else:
-            pred = data[model][1][:, input_len:]
-            true = data[model][0][:, input_len:]
-
-        mse = MSE(pred, true)
-        mae = MAE(pred, true)
-        se = np.mean((pred[:, -1] - true[:, -1]) ** 2)  # Last step error
-        rmse = RMSE(pred, true)
-        
-        # Calculate RRMSE (Relative RMSE) and RMAE (Relative MAE)
-        rrmse = rmse / np.mean(np.abs(true))
-        rmae = mae / np.mean(np.abs(true))
-
-        metrics[model] = {
-            'MSE': mse,
-            'MAE': mae,
-            'SE': se,
-            'RRMSE': rrmse,
-            'RMAE': rmae
-        }
-
-    # Print metrics
-    for model, model_metrics in metrics.items():
-        print(f"{model:<12} "
-              f"MSE: {model_metrics['MSE']:.6f}   "
-              f"MAE: {model_metrics['MAE']:.6f}   "
-              f"SE: {model_metrics['SE']:.6f}   "
-              f"RRMSE: {model_metrics['RRMSE']:.6f}   "
-              f"RMAE: {model_metrics['RMAE']:.6f}   "
-              f"(numpy)")
-
-def process_data(dataset, seq_len, pred_len, specified_model):
-    root_folder, input_len, models, exclude_repeat = configure(dataset, seq_len, pred_len, specified_model)
+def plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat, dim_to_plot, dataset):
+    plt.figure(figsize=(12, 6), dpi=100)
     
-    # Load naive prediction using the specified model's folder
-    naive_pred = load_naive_pred(dataset, seq_len, pred_len, specified_model)
-    
-    data = {model: load_data(dataset, seq_len, pred_len, model) for model in models.keys() if model != 'Repeat'}
-    
-    # Print shapes for debugging
-    print(f"Shapes: gt {data[specified_model][0].shape}, pd {data[specified_model][1].shape}, naive_pd {naive_pred.shape}")
-    
-    # Calculate and print metrics
-    calculate_and_print_metrics(data, naive_pred, input_len)
+    # Plot ground truth for the entire sequence
+    plt.plot(range(len(gt_data)), gt_data[:, dim_to_plot], label=f'Ground Truth (Dim {dim_to_plot})', linewidth=2, color='black')
 
-    # Rest of the process_data function remains the same
-    gt = data[specified_model][0]  # Use specified model's ground truth
+    for model, data in results.items():
+        if model != 'Repeat' or not exclude_repeat:
+            label = f'{model} [MSE: {data["mse"]:.3f}]'
+            
+            # Plot only the forecast part, starting from input_len
+            forecast_data = data["pd_data"][:, dim_to_plot]
+            forecast_end = input_len + len(forecast_data)
+            plt.plot(range(input_len, forecast_end), forecast_data, 
+                     label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
+            
+            # Highlight the last point of the forecast
+            plt.scatter(forecast_end - 1, forecast_data[-1], color=models[model]['color'], s=100, zorder=5)
+            plt.annotate(f'SE: {data["se"]:.3f}', (forecast_end - 1, forecast_data[-1]), 
+                         xytext=(5, 5), textcoords='offset points', color=models[model]['color'])
 
-    fourcc, video_path, video = setup_video(root_folder, specified_model)
+    plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start')
+    plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
+
+    sorted_models = sorted([(k, v) for k, v in results.items() if k != 'Repeat' or not exclude_repeat], key=lambda x: x[1]['mse'])
+    
+    if len(sorted_models) >= 2:
+        best_model, second_best_model = sorted_models[0][0], sorted_models[1][0]
+        compared_model = second_best_model if specified_model == best_model else best_model
+        mse_diff = results[compared_model]['mse'] - results[specified_model]['mse']
+        title = f'{specified_model} {"better" if mse_diff > 0 else "worse"} than {compared_model} by {"-" if mse_diff < 0 else "+"}{abs(mse_diff):.3f} MSE. Sample {sample+1}/{total_samples} on {dataset}. (Dim: {dim_to_plot})'
+    else:
+        title = f'{specified_model} MSE: {results[specified_model]["mse"]:.3f}. Sample {sample+1}/{total_samples}, Dim {dim_to_plot}'
+
+    plt.title(title)
+    plt.xlabel('Time Step')
+    plt.ylabel('Value')
+    plt.tight_layout()
+
+    buf = BytesIO()
+    plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+    plt.close()
+    
+    buf.seek(0)
+    img_arr = np.frombuffer(buf.getvalue(), dtype=np.uint8)
+    buf.close()
+    return cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
+
+
+def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=0):
+    root_folder, input_len, models, exclude_repeat = configure(dataset, seq_len, pred_len)
+    
+    gt, naive_pred = load_naive_pred(root_folder)
+    
+    data = {}
+    for model in models.keys():
+        if model != 'Repeat':
+            pd, metrics = load_data(root_folder, model)
+            if gt is not None and pd is not None:
+                data[model] = (pd, metrics)
+    
+    if not data:
+        print(f"No data found for any model in {root_folder}")
+        return
+
     total_samples = gt.shape[0]
     print(f"Total samples: {total_samples}")
+    # total_samples = 20 # Comment out for full sample size
+    fourcc, video_path, video = setup_video(root_folder, specified_model, total_samples)
 
     for sample in range(total_samples):
         gt_data = gt[sample]
         results = {}
         
-        for model, (_, pd) in data.items():
+        for model, model_data in data.items():
+            pd, _ = model_data  # Unpack the tuple correctly
             if pd is not None:
                 pd_data = pd[sample]
-                mse = np.mean((gt_data[input_len:] - pd_data[input_len:])**2)
-                se = (gt_data[-1] - pd_data[-1])**2
+                # Adjust the slicing to match the lengths
+                gt_slice = gt_data[-pred_len:, dim_to_plot]
+                pd_slice = pd_data[:, dim_to_plot]
+                mse = np.mean((gt_slice - pd_slice)**2)
+                se = np.mean((gt_data[-1, dim_to_plot] - pd_data[-1, dim_to_plot])**2)
                 results[model] = {'mse': mse, 'se': se, 'pd_data': pd_data}
 
         if naive_pred is not None:
             naive_pred_data = naive_pred[sample]
-            mse_naive = np.mean((gt_data[input_len:] - naive_pred_data[input_len:])**2)
-            se_naive = (gt_data[-1] - naive_pred_data[-1])**2
+            gt_slice = gt_data[-pred_len:, dim_to_plot]
+            naive_slice = naive_pred_data[:, dim_to_plot]
+            mse_naive = np.mean((gt_slice - naive_slice)**2)
+            se_naive = np.mean((gt_data[-1, dim_to_plot] - naive_pred_data[-1, dim_to_plot])**2)
             results['Repeat'] = {'mse': mse_naive, 'se': se_naive, 'pd_data': naive_pred_data}
 
-        frame = plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat)
+        frame = plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat, dim_to_plot, dataset)
 
         if video is None:
             h, w = frame.shape[:2]
@@ -177,7 +237,8 @@ def process_data(dataset, seq_len, pred_len, specified_model):
 # Usage
 dataset = 'exchange_rate'
 seq_len = 336
-pred_len =720
+pred_len = 720
 specified_model = 'FITS_DLinear'
+dim_to_plot = 0  # Change this to plot different dimensions
 
-process_data(dataset, seq_len, pred_len, specified_model)
+process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot)
