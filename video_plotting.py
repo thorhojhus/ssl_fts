@@ -238,8 +238,11 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
     
     # Create gradient fill
     cmap = plt.get_cmap('YlGnBu_r')
-    y_min = np.min([np.min(gt_data[:, dim_to_plot])] + [np.min(data['pd_data'][:, dim_to_plot]) for data in results.values()])
-    y_max = np.max([np.max(gt_data[:, dim_to_plot])] + [np.max(data['pd_data'][:, dim_to_plot]) for data in results.values()])
+    y_min = min(np.min(gt_data[:, dim_to_plot]), min(np.min(data['pd_data'][:, dim_to_plot]) for data in results.values()))
+    y_max = max(np.max(gt_data[:, dim_to_plot]), max(np.max(data['pd_data'][:, dim_to_plot]) for data in results.values()))
+    y_range = y_max - y_min
+    y_min -= 0.1 * y_range  # Extend 10% below
+    y_max += 0.1 * y_range  # Extend 10% above
     
     # Create gradient image
     xv, yv = np.meshgrid(np.linspace(0, len(x_gt)-1, 100), np.linspace(y_min, y_max, 100))
@@ -247,12 +250,13 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
     plt.imshow(zv, cmap=cmap, origin='upper', aspect='auto',
                extent=[0, len(x_gt)-1, y_min, y_max], alpha=0.1)
 
-    # Plot ground truth line
-    plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=5)
-    
-    # Fill above the ground truth line with white to create the gradient effect
-    plt.fill_between(x_gt, y_gt, y_max, color='white', zorder=4)
+    # Fill above the ground truth line with semi-transparent white
+    plt.fill_between(x_gt, y_gt, y_max, color='white', alpha=0.7, zorder=5)
 
+    # Plot ground truth line with higher zorder
+    plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=6)
+
+    # Plot model predictions
     for model, data in results.items():
         if model != 'Repeat' or not exclude_repeat:
             label = f'{model} [MSE: {data["mse"]:.3f}]'
@@ -261,14 +265,16 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
             x_forecast = range(input_len, input_len + len(forecast_data))
             
             # Plot the main line
-            plt.plot(x_forecast, forecast_data, label=label, linewidth=1.2, color=models[model]['color'], linestyle=models[model]['style'])
+            plt.plot(x_forecast, forecast_data, label=label, linewidth=1.2, 
+                     color=models[model]['color'], linestyle=models[model]['style'], zorder=7)
             
             # Add end point marker and annotation
-            plt.scatter(x_forecast[-1], forecast_data[-1], color=models[model]['color'], s=100, zorder=5)
+            plt.scatter(x_forecast[-1], forecast_data[-1], color=models[model]['color'], s=100, zorder=8)
             plt.annotate(f'SE: {data["se"]:.3f}', (x_forecast[-1], forecast_data[-1]), 
-                         xytext=(5, 5), textcoords='offset points', color=models[model]['color'])
+                         xytext=(5, 5), textcoords='offset points', color=models[model]['color'], zorder=9)
 
-    plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start')
+    # Plot forecast start line
+    plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start', zorder=4)
     plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
 
     sorted_models = sorted([(k, v) for k, v in results.items() if k != 'Repeat' or not exclude_repeat], key=lambda x: x[1]['mse'])
@@ -353,7 +359,7 @@ specified_model = 'FITS_DLinear_no_seasonal'
 dim_to_plot = 6                     # 1-based indeexing
 sample_interval = 50                # Process every 5th sample
 
-process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
+# process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
 
-# sample_index = 0
-# plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot)
+sample_index = 1901
+plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot)
