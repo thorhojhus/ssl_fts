@@ -52,12 +52,29 @@ def configure(dataset, seq_len, pred_len):
 
 def load_data(root_folder, model_name):
     pd_path = os.path.join(root_folder, f'{model_name}_pred.npy')
-    metrics_path = os.path.join(root_folder, f'{model_name}_metrics.npy')
+    
+    # List of possible metric file names
+    metric_file_names = [
+        f'{model_name}_metrics.npy',
+        f'{"_".join(model_name.split("_")[::-1])}_metrics.npy',  # Reverse order of underscores
+        f'{"_".join(model_name.split("_"))}_metrics.npy'  # Original order
+    ]
+    
+    metrics_path = None
+    for file_name in metric_file_names:
+        path = os.path.join(root_folder, file_name)
+        if os.path.exists(path):
+            metrics_path = path
+            break
     
     if os.path.exists(pd_path):
         pd = np.load(pd_path)
-        metrics = np.load(metrics_path, allow_pickle=True).item() if os.path.exists(metrics_path) else None
+        metrics = np.load(metrics_path, allow_pickle=True).item() if metrics_path else None
         print(f"Loaded data for {model_name}. Shape: pd {pd.shape} from {pd_path}")
+        if metrics_path:
+            print(f"Loaded metrics from {metrics_path}")
+        else:
+            print(f"No metrics file found for {model_name}")
         return pd, metrics
     else:
         print(f"Data not found for {model_name} in {root_folder}")
@@ -80,6 +97,10 @@ def load_naive_pred(root_folder):
 
 
 def calculate_metrics(pred, true):
+    # Only compare the last pred_len time steps
+    pred_len = pred.shape[1]
+    true = true[:, -pred_len:, :]
+    
     mse = MSE(pred, true)
     mae = MAE(pred, true)
     se = np.mean((pred[:, -1, :] - true[:, -1, :]) ** 2)
@@ -87,21 +108,58 @@ def calculate_metrics(pred, true):
     rrmse = rmse / np.mean(np.abs(true))
     rmae = mae / np.mean(np.abs(true))
     return {
-        'MSE': mse,
-        'MAE': mae,
-        'SE': se,
-        'RRMSE': rrmse,
-        'RMAE': rmae
+        'mse': mse,
+        'mae': mae,
+        'se': se,
+        # 'RMSE': rmse,
+        'relative_rmse': rrmse,
+        # 'RMAE': rmae
     }
 
 
 def assert_metrics(calculated_metrics, loaded_metrics, model_name):
+    model_metrics = loaded_metrics.get(model_name, {})
     for key in calculated_metrics:
-        if key in loaded_metrics:
-            np.testing.assert_almost_equal(calculated_metrics[key], loaded_metrics[key], decimal=4, 
+        loaded_key = key.lower()
+        if loaded_key in model_metrics:
+            np.testing.assert_almost_equal(calculated_metrics[key], model_metrics[loaded_key], decimal=4, 
                                            err_msg=f"Mismatch in {key} for {model_name}")
         else:
             print(f"Warning: {key} not found in loaded metrics for {model_name}")
+
+    print(f"All available metrics for {model_name} verified successfully.")
+
+
+def verify_metrics(dataset, seq_len, pred_len):
+    root_folder, _, models, _ = configure(dataset, seq_len, pred_len)
+    gt, _ = load_naive_pred(root_folder)
+
+    for model in models.keys():
+        if model != 'Repeat':
+            pd, loaded_metrics = load_data(root_folder, model)
+            if gt is not None and pd is not None:
+                print("")
+                # print(f"\nVerifying metrics for {model}")
+                # print(f"Ground truth shape: {gt.shape}")
+                # print(f"Prediction shape: {pd.shape}")
+                
+                if loaded_metrics:
+                    model_metrics = loaded_metrics.get(model, {})
+                    filtered_metrics = {k: v for k, v in model_metrics.items() if not (k.endswith('_torch') or k.startswith('relative_mae'))}
+                    print(f"Loaded metrics:     {model}: {filtered_metrics}")
+                
+                calculated_metrics = calculate_metrics(pd, gt)
+                print(f"Calculated metrics: {model}: {calculated_metrics}")
+                
+                if loaded_metrics:
+                    try:
+                        assert_metrics(calculated_metrics, loaded_metrics, model)
+                    except AssertionError as e:
+                        print(f"Metric verification failed for {model}: {str(e)}")
+                else:
+                    print(f"No loaded metrics to verify for {model}")
+            else:
+                print(f"Skipping metric verification for {model} due to missing data.")
 
 
 def setup_video(root_folder, specified_model, total_samples, dim_to_plot):
@@ -265,7 +323,7 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
             x_forecast = range(input_len, input_len + len(forecast_data))
             
             # Plot the main line
-            plt.plot(x_forecast, forecast_data, label=label, linewidth=1.2, 
+            plt.plot(x_forecast, forecast_data, label=label, linewidth=1.5, 
                      color=models[model]['color'], linestyle=models[model]['style'], zorder=7)
             
             # Add end point marker and annotation
@@ -363,3 +421,4 @@ sample_interval = 50                # Process every 5th sample
 
 sample_index = 1901
 plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot)
+# verify_metrics(dataset, seq_len, pred_len)
