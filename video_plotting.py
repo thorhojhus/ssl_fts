@@ -190,13 +190,13 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
                extent=[0, len(x_gt)-1, y_min, y_max], alpha=0.1)
 
     # Plot ground truth line
-    plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=5)
+    plt.plot(x_gt, y_gt, label=f'Ground Truth', linewidth=1.8, color='black', zorder=5)
     
     # Fill above the ground truth line with semi-transparent white
     plt.fill_between(x_gt, y_gt, y_max, color='white', alpha=0.7, zorder=5)
 
     # Plot ground truth line with higher zorder
-    plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=6)
+    plt.plot(x_gt, y_gt, label=f'Ground Truth', linewidth=1.8, color='black', zorder=6)
 
     # Plot model predictions
     for model, data in results.items():
@@ -312,7 +312,7 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
     plt.fill_between(x_gt, y_gt, y_max, color='white', alpha=0.7, zorder=5)
 
     # Plot ground truth line with higher zorder
-    plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=6)
+    plt.plot(x_gt, y_gt, label=f'Ground Truth', linewidth=1.8, color='black', zorder=6)
 
     # Plot model predictions
     for model, data in results.items():
