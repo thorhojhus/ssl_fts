@@ -159,6 +159,87 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
     return cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
 
 
+def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot=1):
+    dim_to_plot = dim_to_plot - 1
+    root_folder, input_len, models, exclude_repeat = configure(dataset, seq_len, pred_len)
+    
+    gt, naive_pred = load_naive_pred(root_folder)
+    
+    data = {}
+    for model in models.keys():
+        if model != 'Repeat':
+            pd, metrics = load_data(root_folder, model)
+            if gt is not None and pd is not None:
+                data[model] = (pd, metrics)
+    
+    if not data:
+        print(f"No data found for any model in {root_folder}")
+        return
+
+    total_samples = gt.shape[0]
+    if sample_index >= total_samples:
+        print(f"Sample index {sample_index} is out of range. Total samples: {total_samples}")
+        return
+
+    gt_data = gt[sample_index]
+    results = {}
+    
+    for model, model_data in data.items():
+        pd, _ = model_data
+        if pd is not None:
+            pd_data = pd[sample_index]
+            gt_slice = gt_data[-pred_len:, dim_to_plot]
+            pd_slice = pd_data[:, dim_to_plot]
+            mse = np.mean((gt_slice - pd_slice)**2)
+            se = np.mean((gt_data[-1, dim_to_plot] - pd_data[-1, dim_to_plot])**2)
+            results[model] = {'mse': mse, 'se': se, 'pd_data': pd_data}
+
+    if naive_pred is not None:
+        naive_pred_data = naive_pred[sample_index]
+        gt_slice = gt_data[-pred_len:, dim_to_plot]
+        naive_slice = naive_pred_data[:, dim_to_plot]
+        mse_naive = np.mean((gt_slice - naive_slice)**2)
+        se_naive = np.mean((gt_data[-1, dim_to_plot] - naive_pred_data[-1, dim_to_plot])**2)
+        results['Repeat'] = {'mse': mse_naive, 'se': se_naive, 'pd_data': naive_pred_data}
+
+    plt.figure(figsize=(12, 6), dpi=100)
+    
+    plt.plot(range(len(gt_data)), gt_data[:, dim_to_plot], label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=2, color='black')
+
+    for model, data in results.items():
+        if model != 'Repeat' or not exclude_repeat:
+            label = f'{model} [MSE: {data["mse"]:.3f}]'
+            
+            forecast_data = data["pd_data"][:, dim_to_plot]
+            forecast_end = input_len + len(forecast_data)
+            plt.plot(range(input_len, forecast_end), forecast_data, 
+                     label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
+            
+            plt.scatter(forecast_end - 1, forecast_data[-1], color=models[model]['color'], s=100, zorder=5)
+            plt.annotate(f'SE: {data["se"]:.3f}', (forecast_end - 1, forecast_data[-1]), 
+                         xytext=(5, 5), textcoords='offset points', color=models[model]['color'])
+
+    plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start')
+    plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
+
+    sorted_models = sorted([(k, v) for k, v in results.items() if k != 'Repeat' or not exclude_repeat], key=lambda x: x[1]['mse'])
+    
+    if len(sorted_models) >= 2:
+        best_model, second_best_model = sorted_models[0][0], sorted_models[1][0]
+        compared_model = second_best_model if specified_model == best_model else best_model
+        mse_diff = results[compared_model]['mse'] - results[specified_model]['mse']
+        title = f'{specified_model} {"better" if mse_diff > 0 else "worse"} than {compared_model} by {"-" if mse_diff < 0 else "+"}{abs(mse_diff):.3f} MSE. Sample {sample_index+1}/{total_samples} on {dataset}. (Dim: {dim_to_plot+1})'
+    else:
+        title = f'{specified_model} MSE: {results[specified_model]["mse"]:.3f}. Sample {sample_index+1}/{total_samples}, Dim {dim_to_plot+1}'
+
+    plt.title(title)
+    plt.xlabel('Time Step')
+    plt.ylabel('Value')
+    plt.tight_layout()
+
+    plt.show()
+
+
 def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=1, sample_interval=1):
     dim_to_plot = dim_to_plot - 1
     root_folder, input_len, models, exclude_repeat = configure(dataset, seq_len, pred_len)
@@ -223,4 +304,7 @@ specified_model = 'FITS_DLinear_no_seasonal'
 dim_to_plot = 6                     # 1-based indeexing
 sample_interval = 50                # Process every 5th sample
 
-process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
+# process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
+
+sample_index = 0
+plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot)
