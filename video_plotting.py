@@ -113,25 +113,52 @@ def setup_video(root_folder, specified_model, total_samples, dim_to_plot):
 def plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat, dim_to_plot, dataset):
     plt.figure(figsize=(12, 6), dpi=100)
     
-    # Plot ground truth for the entire sequence
-    plt.plot(range(len(gt_data)), gt_data[:, dim_to_plot], label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=2, color='black')
+    # Plot ground truth with gradient fill
+    x_gt = range(len(gt_data))
+    y_gt = gt_data[:, dim_to_plot]
+    
+    # Create gradient fill
+    cmap = plt.get_cmap('YlGnBu_r')
+    y_min = min(np.min(gt_data[:, dim_to_plot]), min(np.min(data['pd_data'][:, dim_to_plot]) for data in results.values()))
+    y_max = max(np.max(gt_data[:, dim_to_plot]), max(np.max(data['pd_data'][:, dim_to_plot]) for data in results.values()))
+    y_range = y_max - y_min
+    y_min -= 0.1 * y_range  # Extend 10% below
+    y_max += 0.1 * y_range  # Extend 10% above
+    
+    # Create gradient image
+    xv, yv = np.meshgrid(np.linspace(0, len(x_gt)-1, 100), np.linspace(y_min, y_max, 100))
+    zv = yv
+    plt.imshow(zv, cmap=cmap, origin='upper', aspect='auto',
+               extent=[0, len(x_gt)-1, y_min, y_max], alpha=0.1)
 
+    # Plot ground truth line
+    plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=5)
+    
+    # Fill above the ground truth line with semi-transparent white
+    plt.fill_between(x_gt, y_gt, y_max, color='white', alpha=0.7, zorder=5)
+
+    # Plot ground truth line with higher zorder
+    plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=6)
+
+    # Plot model predictions
     for model, data in results.items():
         if model != 'Repeat' or not exclude_repeat:
             label = f'{model} [MSE: {data["mse"]:.3f}]'
             
-            # Plot only the forecast part, starting from input_len
             forecast_data = data["pd_data"][:, dim_to_plot]
-            forecast_end = input_len + len(forecast_data)
-            plt.plot(range(input_len, forecast_end), forecast_data, 
-                     label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
+            x_forecast = range(input_len, input_len + len(forecast_data))
             
-            # Highlight the last point of the forecast
-            plt.scatter(forecast_end - 1, forecast_data[-1], color=models[model]['color'], s=100, zorder=5)
-            plt.annotate(f'SE: {data["se"]:.3f}', (forecast_end - 1, forecast_data[-1]), 
-                         xytext=(5, 5), textcoords='offset points', color=models[model]['color'])
+            # Plot the main line
+            plt.plot(x_forecast, forecast_data, label=label, linewidth=1.2, 
+                     color=models[model]['color'], linestyle=models[model]['style'], zorder=7)
+            
+            # Add end point marker and annotation
+            plt.scatter(x_forecast[-1], forecast_data[-1], color=models[model]['color'], s=100, zorder=8)
+            plt.annotate(f'SE: {data["se"]:.3f}', (x_forecast[-1], forecast_data[-1]), 
+                         xytext=(5, 5), textcoords='offset points', color=models[model]['color'], zorder=9)
 
-    plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start')
+    # Plot forecast start line
+    plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start', zorder=4)
     plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
 
     sorted_models = sorted([(k, v) for k, v in results.items() if k != 'Repeat' or not exclude_repeat], key=lambda x: x[1]['mse'])
@@ -147,6 +174,7 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
     plt.title(title)
     plt.xlabel('Time Step')
     plt.ylabel('Value')
+    plt.ylim(y_min, y_max)  # Set y-axis limits
     plt.tight_layout()
 
     buf = BytesIO()
@@ -158,10 +186,6 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
     buf.close()
     return cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
 
-
-import matplotlib.pyplot as plt
-from matplotlib.colors import to_rgba
-import numpy as np
 
 def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot=1):
     dim_to_plot = dim_to_plot - 1
@@ -265,9 +289,6 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
 
     plt.show()
 
-# Usage example
-# plot_single_frame(dataset='MRO', seq_len=336, pred_len=720, specified_model='FITS_DLinear_no_seasonal', sample_index=0, dim_to_plot=6)
-
 def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=1, sample_interval=1):
     dim_to_plot = dim_to_plot - 1
     root_folder, input_len, models, exclude_repeat = configure(dataset, seq_len, pred_len)
@@ -332,7 +353,7 @@ specified_model = 'FITS_DLinear_no_seasonal'
 dim_to_plot = 6                     # 1-based indeexing
 sample_interval = 50                # Process every 5th sample
 
-# process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
+process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
 
-sample_index = 0
-plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot)
+# sample_index = 0
+# plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index, dim_to_plot)
