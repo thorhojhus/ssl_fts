@@ -15,7 +15,7 @@ def configure(dataset, seq_len, pred_len):
         'Repeat': {'color': 'gray', 'style': '--'},
         'FITS_DLinear': {'color': 'orange', 'style': '-'},
     }
-    exclude_repeat = True
+    exclude_repeat = False
     return root_folder, seq_len, models, exclude_repeat
 
 
@@ -73,9 +73,9 @@ def assert_metrics(calculated_metrics, loaded_metrics, model_name):
             print(f"Warning: {key} not found in loaded metrics for {model_name}")
 
 
-def setup_video(root_folder, specified_model, total_samples):
+def setup_video(root_folder, specified_model, total_samples, dim_to_plot):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video_path = os.path.join(root_folder, f'forecast_video_{specified_model}_{total_samples}_samples.mp4')
+    video_path = os.path.join(root_folder, f'forecast_video_{specified_model}_{total_samples}_samples_dim_{dim_to_plot+1}.mp4')
     return fourcc, video_path, None
 
 
@@ -83,7 +83,7 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
     plt.figure(figsize=(12, 6), dpi=100)
     
     # Plot ground truth for the entire sequence
-    plt.plot(range(len(gt_data)), gt_data[:, dim_to_plot], label=f'Ground Truth (Dim {dim_to_plot})', linewidth=2, color='black')
+    plt.plot(range(len(gt_data)), gt_data[:, dim_to_plot], label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=2, color='black')
 
     for model, data in results.items():
         if model != 'Repeat' or not exclude_repeat:
@@ -92,8 +92,8 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
             # Plot only the forecast part, starting from input_len
             forecast_data = data["pd_data"][:, dim_to_plot]
             forecast_end = input_len + len(forecast_data)
-            # plt.plot(range(input_len, forecast_end), forecast_data, 
-            #          label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
+            plt.plot(range(input_len, forecast_end), forecast_data, 
+                     label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
             
             # Highlight the last point of the forecast
             plt.scatter(forecast_end - 1, forecast_data[-1], color=models[model]['color'], s=100, zorder=5)
@@ -109,9 +109,9 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
         best_model, second_best_model = sorted_models[0][0], sorted_models[1][0]
         compared_model = second_best_model if specified_model == best_model else best_model
         mse_diff = results[compared_model]['mse'] - results[specified_model]['mse']
-        title = f'{specified_model} {"better" if mse_diff > 0 else "worse"} than {compared_model} by {"-" if mse_diff < 0 else "+"}{abs(mse_diff):.3f} MSE. Sample {sample+1}/{total_samples} on {dataset}. (Dim: {dim_to_plot})'
+        title = f'{specified_model} {"better" if mse_diff > 0 else "worse"} than {compared_model} by {"-" if mse_diff < 0 else "+"}{abs(mse_diff):.3f} MSE. Sample {sample+1}/{total_samples} on {dataset}. (Dim: {dim_to_plot+1})'
     else:
-        title = f'{specified_model} MSE: {results[specified_model]["mse"]:.3f}. Sample {sample+1}/{total_samples}, Dim {dim_to_plot}'
+        title = f'{specified_model} MSE: {results[specified_model]["mse"]:.3f}. Sample {sample+1}/{total_samples}, Dim {dim_to_plot+1}'
 
     plt.title(title)
     plt.xlabel('Time Step')
@@ -128,7 +128,8 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
     return cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
 
 
-def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=0, sample_interval=1):
+def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=1, sample_interval=1):
+    dim_to_plot = dim_to_plot - 1
     root_folder, input_len, models, exclude_repeat = configure(dataset, seq_len, pred_len)
     
     gt, naive_pred = load_naive_pred(root_folder)
@@ -146,7 +147,7 @@ def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=0, sam
 
     total_samples = gt.shape[0]
     print(f"Total samples: {total_samples}")
-    fourcc, video_path, video = setup_video(root_folder, specified_model, total_samples)
+    fourcc, video_path, video = setup_video(root_folder, specified_model, total_samples, dim_to_plot)
 
     for sample in range(0, total_samples, sample_interval):
         gt_data = gt[sample]
@@ -188,7 +189,7 @@ dataset = 'GD'
 seq_len = 336
 pred_len = 720
 specified_model = 'FITS_DLinear'
-dim_to_plot = 0
-sample_interval = 50  # Process every 5th sample
+dim_to_plot = 5                     # 1-based indeexing
+sample_interval = 50                # Process every 5th sample
 
 process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
