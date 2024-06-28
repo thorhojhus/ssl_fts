@@ -1,20 +1,51 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import numpy as np
 from io import BytesIO
 import cv2
 from utils.metrics import MSE, MAE, SE, RMSE
 
 
+# def configure(dataset, seq_len, pred_len):
+#     root_folder = f'results/{dataset}_{seq_len}_{pred_len}_M_channels_6'
+#     models = {
+#         # 'DLinear': {'color': 'blue', 'style': '-'},
+#         # 'DLinear_FITS': {'color': 'magenta', 'style': '-'},
+#         # 'FITS': {'color': 'red', 'style': '-'},
+#         'Repeat': {'color': 'gray', 'style': '--'},
+#         'FITS_DLinear': {'color': 'orange', 'style': '-'},
+#         'FITS_DLinear_no_ma': {'color': 'yellow', 'style': '-'},
+#         'FITS_DLinear_no_seasonal': {'color': 'red', 'style': '-'},
+#     }
+#     exclude_repeat = False
+#     return root_folder, seq_len, models, exclude_repeat
+
 def configure(dataset, seq_len, pred_len):
     root_folder = f'results/{dataset}_{seq_len}_{pred_len}_M_channels_6'
-    models = {
-        'DLinear': {'color': 'blue', 'style': '-'},
-        'DLinear_FITS': {'color': 'magenta', 'style': '-'},
-        'FITS': {'color': 'red', 'style': '-'},
-        'Repeat': {'color': 'gray', 'style': '--'},
-        'FITS_DLinear': {'color': 'orange', 'style': '-'},
-    }
+    
+    # Get a blue colormap
+    cmap = plt.get_cmap('gnuplot')
+    
+    # List of all models (excluding 'Repeat')
+    model_list = [
+        # 'DLinear',
+        # 'DLinear_FITS',
+        # 'FITS',
+        'FITS_DLinear',
+        'FITS_DLinear_no_ma',
+        'FITS_DLinear_no_seasonal'
+    ]
+    
+    # Generate colors from the colormap
+    colors = [mcolors.rgb2hex(cmap(i)) for i in np.linspace(0.3, 0.9, len(model_list))]
+    
+    # Create the models dictionary
+    models = {'Repeat': {'color': 'gray', 'style': '--'}}
+    models.update({model: {'color': color, 'style': '-'} for model, color in zip(model_list, colors)})
+    
     exclude_repeat = False
     return root_folder, seq_len, models, exclude_repeat
 
@@ -185,11 +216,11 @@ def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=1, sam
     print(f"Video saved to {video_path}")
 
 # Usage
-dataset = 'GD'
+dataset = 'MRO'
 seq_len = 336
 pred_len = 720
-specified_model = 'FITS_DLinear'
-dim_to_plot = 5                     # 1-based indeexing
+specified_model = 'FITS_DLinear_no_seasonal'
+dim_to_plot = 6                     # 1-based indeexing
 sample_interval = 50                # Process every 5th sample
 
 process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)
