@@ -7,7 +7,7 @@ from utils.metrics import MSE, MAE, SE, RMSE
 
 
 def configure(dataset, seq_len, pred_len):
-    root_folder = f'results/{dataset}_{seq_len}_{pred_len}_M_channels_7'
+    root_folder = f'results/{dataset}_{seq_len}_{pred_len}_M_channels_6'
     models = {
         'DLinear': {'color': 'blue', 'style': '-'},
         'DLinear_FITS': {'color': 'magenta', 'style': '-'},
@@ -79,55 +79,6 @@ def setup_video(root_folder, specified_model, total_samples):
     return fourcc, video_path, None
 
 
-def plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat, dim_to_plot):
-    plt.figure(figsize=(12, 6), dpi=100)
-    
-    # Plot ground truth for the entire sequence
-    plt.plot(range(len(gt_data)), gt_data[:, dim_to_plot], label=f'Ground Truth (Dim {dim_to_plot})', linewidth=2, color='black', alpha=0.7)
-
-    for model, data in results.items():
-        if model != 'Repeat' or not exclude_repeat:
-            label = f'{model} [MSE: {data["mse"]:.3f}]'
-            
-            # Plot the input sequence (historical data)
-            plt.plot(range(input_len), data["pd_data"][:input_len, dim_to_plot], 
-                     color=models[model]['color'], linestyle=models[model]['style'], alpha=0.3)
-            
-            # Plot the forecast
-            plt.plot(range(input_len, len(data["pd_data"])), data["pd_data"][input_len:, dim_to_plot], 
-                     label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
-            
-            # Highlight the last point of the forecast
-            plt.scatter(len(data["pd_data"]) - 1, data["pd_data"][-1, dim_to_plot], color=models[model]['color'], s=50, zorder=5)
-
-    plt.axvline(x=input_len, color='silver', linestyle='--', label='Forecast Start')
-    plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
-
-    sorted_models = sorted([(k, v) for k, v in results.items() if k != 'Repeat' or not exclude_repeat], key=lambda x: x[1]['mse'])
-    
-    if len(sorted_models) >= 2:
-        best_model, second_best_model = sorted_models[0][0], sorted_models[1][0]
-        compared_model = second_best_model if specified_model == best_model else best_model
-        mse_diff = results[compared_model]['mse'] - results[specified_model]['mse']
-        title = f'{specified_model} {"better" if mse_diff > 0 else "worse"} than {compared_model} by {mse_diff:.3f} MSE. Sample {sample+1}/{total_samples}'
-    else:
-        title = f'{specified_model} MSE: {results[specified_model]["mse"]:.3f}. Sample {sample+1}/{total_samples}'
-
-    plt.title(title)
-    plt.xlabel('Time Step')
-    plt.ylabel('Value')
-    plt.tight_layout()
-
-    buf = BytesIO()
-    plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
-    plt.close()
-    
-    buf.seek(0)
-    img_arr = np.frombuffer(buf.getvalue(), dtype=np.uint8)
-    buf.close()
-    return cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
-
-
 def plot_and_save_frame(gt_data, results, models, input_len, sample, total_samples, specified_model, exclude_repeat, dim_to_plot, dataset):
     plt.figure(figsize=(12, 6), dpi=100)
     
@@ -141,8 +92,8 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
             # Plot only the forecast part, starting from input_len
             forecast_data = data["pd_data"][:, dim_to_plot]
             forecast_end = input_len + len(forecast_data)
-            plt.plot(range(input_len, forecast_end), forecast_data, 
-                     label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
+            # plt.plot(range(input_len, forecast_end), forecast_data, 
+            #          label=label, linewidth=2, color=models[model]['color'], linestyle=models[model]['style'], alpha=0.6)
             
             # Highlight the last point of the forecast
             plt.scatter(forecast_end - 1, forecast_data[-1], color=models[model]['color'], s=100, zorder=5)
@@ -177,7 +128,7 @@ def plot_and_save_frame(gt_data, results, models, input_len, sample, total_sampl
     return cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
 
 
-def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=0):
+def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=0, sample_interval=1):
     root_folder, input_len, models, exclude_repeat = configure(dataset, seq_len, pred_len)
     
     gt, naive_pred = load_naive_pred(root_folder)
@@ -195,18 +146,16 @@ def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=0):
 
     total_samples = gt.shape[0]
     print(f"Total samples: {total_samples}")
-    # total_samples = 20 # Comment out for full sample size
     fourcc, video_path, video = setup_video(root_folder, specified_model, total_samples)
 
-    for sample in range(total_samples):
+    for sample in range(0, total_samples, sample_interval):
         gt_data = gt[sample]
         results = {}
         
         for model, model_data in data.items():
-            pd, _ = model_data  # Unpack the tuple correctly
+            pd, _ = model_data
             if pd is not None:
                 pd_data = pd[sample]
-                # Adjust the slicing to match the lengths
                 gt_slice = gt_data[-pred_len:, dim_to_plot]
                 pd_slice = pd_data[:, dim_to_plot]
                 mse = np.mean((gt_slice - pd_slice)**2)
@@ -235,10 +184,11 @@ def process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot=0):
     print(f"Video saved to {video_path}")
 
 # Usage
-dataset = 'exchange_rate'
+dataset = 'GD'
 seq_len = 336
 pred_len = 720
 specified_model = 'FITS_DLinear'
-dim_to_plot = 0  # Change this to plot different dimensions
+dim_to_plot = 0
+sample_interval = 50  # Process every 5th sample
 
-process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot)
+process_data(dataset, seq_len, pred_len, specified_model, dim_to_plot, sample_interval)

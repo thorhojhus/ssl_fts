@@ -4,14 +4,14 @@
 seq_len=336
 
 # List of models to run
-models=("DLinear")
+models=("DLinear" "FITS_DLinear" "FITS" "DLinear_FITS")
 # models=("XGBoost")
 
 # List of pred_len values
 pred_lens=(720)
 
 # List of datasets to run
-datasets=("exchange_rate")
+datasets=("GD")
 features="M"
 
 # Create necessary directories if they do not exist
