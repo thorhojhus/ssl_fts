@@ -213,15 +213,15 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
     y_gt = gt_data[:, dim_to_plot]
     
     # Create gradient fill
-    cmap = plt.get_cmap('Greys')
+    cmap = plt.get_cmap('YlGnBu_r')
     y_min = np.min([np.min(gt_data[:, dim_to_plot])] + [np.min(data['pd_data'][:, dim_to_plot]) for data in results.values()])
     y_max = np.max([np.max(gt_data[:, dim_to_plot])] + [np.max(data['pd_data'][:, dim_to_plot]) for data in results.values()])
     
     # Create gradient image
     xv, yv = np.meshgrid(np.linspace(0, len(x_gt)-1, 100), np.linspace(y_min, y_max, 100))
     zv = yv
-    plt.imshow(zv, cmap=cmap, origin='lower', aspect='auto',
-               extent=[0, len(x_gt)-1, y_min, y_max], alpha=0.3)
+    plt.imshow(zv, cmap=cmap, origin='upper', aspect='auto',
+               extent=[0, len(x_gt)-1, y_min, y_max], alpha=0.1)
 
     # Plot ground truth line
     plt.plot(x_gt, y_gt, label=f'Ground Truth (Dim {dim_to_plot+1})', linewidth=1.8, color='black', zorder=5)
@@ -237,7 +237,7 @@ def plot_single_frame(dataset, seq_len, pred_len, specified_model, sample_index,
             x_forecast = range(input_len, input_len + len(forecast_data))
             
             # Plot the main line
-            plt.plot(x_forecast, forecast_data, label=label, linewidth=1, color=models[model]['color'], linestyle=models[model]['style'])
+            plt.plot(x_forecast, forecast_data, label=label, linewidth=1.2, color=models[model]['color'], linestyle=models[model]['style'])
             
             # Add end point marker and annotation
             plt.scatter(x_forecast[-1], forecast_data[-1], color=models[model]['color'], s=100, zorder=5)
