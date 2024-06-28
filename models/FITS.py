@@ -103,6 +103,7 @@ class Model(nn.Module):
             individual=configs.individual,
         )
         self.fits = FITS(fits_args)
+        print("FITS cutoff frequency:", fits_args.dominance_freq)
 
     def forward(self, x):
         return self.fits(x)

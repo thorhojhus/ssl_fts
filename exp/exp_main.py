@@ -8,7 +8,7 @@ from torch import optim
 
 from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import Informer, Autoformer, Transformer, DLinear, DLinear_FITS, FITS, FITS_DLinear, FITS_p, FITS_100, XGBoost
+from models import Informer, Autoformer, Transformer, DLinear, DLinear_FITS, FITS, FITS_DLinear, FITS_p, FITS_100, XGBoost, FITS_DLinear_no_ma, FITS_DLinear_no_seasonal
 from utils.tools import EarlyStopping, adjust_learning_rate
 from utils.metrics import metric, SE
 from models.Stat_models import Naive_repeat
@@ -30,7 +30,9 @@ class Exp_Main(Exp_Basic):
             'FITS_DLinear': FITS_DLinear,
             'FITS_p': FITS_p,
             'FITS_100': FITS_100,
-            'XGBoost': XGBoost
+            'XGBoost': XGBoost,
+            'FITS_DLinear_no_ma': FITS_DLinear_no_ma,
+            'FITS_DLinear_no_seasonal': FITS_DLinear_no_seasonal
         }
         model = model_dict[self.args.model].Model(self.args).float()
         print(f"\n{model}\n")
@@ -216,7 +218,7 @@ class Exp_Main(Exp_Basic):
             }
 
         def log_metrics(results, filename='final_metrics.txt'):
-            print("Final Metrics:")
+            print("\nFinal Metrics:\n")
             
             for model_name, metrics in results.items():
                 print(f"{model_name:<12} MSE: {metrics['mse']:<10.6f} MAE: {metrics['mae']:<10.6f} SE: {metrics['se']:<10.6f} "

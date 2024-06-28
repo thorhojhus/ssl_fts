@@ -130,7 +130,7 @@ class Model(nn.Module):
             individual=configs.individual,
         )
         self.fits = FITS(fits_args)
-        # print("FITS cutoff frequency:", fits_args.dominance_freq)
+        print("FITS cutoff frequency:", fits_args.dominance_freq)
 
         # Linear layers
         self.individual = configs.individual
