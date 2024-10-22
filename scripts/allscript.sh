@@ -4,7 +4,7 @@
 seq_len=336
 
 # List of models to run
-models=("DLinear")
+models=("DLinear" "DLinear_FITS" "FITS_DLinear")
 
 # List of pred_len values
 pred_lens=(96 192 336 720)
@@ -34,11 +34,8 @@ for dataset in "${datasets[@]}"; do
         continue
     fi
 
-    # Loop through each model
     for model in "${models[@]}"; do
-        # Loop through each pred_len value
         for pred_len in "${pred_lens[@]}"; do
-            # Loop through each feature type
             for features in "${features_list[@]}"; do
                 echo "Running experiments for seq_len=${seq_len} pred_len=${pred_len} and dataset=${dataset}:"
 

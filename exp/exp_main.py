@@ -8,7 +8,7 @@ from torch import optim
 
 from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import DLinear, FITS
+from models import DLinear, FITS, DLinear_FITS, FITS_DLinear
 from utils.tools import EarlyStopping, adjust_learning_rate
 from utils.metrics import metric, SE
 from models.Stat_models import Naive_repeat
@@ -22,7 +22,9 @@ class Exp_Main(Exp_Basic):
     def _build_model(self):
         model_dict = {
             'DLinear': DLinear,
-            'FITS': FITS
+            'FITS': FITS,
+            'DLinear_FITS': DLinear_FITS,
+            'FITS_DLinear': FITS_DLinear
         }
         model = model_dict[self.args.model].Model(self.args).float()
         print(f"\n{model}\n")
@@ -162,9 +164,10 @@ class Exp_Main(Exp_Basic):
 
                 f_dim = -1 if self.args.features == 'MS' else 0
                 outputs = outputs[:, -self.args.pred_len:, f_dim:]
-                naive_output = naive_output[:, -self.args.pred_len:, f_dim:]
                 batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
 
+                naive_output = naive_output[:, -self.args.pred_len:, f_dim:]
+                
                 input = batch_x.detach().cpu().numpy()
                 pred = outputs.detach().cpu().numpy()
                 naive_pred = naive_output.detach().cpu().numpy()
@@ -227,9 +230,9 @@ class Exp_Main(Exp_Basic):
                 for model_name, metrics in results.items():
                     f.write(f"{model_name:<12} MSE: {metrics['mse']:<10.3f} MAE: {metrics['mae']:<10.3f} SE: {metrics['se']:<10.3f} "
                             f"RRMSE: {metrics['relative_rmse_torch']:<10.2%} | RRMSE: {metrics['relative_rmse']:<10.3f} RMAE: {metrics['relative_mae']:<10.3f} (numpy)\n")
-                    f.write(f"{model_name:<12} MSE: {metrics['mse_torch']:<10.3f} MAE: {metrics['mae_torch']:<10.3f} SE: {metrics['se_torch']:<10.3f} "
-                            f"RRMSE: {metrics['relative_rmse_torch']:<10.2%} | RRMSE: {metrics['relative_rmse_torch']:<10.3f} RMAE: {metrics['relative_mae_torch']:<10.3f} (torch)\n")
-                    f.write("\n")
+                    # f.write(f"{model_name:<12} MSE: {metrics['mse_torch']:<10.3f} MAE: {metrics['mae_torch']:<10.3f} SE: {metrics['se_torch']:<10.3f} "
+                            # f"RRMSE: {metrics['relative_rmse_torch']:<10.2%} | RRMSE: {metrics['relative_rmse_torch']:<10.3f} RMAE: {metrics['relative_mae_torch']:<10.3f} (torch)\n")
+                    # f.write("\n")
 
         results = {
             self.args.model: compute_metrics(preds, trues),
