@@ -5,7 +5,7 @@ seq_len=336
 
 # List of models to run
 # models=("DLinear" "FITS_DLinear" "DLinear_FITS")
-models=("FITS")
+models=("DLinear")
 
 # List of pred_len values
 pred_lens=(96)

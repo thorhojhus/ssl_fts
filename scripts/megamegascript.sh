@@ -10,7 +10,7 @@ models=("DLinear")
 pred_lens=(96)
 
 # List of datasets to run
-datasets=("GD")
+datasets=("exchange_rate")
 
 # List of features to run
 features_list=("S" "MS" "M")
