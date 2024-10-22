@@ -8,7 +8,7 @@ from torch import optim
 
 from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import DLinear, FITS, DLinear_FITS, FITS_DLinear
+from models import DLinear, FITS, DLinear_FITS, FITS_DLinear, FITS10, FITS100
 from utils.tools import EarlyStopping, adjust_learning_rate
 from utils.metrics import metric, SE
 from models.Stat_models import Naive_repeat
@@ -23,6 +23,8 @@ class Exp_Main(Exp_Basic):
         model_dict = {
             'DLinear': DLinear,
             'FITS': FITS,
+            'FITS10': FITS10,
+            'FITS100': FITS100,
             'DLinear_FITS': DLinear_FITS,
             'FITS_DLinear': FITS_DLinear
         }

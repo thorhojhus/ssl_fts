@@ -1,7 +1,7 @@
 checkpoints
-results
+# results
 **/__pycache__/
-**/results/
+# **/results/
 *.mp4
 .DS_Store
 *.DS_Store

@@ -85,20 +85,6 @@ def parse_metrics(file_content, models):
             }
     return metrics
 
-def get_metrics(results_folder, dataset, seq_len, pred_len, model, models):
-    mode = 'M'
-    channels = '8' if dataset == 'exchange_rate' else '6'
-    model_file = 'Straight_Line.log' if model == 'Repeat' else f'{model}.log'
-    log_file_path = f'{results_folder}/{dataset}_{seq_len}_{pred_len}_{mode}_channels_{channels}/logs/{model_file}'
-    
-    try:
-        with open(log_file_path, 'r') as f:
-            metrics = parse_metrics(f.read(), models)
-            return metrics.get(model)
-    except FileNotFoundError:
-        print(f"Log file not found: {log_file_path}")
-    return None
-
 
 def print_metrics_table(results_folder, datasets, seq_len, pred_lengths, models):
     headers = ['Dataset'] + [f"{dataset}\n(4 col)" for dataset in datasets]
@@ -118,11 +104,26 @@ def print_metrics_table(results_folder, datasets, seq_len, pred_lengths, models)
                     row.append(f"{'N/A':>10} {'N/A':>10} {'N/A':>10} {'N/A':>10}")
             print("".join(row))
 
+
+def get_metrics(results_folder, dataset, seq_len, pred_len, model, models):
+    mode = 'S'
+    channels = '8' if dataset == 'exchange_rate' else '6'
+    model_file = 'DLinear.log' if model == 'Repeat' else f'{model}.log'
+    log_file_path = f'{results_folder}/{dataset}_{seq_len}_{pred_len}_{mode}_channels_{channels}/logs/{model_file}'
+    
+    try:
+        with open(log_file_path, 'r') as f:
+            metrics = parse_metrics(f.read(), models)
+            return metrics.get(model)
+    except FileNotFoundError:
+        print(f"Log file not found: {log_file_path}")
+    return None
+
 # Example usage
 datasets = ['exchange_rate', 'GD', 'MRO']
 seq_len = 336
 pred_lengths = [96, 192, 336, 720]
-models = ['Repeat', 'DLinear', 'DLinear_FITS', 'FITS_DLinear', 'Straight_Line', 'Intercept', 'Straight_Line_FITS']
+models = ['Repeat', 'DLinear', 'DLinear_FITS', 'FITS_DLinear', 'FITS', 'FITS100', 'FITS10']
 results_folder = 'results'  # Change this to the path of your results folder
 
 print_metrics_table(results_folder, datasets, seq_len, pred_lengths, models)
