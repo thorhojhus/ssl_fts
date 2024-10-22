@@ -10,7 +10,7 @@ models=("DLinear" "DLinear_FITS" "FITS_DLinear")
 pred_lens=(96 192 336 720)
 
 # List of datasets to run
-datasets=("exchange_rate")
+datasets=("exchange_rate" "GD" "MRO")
 
 # List of features to run
 features_list=("S" "MS" "M")
@@ -21,22 +21,22 @@ if [ ! -d "./results" ]; then
 fi
 
 # Loop through each dataset
-for dataset in "${datasets[@]}"; do
-    # Set target and features based on dataset
-    if [ "$dataset" = "exchange_rate" ]; then
-        target="OT"
-        channels=8
-    elif [ "$dataset" = "GD" ] || [ "$dataset" = "MRO" ] || [ "$dataset" = "AAPL" ]; then
-        target="Adj Close"
-        channels=6
-    else
-        echo "Error: Unknown dataset. Please specify 'exchange_rate', 'GD', or 'MRO'."
-        continue
-    fi
+for features in "${features_list[@]}"; do
+    for dataset in "${datasets[@]}"; do
+        # Set target and features based on dataset
+        if [ "$dataset" = "exchange_rate" ]; then
+            target="OT"
+            channels=8
+        elif [ "$dataset" = "GD" ] || [ "$dataset" = "MRO" ] || [ "$dataset" = "AAPL" ]; then
+            target="Adj Close"
+            channels=6
+        else
+            echo "Error: Unknown dataset. Please specify 'exchange_rate', 'GD', or 'MRO'."
+            continue
+        fi
 
-    for model in "${models[@]}"; do
-        for pred_len in "${pred_lens[@]}"; do
-            for features in "${features_list[@]}"; do
+        for model in "${models[@]}"; do
+            for pred_len in "${pred_lens[@]}"; do
                 echo "Running experiments for seq_len=${seq_len} pred_len=${pred_len} and dataset=${dataset}:"
 
                 logname="${dataset}_${seq_len}_${pred_len}_${features}_channels_${channels}"
