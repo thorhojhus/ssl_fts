@@ -52,10 +52,7 @@ class Exp_Main(Exp_Basic):
                 outputs = self.model(batch_x)
 
                 f_dim = -1 if self.args.features == 'MS' else 0
-                if self.args.features == 'MS':
-                    outputs = outputs[:, -self.args.pred_len:, :]
-                else:
-                    outputs = outputs[:, -self.args.pred_len:, f_dim:]
+                outputs = outputs[:, -self.args.pred_len:, f_dim:]
                 batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
 
                 pred = outputs.detach().cpu()
@@ -100,10 +97,7 @@ class Exp_Main(Exp_Basic):
                 outputs = self.model(batch_x)
 
                 f_dim = -1 if self.args.features == 'MS' else 0
-                if self.args.features == 'MS':
-                    outputs = outputs[:, -self.args.pred_len:, :]
-                else:
-                    outputs = outputs[:, -self.args.pred_len:, f_dim:]
+                outputs = outputs[:, -self.args.pred_len:, f_dim:]
                 batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
                 loss = criterion(outputs, batch_y)
                 train_loss.append(loss.item())
@@ -167,12 +161,9 @@ class Exp_Main(Exp_Basic):
                 outputs = self.model(batch_x)
 
                 f_dim = -1 if self.args.features == 'MS' else 0
-                if self.args.features == 'MS':
-                    outputs = outputs[:, -self.args.pred_len:, :]
-                else:
-                    outputs = outputs[:, -self.args.pred_len:, f_dim:]
-                batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
+                outputs = outputs[:, -self.args.pred_len:, f_dim:]
                 naive_output = naive_output[:, -self.args.pred_len:, f_dim:]
+                batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
 
                 input = batch_x.detach().cpu().numpy()
                 pred = outputs.detach().cpu().numpy()
