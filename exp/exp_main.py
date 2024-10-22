@@ -8,7 +8,7 @@ from torch import optim
 
 from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
-from models import DLinear
+from models import DLinear, FITS
 from utils.tools import EarlyStopping, adjust_learning_rate
 from utils.metrics import metric, SE
 from models.Stat_models import Naive_repeat
@@ -22,6 +22,7 @@ class Exp_Main(Exp_Basic):
     def _build_model(self):
         model_dict = {
             'DLinear': DLinear,
+            'FITS': FITS
         }
         model = model_dict[self.args.model].Model(self.args).float()
         print(f"\n{model}\n")

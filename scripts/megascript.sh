@@ -5,14 +5,14 @@ seq_len=336
 
 # List of models to run
 # models=("DLinear" "FITS_DLinear" "DLinear_FITS")
-models=("DLinear")
+models=("FITS")
 
 # List of pred_len values
 pred_lens=(96)
 
 # List of datasets to run
 datasets=("exchange_rate")
-features="MS"
+features="M"
 
 # Create necessary directories if they do not exist
 if [ ! -d "./results" ]; then

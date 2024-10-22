@@ -1,0 +1,7 @@
+checkpoints/** */
+**/__pycache__/
+**/results/
+*.mp4
+.DS_Store
+*.DS_Store
+**/checkpoints/
